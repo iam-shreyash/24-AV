@@ -227,7 +227,7 @@ export default function Home() {
               </p>
             </div>
           </ScrollAnimate>
-          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-3">
             {(auth?.role === "vendor" ? vendorPartnerFeatures : whyChooseFeatures).map((feature, index) => (
               <ScrollAnimate 
                 key={index} 
@@ -235,11 +235,11 @@ export default function Home() {
                 delay={index * 100}
                 threshold={0.2}
               >
-                <Card className="border border-gray-200 bg-white p-8 text-center shadow-sm hover:shadow-lg transition-shadow">
-                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-                    <feature.icon className="h-8 w-8 text-blue-800" />
+                <Card className="border border-gray-200 bg-white p-8 text-center rounded-xl shadow transition-shadow hover:shadow-lg">
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+                    <feature.icon className="h-10 w-10 text-blue-800" />
                   </div>
-                  <h3 className="font-heading text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                  <h3 className="font-heading text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
                   <p className="font-body text-gray-600">{feature.description}</p>
                 </Card>
               </ScrollAnimate>
@@ -264,7 +264,7 @@ export default function Home() {
               </p>
             </div>
           </ScrollAnimate>
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
             {(auth?.role === "vendor" ? vendorTools : benefits).map((item, index) => (
               <ScrollAnimate 
                 key={index} 
@@ -272,12 +272,38 @@ export default function Home() {
                 delay={index * 50}
                 threshold={0.1}
               >
-                <Card className="border border-gray-200 bg-white p-6 text-center shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                    <item.icon className="h-6 w-6 text-blue-800" />
+                <Card className="border border-gray-200 bg-white p-8 text-center rounded-xl shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
+                    <item.icon className="h-7 w-7 text-blue-800" />
                   </div>
-                  <h3 className="font-heading text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
+                  <h3 className="font-heading text-lg font-semibold text-gray-900 mb-3">{item.title}</h3>
                   <p className="font-body text-sm text-gray-600 flex-grow">{item.description}</p>
+                </Card>
+              </ScrollAnimate>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Partner with 24AV Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <ScrollAnimate type="fade-in" threshold={0.2}>
+            <div className="mb-12 text-center">
+              <h2 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">Why Partner with 24AV?</h2>
+              <p className="mt-4 font-body text-lg text-gray-600">Grow your aviation business with India's most trusted platform.</p>
+            </div>
+          </ScrollAnimate>
+
+          <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+            {vendorPartnerFeatures.slice(0,4).map((feature, idx) => (
+              <ScrollAnimate key={idx} type="fade-in" delay={idx * 80}>
+                <Card className="border border-gray-200 bg-white p-8 text-center rounded-xl shadow transition-shadow hover:shadow-lg">
+                  <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+                    <feature.icon className="h-10 w-10 text-blue-800" />
+                  </div>
+                  <h3 className="font-heading text-xl font-semibold text-gray-900 mb-3">{feature.title}</h3>
+                  <p className="font-body text-gray-600">{feature.description}</p>
                 </Card>
               </ScrollAnimate>
             ))}

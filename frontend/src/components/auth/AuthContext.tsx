@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
+import { getStoredAuth } from './Login';
 
 type User = {
   id: string;
@@ -18,30 +19,15 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Populate initial user synchronously from local storage to avoid transient nulls
+  const stored = getStoredAuth();
+  const [user, setUser] = useState<User | null>(
+    stored ? { id: stored.email || stored.role || 'unknown', email: stored.email, role: stored.role } : null
+  );
 
-  useEffect(() => {
-    // Check for existing session/token here
-    const checkAuth = async () => {
-      try {
-        // Example: Check for stored token and validate it
-        const token = localStorage.getItem('token');
-        if (token) {
-          // TODO: Add API call to validate token and get user data
-          // const userData = await validateToken(token);
-          // setUser(userData);
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        localStorage.removeItem('token');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
+  // We no longer block rendering of the app while auth is being checked.
+  // Components can use the `loading` flag if they need to wait for auth verification.
+  const [loading, setLoading] = useState(false);
 
   const login = async (email: string, password: string) => {
     try {
@@ -84,9 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };
 

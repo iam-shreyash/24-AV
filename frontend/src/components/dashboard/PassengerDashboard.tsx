@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Calendar, Plane, Sparkles, Download, Search, ArrowRight } from "lucide-react";
+import { Calendar, Plane, Sparkles, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 import { Badge } from "../ui/badge";
@@ -259,99 +259,7 @@ export default function PassengerDashboard() {
             </p>
           </div>
 
-          {/* Available Flights Section */}
-          <Card className="mb-8 border-2 bg-gradient-to-b from-card to-card/50 p-8 shadow-xl transition-all hover:shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary/10 p-2">
-                  <Search className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-heading text-2xl font-semibold">Available Flights</h3>
-                  <p className="font-body text-sm text-muted-foreground">Discover flights you can book right now.</p>
-                </div>
-              </div>
-              <Button
-                variant="outline"
-                onClick={() => navigate("/search")}
-                className="gap-2"
-              >
-                View All
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-
-            {flightsLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-4 text-muted-foreground">Loading available flights...</p>
-              </div>
-            ) : availableFlights.length === 0 ? (
-              <div className="text-center py-12">
-                <Plane className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="font-heading text-xl font-bold mb-2">No Flights Available</h3>
-                <p className="text-muted-foreground mb-4">
-                  There are no flights available at the moment. Check back later or search for specific routes.
-                </p>
-                <Button
-                  onClick={() => navigate("/search")}
-                  className="gap-2"
-                >
-                  <Search className="h-4 w-4" />
-                  Search Flights
-                </Button>
-              </div>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {availableFlights.map((flight) => (
-                  <Card
-                    key={flight.id}
-                    className="group border-2 border-primary/20 bg-gradient-to-br from-card to-card/50 p-5 transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg cursor-pointer"
-                    onClick={() => navigate(`/search?from=${flight.origin}&to=${flight.destination}`)}
-                  >
-                    <div className="mb-3 flex items-center gap-2">
-                      <Plane className="h-4 w-4 text-primary" />
-                      <p className="font-body text-xs uppercase text-muted-foreground">
-                        {formatDate(flight.departure_time)}
-                      </p>
-                    </div>
-                    <p className="font-heading text-lg font-semibold text-foreground mb-1">
-                      {flight.origin} → {flight.destination}
-                    </p>
-                    {flight.flight_number && (
-                      <p className="font-body text-xs text-muted-foreground mb-2">
-                        {flight.flight_number}
-                      </p>
-                    )}
-                    <p className="font-body text-xs text-muted-foreground mb-2">
-                      {new Date(flight.departure_time).toLocaleTimeString("en-US", { 
-                        hour: "2-digit", 
-                        minute: "2-digit" 
-                      })} - {new Date(flight.arrival_time).toLocaleTimeString("en-US", { 
-                        hour: "2-digit", 
-                        minute: "2-digit" 
-                      })}
-                    </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <p className="font-heading text-lg font-bold text-primary">
-                        ₹{flight.base_price.toLocaleString("en-IN")}
-                      </p>
-                      {flight.available_seats !== null && flight.available_seats !== undefined && (
-                        <Badge variant="outline" className="text-xs">
-                          {flight.available_seats} seats
-                        </Badge>
-                      )}
-                      {flight.is_full_charter_only && (
-                        <Badge className="bg-accent text-accent-foreground text-xs">
-                          Charter Only
-                        </Badge>
-                      )}
-                    </div>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </Card>
+          {/* Available Flights section removed per request */}
 
           {/* My Bookings Section */}
           <Card className="border-2 bg-gradient-to-b from-card to-card/50 p-8 shadow-xl transition-all hover:shadow-2xl">

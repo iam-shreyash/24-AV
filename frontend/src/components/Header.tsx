@@ -54,10 +54,25 @@ export default function Header() {
         <nav className="hidden items-center space-x-6 md:flex">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
+            // For Home link, attach a stronger navigate fallback and debug logging
+            const handleClick = (e: React.MouseEvent) => {
+              if (item.href === "/") {
+                try {
+                  console.debug("Header Home clicked - executing fallback navigate", { href: item.href, target: e.currentTarget });
+                } catch (err) {
+                  // ignore
+                }
+                // Prevent default behavior and force navigation via router
+                e.preventDefault();
+                e.stopPropagation();
+                navigate("/");
+              }
+            };
             return (
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={handleClick}
                 className={`font-body text-sm font-medium transition-all duration-300 ${
                   isActive
                     ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
@@ -96,10 +111,21 @@ export default function Header() {
             <nav className="mt-8 flex flex-col space-y-4">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
+                const handleClick = (e: React.MouseEvent) => {
+                  if (item.href === "/") {
+                    try {
+                      console.debug("Mobile nav Home clicked - executing fallback navigate", { href: item.href, target: e.currentTarget });
+                    } catch (err) {}
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate("/");
+                  }
+                };
                 return (
                   <Link
                     key={item.name}
                     to={item.href}
+                    onClick={handleClick}
                     className={`font-body text-base font-medium transition-all duration-300 ${
                       isActive
                         ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"

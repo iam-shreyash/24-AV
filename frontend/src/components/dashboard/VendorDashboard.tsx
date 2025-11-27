@@ -1,15 +1,16 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Plane, Plus, LogOut, Calendar, Clock, MapPin, RefreshCw, Edit, Trash2, Users, FileText, Upload, CreditCard, FileCheck } from "lucide-react";
+import { Plane, Plus, Calendar, Clock, MapPin, RefreshCw, Edit, Trash2 } from "lucide-react";
 
 import { Badge } from "../ui/badge";
 import { extractMessage } from "../../lib/extractMessage";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Sheet, SheetContent } from "../ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { getStoredAuth, clearAuth } from "../auth/Login";
+import { Tabs, TabsContent } from "../ui/tabs";
+import { getStoredAuth } from "../auth/Login";
+import { useAuth } from "../auth/AuthContext";
 import AircraftRegistrationForm from "../aircraft/AircraftRegistrationForm";
 import CreateFlightForm from "../flights/CreateFlightForm";
 import EditFlightForm from "../flights/EditFlightForm";
@@ -18,6 +19,8 @@ import { useToast } from "../ui/use-toast";
 
 export default function VendorDashboard() {
   const navigate = useNavigate();
+  // Use AuthContext to determine authenticated user and loading state
+  const { user, loading } = useAuth();
   const auth = getStoredAuth();
   const [isAircraftFormOpen, setIsAircraftFormOpen] = useState(false);
   const [isFlightFormOpen, setIsFlightFormOpen] = useState(false);
@@ -30,10 +33,7 @@ export default function VendorDashboard() {
   const hasCheckedApproval = useRef(false);
   const hasLoadedFlights = useRef(false);
 
-  const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
-  };
+  
 
   const loadVendorFlights = useCallback(async (force = false) => {
     if (!auth || auth.role !== "vendor") return;
@@ -56,10 +56,20 @@ export default function VendorDashboard() {
   useEffect(() => {
     // Prevent infinite loops by checking if we've already checked
     if (hasCheckedApproval.current) return;
-    
-    // Check vendor approval status
+
     const checkApprovalStatus = async () => {
+      // Wait while AuthContext determines current user
+      if (loading) return;
+
+      // If no authenticated user or wrong role, send to login
+      if (!user || user.role !== "vendor") {
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      // At this point user exists and is vendor
       if (!auth || auth.role !== "vendor") {
+        // If token missing, send to login
         navigate("/login", { replace: true });
         return;
       }
@@ -80,16 +90,17 @@ export default function VendorDashboard() {
           loadVendorFlights();
         }
       } catch (err) {
-        // If error, redirect to application
-        navigate("/vendor/application", { replace: true });
+        // Network or server error - prefer sending to login instead of forcing application redirect
+        console.error("Vendor approval check failed:", err);
+        navigate("/login", { replace: true });
       }
     };
 
     checkApprovalStatus();
-  }, [auth, navigate, loadVendorFlights]);
+  }, [user, loading, auth, navigate, loadVendorFlights]);
 
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState("flights");
 
   // Function to handle tab change
   const handleTabChange = (value: string) => {
@@ -145,15 +156,7 @@ export default function VendorDashboard() {
                 <Plus className="h-4 w-4" />
                 Add Flight
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleLogout}
-                className="gap-1.5 text-destructive hover:text-destructive/90"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
+              
             </div>
           </div>
         </div>
@@ -208,7 +211,7 @@ export default function VendorDashboard() {
         </SheetContent>
       </Sheet>
 
-      <section className="relative overflow-hidden py-12">
+      <section className="relative overflow-hidden pt-4 pb-6">
         {/* Aviation-themed background pattern - Clouds and Flight Paths */}
         <div className="absolute inset-0 opacity-[0.03]">
           <div
@@ -221,56 +224,7 @@ export default function VendorDashboard() {
         </div>
 
         <div className="container relative z-10 mx-auto px-4">
-          <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-0">
-            <TabsList>
-              <TabsTrigger value="home" className="py-2.5">
-                Home
-              </TabsTrigger>
-              <TabsTrigger value="flights" className="py-2.5">
-                Flights
-              </TabsTrigger>
-              <TabsTrigger value="passengers" className="py-2.5">
-                Passengers
-              </TabsTrigger>
-              <TabsTrigger value="earnings" className="py-2.5">
-                Earnings
-              </TabsTrigger>
-              <TabsTrigger value="documents" className="py-2.5">
-                Documents
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Home Tab */}
-            <TabsContent value="home" className="mt-0">
-              <Card className="border-2 bg-gradient-to-b from-card to-card/50 p-8 shadow-xl transition-all hover:shadow-2xl">
-                <div className="text-center">
-                  <h3 className="font-heading text-2xl font-semibold mb-4">Welcome to Your Vendor Dashboard</h3>
-                  <p className="font-body text-muted-foreground mb-6">Manage your flights, aircraft, and passenger bookings all in one place.</p>
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-8">
-                    <div className="p-4 rounded-lg bg-primary/10">
-                      <Plane className="h-8 w-8 text-primary mx-auto mb-2" />
-                      <h4 className="font-heading font-semibold mb-1">Flights</h4>
-                      <p className="font-body text-sm text-muted-foreground">Create and manage your flights</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-primary/10">
-                      <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                      <h4 className="font-heading font-semibold mb-1">Passengers</h4>
-                      <p className="font-body text-sm text-muted-foreground">View all your bookings</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-primary/10">
-                      <CreditCard className="h-8 w-8 text-primary mx-auto mb-2" />
-                      <h4 className="font-heading font-semibold mb-1">Earnings</h4>
-                      <p className="font-body text-sm text-muted-foreground">Track your revenue</p>
-                    </div>
-                    <div className="p-4 rounded-lg bg-primary/10">
-                      <FileCheck className="h-8 w-8 text-primary mx-auto mb-2" />
-                      <h4 className="font-heading font-semibold mb-1">Documents</h4>
-                      <p className="font-body text-sm text-muted-foreground">Manage your documents</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </TabsContent>
+              <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-0">
 
             {/* Flights Tab */}
             <TabsContent value="flights" className="mt-0">
@@ -458,73 +412,7 @@ export default function VendorDashboard() {
               </div>
             </TabsContent>
 
-            {/* Passengers Tab */}
-            <TabsContent value="passengers" className="mt-0">
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold">Passenger Management</h2>
-                <Card className="p-6">
-                  <div className="text-center py-8">
-                    <Users className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">View and Manage Passengers</h3>
-                    <p className="text-muted-foreground mb-4">
-                      View passenger lists, check-in status, and manage special requests for your flights.
-                    </p>
-                    <Button variant="outline" onClick={() => showSuccess("Passenger management coming soon")}>
-                      View Passengers
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* Earnings Tab */}
-            <TabsContent value="earnings" className="mt-0">
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold">Earnings & Payments</h2>
-                <Card className="p-6">
-                  <div className="text-center py-8">
-                    <CreditCard className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">Your Earnings</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Track your earnings, view payment history, and manage payment methods.
-                    </p>
-                    <Button variant="outline" onClick={() => showSuccess("Earnings dashboard coming soon")}>
-                      View Earnings
-                    </Button>
-                  </div>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* Documents Tab */}
-            <TabsContent value="documents" className="mt-0">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">Documents & Compliance</h2>
-                  <Button variant="outline" size="sm" className="gap-2">
-                    <Upload className="h-4 w-4" />
-                    Upload Document
-                  </Button>
-                </div>
-                <Card className="p-6">
-                  <div className="text-center py-8">
-                    <FileCheck className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">Document Management</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Upload and manage your compliance documents, licenses, and other important files.
-                    </p>
-                    <div className="flex justify-center gap-4">
-                      <Button variant="outline" onClick={() => showSuccess("Document upload coming soon")}>
-                        View Documents
-                      </Button>
-                      <Button onClick={() => showSuccess("Document upload coming soon")}>
-                        Upload New
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              </div>
-            </TabsContent>
+            
           </Tabs>
         </div>
       </section>

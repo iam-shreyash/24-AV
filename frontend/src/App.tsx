@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useAuth } from "./components/auth/AuthContext";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -21,12 +22,10 @@ import { getStoredAuth } from "./components/auth/Login";
 
 // Component to prevent vendors from accessing passenger-only routes
 function VendorOnlyRoute({ children }: { children: React.ReactNode }) {
-  const auth = getStoredAuth();
-  
-  if (auth?.role === "vendor") {
-    return <Navigate to="/dashboard/vendor" replace />;
-  }
-  
+  // Previously this component read localStorage synchronously and redirected
+  // vendors to their dashboard which could cause unexpected redirects.
+  // We now avoid auto-redirects here — routing role-checks should be handled
+  // by `RequireRole` when accessing dashboards. Keep this a no-op wrapper.
   return <>{children}</>;
 }
 
