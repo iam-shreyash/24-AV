@@ -53,7 +53,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               )}
               {auth?.role === "vendor" && (
                 <NavLink
-                  to="/dashboard/vendor"
+                  to="/vendor/dashboard"
                   className={({ isActive }) =>
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               )}
               {auth?.role === "passenger" && (
                 <NavLink
-                  to="/dashboard/passenger"
+                  to="/passenger/dashboard"
                   className={({ isActive }) =>
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }

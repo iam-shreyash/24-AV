@@ -15,6 +15,7 @@ import AircraftRegistrationForm from "../aircraft/AircraftRegistrationForm";
 import CreateFlightForm from "../flights/CreateFlightForm";
 import EditFlightForm from "../flights/EditFlightForm";
 import RecentBookings from "../vendor/RecentBookings";
+import VendorDashboardHome from "./VendorDashboardHome";
 import { useToast } from "../ui/use-toast";
 
 export default function VendorDashboard() {
@@ -224,6 +225,8 @@ export default function VendorDashboard() {
         </div>
 
         <div className="container relative z-10 mx-auto px-4">
+              <VendorDashboardHome />
+
               <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-0">
 
             {/* Flights Tab */}

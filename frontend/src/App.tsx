@@ -71,7 +71,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/vendor"
+          path="/vendor/dashboard"
           element={
             <RequireRole role="vendor">
               <VendorDashboard />
@@ -79,7 +79,7 @@ function App() {
           }
         />
         <Route
-          path="/dashboard/passenger"
+          path="/passenger/dashboard"
           element={
             <RequireRole role="passenger">
               <PassengerDashboard />

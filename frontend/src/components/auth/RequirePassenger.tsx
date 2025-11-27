@@ -12,7 +12,7 @@ export default function RequirePassenger({ children }: { children: JSX.Element }
 
   // If user is a vendor, redirect to vendor dashboard
   if (user?.role === 'vendor') {
-    return <Navigate to="/dashboard/vendor" state={{ from: location }} replace />;
+    return <Navigate to="/vendor/dashboard" state={{ from: location }} replace />;
   }
 
   // If no user is logged in, redirect to login

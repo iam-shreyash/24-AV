@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
+import { getStoredAuth } from "./Login";
 
 type RequireRoleProps = {
   role: "admin" | "vendor" | "passenger";
@@ -13,18 +14,23 @@ export default function RequireRole({ role, children }: RequireRoleProps) {
   // If auth is still loading, don't redirect yet — let caller handle a loading state.
   if (loading) return null;
 
-  if (!user) {
+  // Fallback to stored auth from localStorage to avoid premature redirects
+  const stored = getStoredAuth();
+
+  if (!user && !stored) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (user.role !== role) {
+  const effectiveRole = user?.role || stored?.role;
+
+  if (effectiveRole !== role) {
     // If the user is logged in but has the wrong role, send them to their own dashboard.
     const target =
-      user.role === "admin"
+      effectiveRole === "admin"
         ? "/dashboard/admin"
-        : user.role === "vendor"
-          ? "/dashboard/vendor"
-          : "/dashboard/passenger";
+        : effectiveRole === "vendor"
+          ? "/vendor/dashboard"
+          : "/passenger/dashboard";
     return <Navigate to={target} replace />;
   }
 

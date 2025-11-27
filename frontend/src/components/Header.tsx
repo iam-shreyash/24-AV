@@ -11,9 +11,9 @@ export default function Header() {
   const auth = getStoredAuth();
 
   const getMyBookingsHref = () => {
-    if (auth?.role === "vendor") return "/dashboard/vendor";
+    if (auth?.role === "vendor") return "/vendor/dashboard";
     if (auth?.role === "admin") return "/dashboard/admin";
-    return "/dashboard/passenger";
+    return "/passenger/dashboard";
   };
 
   // For vendors, hide passenger-only navigation items
@@ -24,7 +24,7 @@ export default function Header() {
     { name: "Offers", href: "/offers" },
     { name: "Support", href: "/support" },
     // Only show Vendor Portal for vendors
-    ...(auth?.role === "vendor" ? [{ name: "Vendor Portal", href: "/dashboard/vendor" }] : []),
+    ...(auth?.role === "vendor" ? [{ name: "Vendor Portal", href: "/vendor/dashboard" }] : []),
     ...(auth?.role === "admin" ? [{ name: "Admin Portal", href: "/admin/portal" }] : [])
   ];
 

@@ -13,7 +13,7 @@ export default function SearchBar() {
   // Redirect vendors away from search
   useEffect(() => {
     if (auth?.role === "vendor") {
-      navigate("/dashboard/vendor", { replace: true });
+      navigate("/vendor/dashboard", { replace: true });
     }
   }, [auth, navigate]);
   const [from, setFrom] = useState("Mumbai (BOM)");
