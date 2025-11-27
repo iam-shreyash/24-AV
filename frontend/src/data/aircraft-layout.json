@@ -1,0 +1,81 @@
+[
+  {
+    "seat_id": "S1",
+    "label": "Seat 1",
+    "x": 18,
+    "y": 25,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S2",
+    "label": "Seat 2",
+    "x": 18,
+    "y": 35,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S3",
+    "label": "Seat 3",
+    "x": 82,
+    "y": 25,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S4",
+    "label": "Seat 4",
+    "x": 82,
+    "y": 35,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S5",
+    "label": "Seat 5",
+    "x": 18,
+    "y": 50,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S6",
+    "label": "Seat 6",
+    "x": 18,
+    "y": 60,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S7",
+    "label": "Seat 7",
+    "x": 82,
+    "y": 50,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S8",
+    "label": "Seat 8",
+    "x": 82,
+    "y": 60,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S9",
+    "label": "Seat 9",
+    "x": 18,
+    "y": 75,
+    "type": "regular"
+  },
+  {
+    "seat_id": "S10",
+    "label": "Seat 10",
+    "x": 82,
+    "y": 75,
+    "type": "regular"
+  }
+]
+
+
+
+
+
+
+
+
+

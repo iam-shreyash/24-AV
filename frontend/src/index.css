@@ -1,0 +1,297 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 217 65% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 65% 50%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 217 65% 40%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 217 65% 50%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 65% 40%;
+    --radius: 0.5rem;
+    --jet-black: 222 47% 11%;
+    --light-bg: 0 0% 100%;
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --gradient-primary: linear-gradient(135deg, hsl(217 65% 40%), hsl(217 65% 50%));
+    --gradient-hero: linear-gradient(135deg, rgba(30, 58, 138, 0.95), rgba(15, 23, 42, 0.95));
+    --gradient-card: linear-gradient(to bottom, transparent, hsl(0, 0%, 100%));
+    --shadow-glow: 0 10px 40px -10px hsl(217 65% 40% / 0.3);
+    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+
+  .dark {
+    --background: 0 0% 6%;
+    --foreground: 0 0% 96%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+    --primary: 356 63% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 145 63% 49%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 356 63% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Scroll Animation Utilities */
+  .scroll-fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .scroll-slide-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-slide-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scroll-slide-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-slide-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .scroll-scale-in {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-scale-in.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Stagger animation delays */
+  .scroll-delay-100 {
+    transition-delay: 0.1s;
+  }
+
+  .scroll-delay-200 {
+    transition-delay: 0.2s;
+  }
+
+  .scroll-delay-300 {
+    transition-delay: 0.3s;
+  }
+
+  .scroll-delay-400 {
+    transition-delay: 0.4s;
+  }
+
+  .scroll-delay-500 {
+    transition-delay: 0.5s;
+  }
+
+  /* Button Hover Animations */
+  .btn-hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .btn-hover-lift:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .btn-hover-glow {
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .btn-hover-glow:hover {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.4), 0 5px 15px rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+  }
+
+  .btn-hover-pulse {
+    animation: pulse-hover 2s ease-in-out infinite;
+  }
+
+  .btn-hover-pulse:hover {
+    animation: pulse-hover-fast 0.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-hover {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+    }
+  }
+
+  @keyframes pulse-hover-fast {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0);
+    }
+  }
+
+  .btn-hover-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-hover-shimmer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: left 0.5s ease;
+  }
+
+  .btn-hover-shimmer:hover::before {
+    left: 100%;
+  }
+
+  .btn-hover-bounce:hover {
+    animation: bounce-hover 0.6s ease;
+  }
+
+  @keyframes bounce-hover {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+
+  /* Icon Hover Animations */
+  .icon-hover-rotate:hover {
+    transform: rotate(15deg);
+    transition: transform 0.3s ease;
+  }
+
+  .icon-hover-bounce:hover {
+    animation: icon-bounce 0.5s ease;
+  }
+
+  @keyframes icon-bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-3px);
+    }
+  }
+
+  .icon-hover-pulse:hover {
+    animation: icon-pulse 0.6s ease-in-out;
+  }
+
+  @keyframes icon-pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+  }
+
+  /* Card Hover Animations */
+  .card-hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .card-hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Link Hover Animations */
+  .link-hover-underline {
+    position: relative;
+    transition: color 0.3s ease;
+  }
+
+  .link-hover-underline::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor;
+    transition: width 0.3s ease;
+  }
+
+  .link-hover-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Smooth transitions for all interactive elements */
+  button, a, [role="button"] {
+    transition: all 0.3s ease;
+  }
+}
+
