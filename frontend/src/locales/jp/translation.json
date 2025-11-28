@@ -202,5 +202,38 @@
     "seatsAvailable_one": "残り{{count}}席",
     "seatsAvailable_other": "残り{{count}}席",
     "noFlightsFiltered": "検索条件に一致するフライトがありません。フィルターを調整してください。"
+  },
+  "offers": {
+    "title": "お得なオファー＆割引",
+    "subtitle": "特別なオファーで次回のフライトをお得に",
+    "promoCodeLabel": "プロモーションコード",
+    "clickToCopy": "クリックしてコピー",
+    "bookNow": "今すぐ予約",
+    "items": {
+      "first": {
+        "category": "初回予約",
+        "title": "初回予約で500円オフ",
+        "description": "ご利用初回にWELCOME500を入力で500円割引",
+        "validity": "2025年12月31日まで有効"
+      },
+      "seasonal": {
+        "category": "季節限定",
+        "title": "シーズンセール - 最大20%オフ",
+        "description": "シーズン限定で国内線セレクトルートがお得に",
+        "validity": "期間限定"
+      },
+      "weekend": {
+        "category": "毎週末",
+        "title": "週末限定セール",
+        "description": "インド国内線の週末予約が10%オフ",
+        "validity": "毎週金曜日から日曜日"
+      },
+      "group": {
+        "category": "グループ割",
+        "title": "グループ割引",
+        "description": "4名様以上で最大15%オフ",
+        "validity": "常時開催中"
+      }
+    }
   }
 }

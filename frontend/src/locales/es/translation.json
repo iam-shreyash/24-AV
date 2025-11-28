@@ -202,5 +202,38 @@
     "seatsAvailable_one": "Queda {{count}} asiento",
     "seatsAvailable_other": "Quedan {{count}} asientos",
     "noFlightsFiltered": "No hay vuelos que coincidan con tus criterios de búsqueda. Por favor, ajusta los filtros."
+  },
+  "offers": {
+    "title": "Ofertas y descuentos",
+    "subtitle": "Ahorra en tu próximo vuelo con nuestras ofertas exclusivas",
+    "promoCodeLabel": "Código promocional",
+    "clickToCopy": "Haz clic para copiar",
+    "bookNow": "Reservar ahora",
+    "items": {
+      "first": {
+        "category": "Primera reserva",
+        "title": "500 € de descuento en tu primera reserva",
+        "description": "¡Bienvenido a bordo! Usa el código WELCOME500 en tu primer vuelo",
+        "validity": "Válido hasta el 31/12/2025"
+      },
+      "seasonal": {
+        "category": "Temporada",
+        "title": "Oferta de temporada - Hasta 20% de descuento",
+        "description": "Descuento especial en rutas nacionales seleccionadas durante la temporada festiva",
+        "validity": "Oferta por tiempo limitado"
+      },
+      "weekend": {
+        "category": "Recurrente",
+        "title": "Especial fin de semana",
+        "description": "10% de descuento adicional en reservas de fin de semana para vuelos nacionales en India",
+        "validity": "Todos los viernes a domingos"
+      },
+      "group": {
+        "category": "Grupo",
+        "title": "Descuento para grupos",
+        "description": "Reserva para 4 o más pasajeros y ahorra hasta un 15%",
+        "validity": "Oferta permanente"
+      }
+    }
   }
 }

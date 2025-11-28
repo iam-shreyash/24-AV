@@ -202,5 +202,38 @@
     "seatsAvailable_one": "剩余{{count}}个座位",
     "seatsAvailable_other": "剩余{{count}}个座位",
     "noFlightsFiltered": "没有符合您搜索条件的航班。请调整筛选条件。"
+  },
+  "offers": {
+    "title": "优惠与折扣",
+    "subtitle": "使用我们的独家优惠，为您的下一次飞行节省更多",
+    "promoCodeLabel": "优惠码",
+    "clickToCopy": "点击复制",
+    "bookNow": "立即预订",
+    "items": {
+      "first": {
+        "category": "首次预订",
+        "title": "首次预订立减500元",
+        "description": "欢迎登机！首次预订使用代码WELCOME500可享优惠",
+        "validity": "有效期至2025年12月31日"
+      },
+      "seasonal": {
+        "category": "季节性",
+        "title": "节日特惠 - 最高20%折扣",
+        "description": "节日期间精选国内航线特别折扣",
+        "validity": "限时优惠"
+      },
+      "weekend": {
+        "category": "每周",
+        "title": "周末特惠",
+        "description": "印度国内周末航班额外9折",
+        "validity": "每周五至周日"
+      },
+      "group": {
+        "category": "团体",
+        "title": "团体预订优惠",
+        "description": "4人及以上同行，最高可享85折",
+        "validity": "长期有效"
+      }
+    }
   }
 }

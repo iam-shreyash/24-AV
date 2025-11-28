@@ -202,5 +202,38 @@
     "seatsAvailable_one": "{{count}} place restante",
     "seatsAvailable_other": "{{count}} places restantes",
     "noFlightsFiltered": "Aucun vol ne correspond à vos critères de recherche. Veuillez ajuster les filtres."
+  },
+  "offers": {
+    "title": "Offres et réductions",
+    "subtitle": "Économisez plus sur votre prochain vol avec nos offres exclusives",
+    "promoCodeLabel": "Code promo",
+    "clickToCopy": "Cliquez pour copier",
+    "bookNow": "Réserver maintenant",
+    "items": {
+      "first": {
+        "category": "Première réservation",
+        "title": "500 € de réduction sur votre première réservation",
+        "description": "Bienvenue à bord ! Utilisez le code WELCOME500 pour votre premier vol",
+        "validity": "Valable jusqu'au 31 déc. 2025"
+      },
+      "seasonal": {
+        "category": "Saisonnier",
+        "title": "Vente de fêtes - Jusqu'à 20% de réduction",
+        "description": "Réduction spéciale sur certaines destinations intérieures pendant la saison des fêtes",
+        "validity": "Offre à durée limitée"
+      },
+      "weekend": {
+        "category": "Récurrent",
+        "title": "Spécial week-end",
+        "description": "10% de réduction supplémentaire sur les réservations de week-end pour les vols intérieurs en Inde",
+        "validity": "Tous les vendredis à dimanches"
+      },
+      "group": {
+        "category": "Groupe",
+        "title": "Réduction pour groupe",
+        "description": "Réservez pour 4 passagers ou plus et économisez jusqu'à 15%",
+        "validity": "Offre permanente"
+      }
+    }
   }
 }

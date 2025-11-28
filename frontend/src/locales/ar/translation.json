@@ -146,5 +146,62 @@
       "chatLabel": "الدردشة الحية",
       "chatSubtitle": "متاح من الاثنين إلى الجمعة، 9 صباحاً - 6 مساءً"
     }
+  },
+  "flightSearch": {
+    "badge": "بحث الرحلات",
+    "title": "البحث عن رحلات",
+    "subtitle": "احجز مقاعد فردية أو طائرات كاملة في ثوانٍ.",
+    "originPlaceholder": "مدينة المغادرة (مثل مومباي)",
+    "destinationPlaceholder": "الوجهة (مثل دبي)",
+    "searchButton": "بحث",
+    "searching": "جاري البحث...",
+    "refresh": "تحديث",
+    "availableFlightsTitle": "الرحلات المتاحة",
+    "resultsCount_one": "تم العثور على {{count}} رحلة",
+    "resultsCount_two": "تم العثور على رحلتين",
+    "resultsCount_few": "تم العثور على {{count}} رحلات",
+    "resultsCount_many": "تم العثور على {{count}} رحلة",
+    "resultsCount_other": "تم العثور على {{count}} رحلة",
+    "noFlights": "لا توجد رحلات متاحة حالياً",
+    "direct": "مباشر",
+    "seatsAvailable_one": "مقعد واحد متبقي",
+    "seatsAvailable_two": "مقعدان متبقيان",
+    "seatsAvailable_few": "{{count}} مقاعد متبقية",
+    "seatsAvailable_many": "{{count}} مقعداً متبقياً",
+    "seatsAvailable_other": "{{count}} مقعد متبقي",
+    "noFlightsFiltered": "لا توجد رحلات تطابق معايير البحث الخاصة بك. يرجى تعديل الفلاتر."
+  },
+  "offers": {
+    "title": "العروض والخصومات",
+    "subtitle": "وفر المزيد في رحلتك القادمة مع عروضنا الحصرية",
+    "promoCodeLabel": "كود الخصم",
+    "clickToCopy": "انقر للنسخ",
+    "bookNow": "احجز الآن",
+    "items": {
+      "first": {
+        "category": "الحجز الأول",
+        "title": "خصم 500 درهم على حجزك الأول",
+        "description": "أهلاً بك على متننا! استخدم الكود WELCOME500 في حجزك الأول",
+        "validity": "صالح حتى 31 ديسمبر 2025"
+      },
+      "seasonal": {
+        "category": "موسمي",
+        "title": "عرض الأعياد - خصم يصل إلى 20%",
+        "description": "خصم خاص على بعض الوجهات المحلية خلال موسم الأعياد",
+        "validity": "عرض لفترة محدودة"
+      },
+      "weekend": {
+        "category": "متكرر",
+        "title": "عرض نهاية الأسبوع",
+        "description": "خصم إضافي 10% على حجوزات نهاية الأسبوع للرحلات الداخلية في الهند",
+        "validity": "كل يوم جمعة إلى أحد"
+      },
+      "group": {
+        "category": "مجموعة",
+        "title": "خصم المجموعات",
+        "description": "احجز لـ 4 ركاب أو أكثر ووفر حتى 15%",
+        "validity": "عرض دائم"
+      }
+    }
   }
 }

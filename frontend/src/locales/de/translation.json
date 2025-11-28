@@ -190,7 +190,7 @@
     "title": "Flüge suchen",
     "subtitle": "Buchen Sie einzelne Sitze oder ganze Flugzeuge in Sekundenschnelle.",
     "originPlaceholder": "Abflugsort (z.B. Mumbai)",
-    "destinationPlaceholder": "Zielort (z.B. Dubai)",
+    "destinationPlaceholder": "Ziel (z.B. Dubai)",
     "searchButton": "Suchen",
     "searching": "Suche läuft...",
     "refresh": "Aktualisieren",
@@ -199,8 +199,41 @@
     "resultsCount_other": "{{count}} Flüge gefunden",
     "noFlights": "Aktuell keine Flüge verfügbar",
     "direct": "Direktflug",
-    "seatsAvailable_one": "Noch {{count}} Sitzplatz",
-    "seatsAvailable_other": "Noch {{count}} Sitzplätze",
-    "noFlightsFiltered": "Keine Flüge entsprechen Ihren Suchkriterien. Bitte passen Sie Ihre Filter an."
+    "seatsAvailable_one": "{{count}} Sitz verfügbar",
+    "seatsAvailable_other": "{{count}} Sitze verfügbar",
+    "noFlightsFiltered": "Keine Flüge entsprechen Ihren Suchkriterien. Bitte passen Sie die Filter an."
+  },
+  "offers": {
+    "title": "Angebote & Rabatte",
+    "subtitle": "Sparen Sie bei Ihrem nächsten Flug mit unseren exklusiven Angeboten",
+    "promoCodeLabel": "Aktionscode",
+    "clickToCopy": "Zum Kopieren klicken",
+    "bookNow": "Jetzt buchen",
+    "items": {
+      "first": {
+        "category": "Erste Buchung",
+        "title": "500 € Rabatt auf Ihre erste Buchung",
+        "description": "Willkommen an Bord! Nutzen Sie den Code WELCOME500 für Ihren ersten Flug",
+        "validity": "Gültig bis 31.12.2025"
+      },
+      "seasonal": {
+        "category": "Saisonal",
+        "title": "Festtagsangebot - Bis zu 20% Rabatt",
+        "description": "Sonderrabatt auf ausgewählte Inlandsflüge in der Festzeit",
+        "validity": "Nur für kurze Zeit"
+      },
+      "weekend": {
+        "category": "Wiederkehrend",
+        "title": "Wochenend-Special",
+        "description": "Zusätzliche 10% Rabatt auf Wochenendbuchungen für Inlandsflüge in Indien",
+        "validity": "Jeden Freitag bis Sonntag"
+      },
+      "group": {
+        "category": "Gruppe",
+        "title": "Gruppenrabatt",
+        "description": "Buchen Sie für 4 oder mehr Passagiere und sparen Sie bis zu 15%",
+        "validity": "Dauerhaftes Angebot"
+      }
+    }
   }
 }
