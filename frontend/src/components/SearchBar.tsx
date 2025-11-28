@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Calendar, MapPin, Search as SearchIcon, Users, ArrowRightLeft } from "lucide-react";
 
 import { Button } from "./ui/button";
@@ -9,13 +9,18 @@ import { getStoredAuth } from "./auth/Login";
 export default function SearchBar() {
   const navigate = useNavigate();
   const auth = getStoredAuth();
+  const location = useLocation();
 
   // Redirect vendors away from search
   useEffect(() => {
     if (auth?.role === "vendor") {
-      navigate("/vendor/dashboard", { replace: true });
+      // Only redirect vendors when they are on dedicated search or booking routes,
+      // not when the shared SearchBar is rendered on the home page.
+      if (location.pathname === "/search" || location.pathname === "/book") {
+        navigate("/vendor/dashboard", { replace: true });
+      }
     }
-  }, [auth, navigate]);
+  }, [auth, navigate, location.pathname]);
   const [from, setFrom] = useState("Mumbai (BOM)");
   const [to, setTo] = useState("Delhi (DEL)");
   const [departure, setDeparture] = useState("");

@@ -100,7 +100,7 @@ export default function VendorDashboard() {
     checkApprovalStatus();
   }, [user, loading, auth, navigate, loadVendorFlights]);
 
-  const { toast } = useToast();
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("flights");
 
   // Function to handle tab change
@@ -110,11 +110,7 @@ export default function VendorDashboard() {
 
   // Function to show success message
   const showSuccess = (message: string) => {
-    toast({
-      title: "Success",
-      description: message,
-      variant: "default",
-    });
+    showToast(message, "success");
   };
 
   return (
