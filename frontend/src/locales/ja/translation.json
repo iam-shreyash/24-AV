@@ -1,0 +1,302 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "ホーム",
+    "searchFlights": "フライト検索",
+    "myBookings": "予約一覧",
+    "offers": "お得情報",
+    "support": "サポート",
+    "vendorPortal": "ベンダーポータル",
+    "adminPortal": "管理者ポータル",
+    "logout": "ログアウト",
+    "signIn": "ログイン",
+    "register": "新規登録",
+    "language": "言語"
+  },
+  "home": {
+    "hero": {
+      "badge": "インドの主要航空会社",
+      "title": "24AVでフライトを予約",
+      "titleVendor": "ベンダーダッシュボードへようこそ",
+      "subtitle": "簡単な検索、スムーズな決済、忘れられない旅を",
+      "subtitleVendor": "フライト、航空機、乗客を簡単に管理"
+    },
+    "sections": {
+      "benefitsTitle": "当社の特長",
+      "benefitsSubtitle": "スムーズな旅行に必要なすべてが揃っています",
+      "vendorToolsTitle": "ベンダー向けツール",
+      "vendorToolsSubtitle": "航空事業の運営に必要なすべてのツール"
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "即時確認",
+        "description": "予約確認をメールとSMSですぐに受け取れます"
+      },
+      "securePayments": {
+        "title": "安全な決済",
+        "description": "銀行レベルの暗号化で取引を保護"
+      },
+      "exclusiveDeals": {
+        "title": "限定セール",
+        "description": "特別割引や季節限定プロモーション"
+      },
+      "easyManagement": {
+        "title": "簡単管理",
+        "description": "1つのダッシュボードで予約をすべて管理"
+      },
+      "travelUpdates": {
+        "title": "旅行情報の更新",
+        "description": "フライトに関するリアルタイム通知"
+      },
+      "groupBookings": {
+        "title": "グループ予約",
+        "description": "グループ旅行に特別料金"
+      },
+      "priceAlerts": {
+        "title": "価格アラート",
+        "description": "行き先の価格が下がったら通知"
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "安全な決済",
+        "description": "迅速な支払いと暗号化された取引"
+      },
+      "businessAnalytics": {
+        "title": "ビジネス分析",
+        "description": "予約動向とパフォーマンスを確認"
+      },
+      "documentVault": {
+        "title": "書類管理",
+        "description": "必要な検証書類をアップロード・管理"
+      },
+      "easyDashboard": {
+        "title": "直感的なダッシュボード",
+        "description": "すべての業務を1か所で管理"
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "24AVでの予約に関するよくある質問と回答",
+      "viewAll": "すべての質問を見る",
+      "items": {
+        "howToBook": {
+          "question": "24AVでフライトを予約するには？",
+          "answer": "出発地と目的地を入力し、出発日を選択して「フライトを検索」をクリックしてください。希望のフライトを選択し、数ステップで予約を完了できます。"
+        },
+        "paymentMethods": {
+          "question": "利用可能な支払い方法は？",
+          "answer": "主要なクレジットカード、デビットカード、UPI、ネットバンキング、デジタルウォレットをご利用いただけます。すべての取引は銀行レベルの暗号化で保護されています。"
+        },
+        "modifyBooking": {
+          "question": "予約をキャンセルまたは変更できますか？",
+          "answer": "はい。「マイブッキング」セクションから予約のキャンセルや変更が可能です。ポリシーと手数料は航空会社と運賃タイプによって異なります。"
+        },
+        "receiveTicket": {
+          "question": "チケットはどのように受け取りますか？",
+          "answer": "予約確認後、すぐにEチケットをメールとSMSでお送りします。また、「マイブッキング」セクションからもご確認いただけます。"
+        },
+        "isSafe": {
+          "question": "オンライン予約は安全ですか？",
+          "answer": "はい、当社ではSSL暗号化と安全な決済ゲートウェイを使用して、お客様の個人情報と金融情報を保護しています。"
+        }
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "badge": "おかえりなさい",
+      "title": "アカウントにログイン",
+      "subtitle": "管理者、ベンダー、または乗客としてダッシュボードにアクセスするにはログインしてください。",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "passwordLabel": "パスワード",
+      "passwordPlaceholder": "パスワードを入力",
+      "submit": "ログイン",
+      "submitting": "ログイン中...",
+      "noAccount": "アカウントをお持ちでない方",
+      "registerHere": "新規登録はこちら"
+    }
+  },
+  "vendor": {
+    "headerTitle": "ベンダーダッシュボード",
+    "headerSubtitle": "機材と運航を管理",
+    "buttons": {
+      "addAircraft": "航空機を追加",
+      "addFlight": "フライトを追加",
+      "refresh": "更新",
+      "createFlight": "フライトを作成",
+      "edit": "編集",
+      "delete": "削除",
+      "deleting": "削除中..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "航空機フォームを開きました",
+      "flightFormOpened": "フライト作成フォームを開きました"
+    },
+    "cards": {
+      "myFlightsTitle": "マイフライト",
+      "myFlightsSubtitle": "作成したすべてのフライト"
+    },
+    "table": {
+      "flight": "フライト",
+      "route": "ルート",
+      "departure": "出発",
+      "arrival": "到着",
+      "price": "料金",
+      "status": "ステータス",
+      "actions": "操作",
+      "priceSuffix": "/席"
+    },
+    "status": {
+      "completed": "完了",
+      "active": "有効"
+    },
+    "emptyState": {
+      "title": "フライトがありません",
+      "description": "予約を受け付けるには、最初のフライトを作成してください。"
+    },
+    "confirmDelete": "フライト {{flight}} を削除してもよろしいですか？乗客の検索結果からも削除されます。",
+    "errors": {
+      "deleteGeneric": "フライトの削除中にエラーが発生しました。もう一度お試しください。"
+    },
+    "loading": "フライトを読み込み中..."
+  },
+  "passenger": {
+    "badge": "乗客ダッシュボード",
+    "welcomeTitle": "おかえりなさい",
+    "welcomeSubtitle": "利用可能なフライトを探して予約を管理",
+    "myBookingsTitle": "マイブッキング",
+    "myBookingsSubtitle": "予約済みのフライトと旅行予定",
+    "loading": "予約を読み込み中...",
+    "errorGeneric": "予約の読み込み中にエラーが発生しました。もう一度お試しください。",
+    "tryAgain": "再試行",
+    "emptyTitle": "予約がありません",
+    "emptyBody": "まだフライトを予約していません。次の旅行のフライトを探しましょう。",
+    "emptyCta": "フライトを検索 →",
+    "downloadTicket": "チケットをダウンロード",
+    "downloadError": "チケットのダウンロード中にエラーが発生しました。もう一度お試しください。"
+  },
+  "searchBar": {
+    "fromPlaceholder": "出発地",
+    "toPlaceholder": "到着地",
+    "departurePlaceholder": "出発日",
+    "passengersPlaceholder": "乗客数",
+    "searchButton": "フライトを検索",
+    "swapAria": "出発地と到着地を入れ替え"
+  },
+  "flightSearch": {
+    "badge": "フライト検索",
+    "title": "フライトを検索",
+    "subtitle": "数秒で席または飛行機全体を予約",
+    "originPlaceholder": "出発都市（例：ムンバイ）",
+    "destinationPlaceholder": "到着都市（例：ドバイ）",
+    "searchButton": "検索",
+    "searching": "検索中...",
+    "refresh": "更新",
+    "availableFlightsTitle": "利用可能なフライト",
+    "resultsCount_one": "{{count}} 便見つかりました",
+    "resultsCount_other": "{{count}} 便見つかりました",
+    "noFlights": "現在利用可能なフライトはありません",
+    "direct": "直行便",
+    "seatsAvailable_one": "あと {{count}} 席",
+    "seatsAvailable_other": "あと {{count}} 席",
+    "noFlightsFiltered": "検索条件に一致するフライトが見つかりませんでした。フィルターを調整してください。"
+  },
+  "offers": {
+    "title": "お得情報と割引",
+    "subtitle": "特別オファーで次回のフライトをお得に",
+    "promoCodeLabel": "プロモーションコード",
+    "clickToCopy": "クリックしてコピー",
+    "bookNow": "今すぐ予約",
+    "items": {
+      "first": {
+        "category": "初回予約",
+        "title": "初回予約で500ユーロ割引",
+        "description": "初回フライトでWELCOME500コードをご利用ください",
+        "validity": "2025年12月31日まで有効"
+      },
+      "seasonal": {
+        "category": "シーズン",
+        "title": "シーズンセール - 最大20%オフ",
+        "description": "ホリデーシーズンの特定の国内線で特別割引",
+        "validity": "期間限定"
+      },
+      "weekend": {
+        "category": "定期的",
+        "title": "週末限定セール",
+        "description": "インド国内線の週末予約でさらに10%オフ",
+        "validity": "毎週金曜日から日曜日"
+      },
+      "group": {
+        "category": "グループ",
+        "title": "グループ割引",
+        "description": "4名以上で最大15%割引",
+        "validity": "常時実施中"
+      }
+    }
+  },
+  "support": {
+    "title": "ヘルプとサポート",
+    "faqTitle": "よくある質問",
+    "contactCard": {
+      "title": "お問い合わせ",
+      "success": "メッセージが送信されました。まもなくご連絡いたします。",
+      "nameLabel": "お名前",
+      "namePlaceholder": "お名前を入力",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "messageLabel": "どのようなご用件ですか？",
+      "messagePlaceholder": "お問い合わせ内容を入力...",
+      "submit": "メッセージを送信"
+    },
+    "quickContact": {
+      "title": "お問い合わせ先",
+      "phoneLabel": "24時間カスタマーサポート",
+      "phoneSubtitle": "+81 3-1234-5678",
+      "emailLabel": "メールでお問い合わせ",
+      "emailSubtitle": "support@24av.jp",
+      "chatLabel": "ライブチャット",
+      "chatSubtitle": "9:00〜21:00 対応"
+    },
+    "urgentHelp": {
+      "title": "緊急のご用件ですか？",
+      "description": "予約や旅行に関する緊急のご用件は、24時間365日対応のカスタマーサポートチームがお手伝いいたします。",
+      "callNow": "今すぐ電話する"
+    },
+    "faq": {
+      "bookFlight": {
+        "question": "フライトの予約方法は？",
+        "answer": "出発地と到着地を入力し、出発日を選択して「フライトを検索」をクリックするだけです。希望のフライトを選択し、予約プロセスを完了してください。"
+      },
+      "paymentMethods": {
+        "question": "利用可能な支払い方法は？",
+        "answer": "主要なクレジットカード、デビットカード、UPI、銀行振込、デジタルウォレットをご利用いただけます。すべての取引は銀行レベルの暗号化で保護されています。"
+      },
+      "cancelBooking": {
+        "question": "予約をキャンセルするには？",
+        "answer": "「マイブッキング」セクションから予約をキャンセルできます。キャンセルポリシーと手数料は、航空会社と運賃タイプによって異なります。"
+      },
+      "refundTimeline": {
+        "question": "返金にはどのくらいかかりますか？",
+        "answer": "返金処理には通常5〜7営業日かかります。正確な期間は、お客様の金融機関やお支払い方法によって異なります。"
+      },
+      "modifyBooking": {
+        "question": "予約を変更できますか？",
+        "answer": "はい、「マイブッキング」セクションから予約を変更できます。変更オプションは、航空会社のポリシーと運賃条件によって異なります。"
+      },
+      "receiveTicket": {
+        "question": "Eチケットはいつ届きますか？",
+        "answer": "予約が確定次第、Eチケットをメールでお送りします。また、「マイブッキング」セクションからもダウンロードいただけます。"
+      },
+      "isSafe": {
+        "question": "オンラインでのフライト予約は安全ですか？",
+        "answer": "はい、お客様の個人情報と支払い情報を保護するために、産業レベルの暗号化を使用しています。"
+      },
+      "missedFlight": {
+        "question": "フライトに乗り遅れた場合はどうすればいいですか？",
+        "answer": "すぐにカスタマーサポートまでご連絡ください。航空会社のポリシーによっては、追加料金が発生する可能性がありますが、次便に振り替えられる場合があります。"
+      }
+    }
+  }
+}

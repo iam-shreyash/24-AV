@@ -239,26 +239,26 @@
     "items": {
       "first": {
         "category": "First Booking",
-        "title": "Flat 500 off on first booking",
-        "description": "Welcome aboard! Use code WELCOME500 on your first flight booking",
-        "validity": "Valid till 31 Dec 2025"
+        "title": "₹500 OFF on First Booking",
+        "description": "Welcome aboard! Get a discount on your first booking with code WELCOME500",
+        "validity": "Valid till Dec 31, 2025"
       },
       "seasonal": {
         "category": "Seasonal",
-        "title": "Festive Sale - Up to 20% off",
-        "description": "Special discount on select domestic routes during festive season",
+        "title": "Festive Sale - Up to 20% OFF",
+        "description": "Special discounts on select domestic routes this festive season",
         "validity": "Limited time offer"
       },
       "weekend": {
-        "category": "Recurring",
+        "category": "Weekly",
         "title": "Weekend Special",
-        "description": "Extra 10% off on weekend bookings for travel within India",
-        "validity": "Every Friday to Sunday"
+        "description": "Extra 10% off on weekend flights across India",
+        "validity": "Every Fri-Sun"
       },
       "group": {
         "category": "Group",
         "title": "Group Booking Discount",
-        "description": "Book for 4 or more passengers and save up to 15%",
+        "description": "Get up to 15% off for groups of 4+ passengers",
         "validity": "Ongoing offer"
       }
     }
@@ -268,13 +268,13 @@
     "faqTitle": "Frequently Asked Questions",
     "contactCard": {
       "title": "Contact Us",
-      "success": "Thank you! Your message has been sent. We'll get back to you soon.",
-      "nameLabel": "Name",
-      "namePlaceholder": "Your name",
-      "emailLabel": "Email",
-      "emailPlaceholder": "your@email.com",
-      "messageLabel": "Message",
-      "messagePlaceholder": "How can we help you?",
+      "success": "Your message has been sent successfully! We'll get back to you soon.",
+      "nameLabel": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "messageLabel": "How can we help?",
+      "messagePlaceholder": "Describe your issue or question...",
       "submit": "Send Message"
     },
     "quickContact": {

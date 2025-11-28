@@ -235,5 +235,68 @@
         "validity": "Offre permanente"
       }
     }
+  },
+  "support": {
+    "title": "Aide & Support",
+    "faqTitle": "Questions fréquemment posées",
+    "contactCard": {
+      "title": "Contactez-nous",
+      "success": "Votre message a été envoyé avec succès ! Nous vous répondrons dès que possible.",
+      "nameLabel": "Votre nom",
+      "namePlaceholder": "Entrez votre nom",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "Entrez votre e-mail",
+      "messageLabel": "Comment pouvons-nous vous aider ?",
+      "messagePlaceholder": "Décrivez votre problème ou votre question...",
+      "submit": "Envoyer le message"
+    },
+    "quickContact": {
+      "title": "Contact rapide",
+      "phoneLabel": "Assistance 24/7",
+      "phoneSubtitle": "+33 1 23 45 67 89",
+      "emailLabel": "Écrivez-nous",
+      "emailSubtitle": "support@24av.com",
+      "chatLabel": "Chat en direct",
+      "chatSubtitle": "Disponible de 9h à 21h"
+    },
+    "urgentHelp": {
+      "title": "Besoin d'aide urgente ?",
+      "description": "Notre équipe d'assistance est disponible 24h/24 et 7j/7 pour vous aider avec toute urgence concernant votre réservation ou votre voyage.",
+      "callNow": "Appeler maintenant"
+    },
+    "faq": {
+      "bookFlight": {
+        "question": "Comment réserver un vol ?",
+        "answer": "Entrez simplement vos villes de départ et d'arrivée, sélectionnez vos dates de voyage et cliquez sur 'Rechercher des vols'. Choisissez votre vol préféré et complétez le processus de réservation."
+      },
+      "paymentMethods": {
+        "question": "Quels modes de paiement acceptez-vous ?",
+        "answer": "Nous acceptons toutes les principales cartes de crédit, cartes de débit, UPI, virements bancaires et portefeuilles numériques. Toutes les transactions sont sécurisées par un chiffrement de niveau bancaire."
+      },
+      "cancelBooking": {
+        "question": "Comment puis-je annuler ma réservation ?",
+        "answer": "Vous pouvez annuler votre réservation dans la section 'Mes réservations'. Les politiques d'annulation et les frais varient selon la compagnie aérienne et le type de tarif."
+      },
+      "refundTimeline": {
+        "question": "Combien de temps faut-il pour traiter un remboursement ?",
+        "answer": "Les remboursements prennent généralement 5 à 7 jours ouvrés pour apparaître sur votre compte. Le délai exact dépend de votre banque ou de votre mode de paiement."
+      },
+      "modifyBooking": {
+        "question": "Puis-je modifier ma réservation ?",
+        "answer": "Oui, vous pouvez modifier votre réservation dans la section 'Mes réservations'. Les options de modification dépendent de la politique de la compagnie aérienne et des conditions tarifaires."
+      },
+      "receiveTicket": {
+        "question": "Quand vais-je recevoir mon e-billet ?",
+        "answer": "Vous recevrez votre e-billet par e-mail immédiatement après la confirmation de votre réservation. Vous pouvez également le télécharger depuis la section 'Mes réservations'."
+      },
+      "isSafe": {
+        "question": "Est-il sûr de réserver des vols en ligne ?",
+        "answer": "Oui, nous utilisons un chiffrement de niveau industriel pour protéger vos informations personnelles et de paiement. La sécurité de vos données est notre priorité absolue."
+      },
+      "missedFlight": {
+        "question": "Que faire si je rate mon vol ?",
+        "answer": "Veuillez contacter immédiatement notre service client. Selon la politique de la compagnie aérienne, vous pourrez peut-être être réaffecté sur le prochain vol disponible, éventuellement moyennant des frais supplémentaires."
+      }
+    }
   }
 }

@@ -235,5 +235,68 @@
         "validity": "Dauerhaftes Angebot"
       }
     }
+  },
+  "support": {
+    "title": "Hilfe & Support",
+    "faqTitle": "Häufig gestellte Fragen",
+    "contactCard": {
+      "title": "Kontaktieren Sie uns",
+      "success": "Ihre Nachricht wurde erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
+      "nameLabel": "Ihr Name",
+      "namePlaceholder": "Geben Sie Ihren Namen ein",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+      "messageLabel": "Wie können wir Ihnen helfen?",
+      "messagePlaceholder": "Beschreiben Sie Ihr Anliegen...",
+      "submit": "Nachricht senden"
+    },
+    "quickContact": {
+      "title": "Schneller Kontakt",
+      "phoneLabel": "24/7 Kundenservice",
+      "phoneSubtitle": "+49 30 12345678",
+      "emailLabel": "E-Mail an uns",
+      "emailSubtitle": "support@24av.com",
+      "chatLabel": "Live-Chat",
+      "chatSubtitle": "Verfügbar 9-21 Uhr"
+    },
+    "urgentHelp": {
+      "title": "Dringende Hilfe benötigt?",
+      "description": "Unser Kundenservice ist rund um die Uhr erreichbar, um Ihnen bei dringenden Anliegen zu Ihrer Buchung oder Reise zu helfen.",
+      "callNow": "Jetzt anrufen"
+    },
+    "faq": {
+      "bookFlight": {
+        "question": "Wie buche ich einen Flug?",
+        "answer": "Geben Sie einfach Ihre Abflugs- und Zielflughäfen ein, wählen Sie Ihr Reisedatum und klicken Sie auf 'Flüge suchen'. Wählen Sie Ihren bevorzugten Flug und schließen Sie die Buchung ab."
+      },
+      "paymentMethods": {
+        "question": "Welche Zahlungsmethoden akzeptieren Sie?",
+        "answer": "Wir akzeptieren alle gängigen Kreditkarten, Debitkarten, UPI, Online-Überweisungen und digitale Geldbörsen. Alle Transaktionen sind bankenüblich verschlüsselt."
+      },
+      "cancelBooking": {
+        "question": "Wie kann ich meine Buchung stornieren?",
+        "answer": "Sie können Ihre Buchung im Bereich 'Meine Buchungen' stornieren. Stornierungsbedingungen und -gebühren variieren je nach Fluggesellschaft und Tarif."
+      },
+      "refundTimeline": {
+        "question": "Wie lange dauert die Bearbeitung einer Rückerstattung?",
+        "answer": "Rückerstattungen werden in der Regel innerhalb von 5-7 Werktagen auf Ihr Konto überwiesen. Die genaue Dauer hängt von Ihrer Bank oder Zahlungsmethode ab."
+      },
+      "modifyBooking": {
+        "question": "Kann ich meine Buchung ändern?",
+        "answer": "Ja, Sie können Ihre Buchung im Bereich 'Meine Buchungen' ändern. Die Änderungsmöglichkeiten hängen von der Richtlinie der Fluggesellschaft und den Tarifbedingungen ab."
+      },
+      "receiveTicket": {
+        "question": "Wann erhalte ich mein E-Ticket?",
+        "answer": "Sie erhalten Ihr E-Ticket per E-Mail, sobald Ihre Buchung bestätigt wurde. Sie können es auch im Bereich 'Meine Buchungen' herunterladen."
+      },
+      "isSafe": {
+        "question": "Ist es sicher, online zu buchen?",
+        "answer": "Ja, wir verwenden branchenübliche Verschlüsselung, um Ihre persönlichen Daten und Zahlungsinformationen zu schützen. Ihre Datensicherheit hat für uns höchste Priorität."
+      },
+      "missedFlight": {
+        "question": "Was soll ich tun, wenn ich meinen Flug verpasse?",
+        "answer": "Bitte kontaktieren Sie umgehend unseren Kundenservice. Je nach Richtlinie der Fluggesellschaft können Sie möglicherweise gegen eine Gebühr auf einen späteren Flug umgebucht werden."
+      }
+    }
   }
 }

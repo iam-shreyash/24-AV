@@ -235,5 +235,68 @@
         "validity": "Oferta permanente"
       }
     }
+  },
+  "support": {
+    "title": "Ayuda y Soporte",
+    "faqTitle": "Preguntas frecuentes",
+    "contactCard": {
+      "title": "Contáctanos",
+      "success": "¡Tu mensaje ha sido enviado con éxito! Nos pondremos en contacto contigo pronto.",
+      "nameLabel": "Tu nombre",
+      "namePlaceholder": "Introduce tu nombre",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "Introduce tu correo electrónico",
+      "messageLabel": "¿Cómo podemos ayudarte?",
+      "messagePlaceholder": "Describe tu consulta o problema...",
+      "submit": "Enviar mensaje"
+    },
+    "quickContact": {
+      "title": "Contacto rápido",
+      "phoneLabel": "Atención al cliente 24/7",
+      "phoneSubtitle": "+34 91 123 45 67",
+      "emailLabel": "Escríbenos",
+      "emailSubtitle": "soporte@24av.com",
+      "chatLabel": "Chat en vivo",
+      "chatSubtitle": "Disponible de 9:00 a 21:00"
+    },
+    "urgentHelp": {
+      "title": "¿Necesitas ayuda urgente?",
+      "description": "Nuestro equipo de atención al cliente está disponible las 24 horas para ayudarte con cualquier urgencia relacionada con tu reserva o viaje.",
+      "callNow": "Llamar ahora"
+    },
+    "faq": {
+      "bookFlight": {
+        "question": "¿Cómo reservo un vuelo?",
+        "answer": "Simplemente introduce tus ciudades de origen y destino, selecciona las fechas de viaje y haz clic en 'Buscar vuelos'. Elige tu vuelo preferido y completa el proceso de reserva."
+      },
+      "paymentMethods": {
+        "question": "¿Qué métodos de pago aceptan?",
+        "answer": "Aceptamos todas las principales tarjetas de crédito, tarjetas de débito, UPI, transferencias bancarias y billeteras digitales. Todas las transacciones están protegidas con cifrado bancario."
+      },
+      "cancelBooking": {
+        "question": "¿Cómo puedo cancelar mi reserva?",
+        "answer": "Puedes cancelar tu reserva en la sección 'Mis reservas'. Las políticas de cancelación y las tarifas varían según la aerolínea y el tipo de tarifa."
+      },
+      "refundTimeline": {
+        "question": "¿Cuánto tarda el reembolso?",
+        "answer": "Los reembolsos suelen procesarse en un plazo de 5 a 7 días hábiles. El tiempo exacto depende de tu banco o método de pago."
+      },
+      "modifyBooking": {
+        "question": "¿Puedo modificar mi reserva?",
+        "answer": "Sí, puedes modificar tu reserva en la sección 'Mis reservas'. Las opciones de modificación dependen de la política de la aerolínea y las condiciones de la tarifa."
+      },
+      "receiveTicket": {
+        "question": "¿Cuándo recibiré mi billete electrónico?",
+        "answer": "Recibirás tu billete electrónico por correo electrónico inmediatamente después de que se confirme tu reserva. También puedes descargarlo desde la sección 'Mis reservas'."
+      },
+      "isSafe": {
+        "question": "¿Es seguro reservar vuelos en línea?",
+        "answer": "Sí, utilizamos cifrado de nivel industrial para proteger tu información personal y de pago. La seguridad de tus datos es nuestra máxima prioridad."
+      },
+      "missedFlight": {
+        "question": "¿Qué debo hacer si pierdo mi vuelo?",
+        "answer": "Por favor, contacta con nuestro servicio de atención al cliente de inmediato. Dependiendo de la política de la aerolínea, es posible que puedas ser reprogramado en el próximo vuelo disponible, posiblemente con un cargo adicional."
+      }
+    }
   }
 }
