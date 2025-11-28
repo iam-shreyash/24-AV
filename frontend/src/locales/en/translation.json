@@ -202,5 +202,128 @@
     "seatsAvailable_one": "{{count}} Seat Available",
     "seatsAvailable_other": "{{count}} Seats Available",
     "noFlightsFiltered": "No flights match the filters yet. Try adjusting your search."
+  },
+  "layout": {
+    "title": "Aviation Platform",
+    "demoBadge": "v0.1.0 Demo",
+    "nav": {
+      "flights": "Flights",
+      "admin": "Admin",
+      "vendor": "Vendor",
+      "passenger": "Passenger",
+      "login": "Login",
+      "logout": "Logout"
+    }
+  },
+  "fleet": {
+    "badge": "Our Premium Fleet",
+    "titlePrefix": "Explore Our",
+    "titleHighlight": "Private Jet Fleet",
+    "description": "Discover our curated collection of luxury private jets, each offering unparalleled comfort and performance.",
+    "stats": {
+      "capacity": "Capacity",
+      "passengersSuffix": "passengers",
+      "range": "Range",
+      "rangeUnit": "nm",
+      "maxSpeed": "Max Speed",
+      "speedUnit": "kts",
+      "available": "Available"
+    }
+  },
+  "offers": {
+    "title": "Offers & Discounts",
+    "subtitle": "Save more on your next flight with our exclusive deals",
+    "promoCodeLabel": "Promo Code",
+    "clickToCopy": "Click to copy",
+    "bookNow": "Book Now",
+    "items": {
+      "first": {
+        "category": "First Booking",
+        "title": "Flat 500 off on first booking",
+        "description": "Welcome aboard! Use code WELCOME500 on your first flight booking",
+        "validity": "Valid till 31 Dec 2025"
+      },
+      "seasonal": {
+        "category": "Seasonal",
+        "title": "Festive Sale - Up to 20% off",
+        "description": "Special discount on select domestic routes during festive season",
+        "validity": "Limited time offer"
+      },
+      "weekend": {
+        "category": "Recurring",
+        "title": "Weekend Special",
+        "description": "Extra 10% off on weekend bookings for travel within India",
+        "validity": "Every Friday to Sunday"
+      },
+      "group": {
+        "category": "Group",
+        "title": "Group Booking Discount",
+        "description": "Book for 4 or more passengers and save up to 15%",
+        "validity": "Ongoing offer"
+      }
+    }
+  },
+  "support": {
+    "title": "Help & Support",
+    "faqTitle": "Frequently Asked Questions",
+    "contactCard": {
+      "title": "Contact Us",
+      "success": "Thank you! Your message has been sent. We'll get back to you soon.",
+      "nameLabel": "Name",
+      "namePlaceholder": "Your name",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your@email.com",
+      "messageLabel": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "submit": "Send Message"
+    },
+    "quickContact": {
+      "title": "Quick Contact",
+      "phoneLabel": "+91 90000 00000",
+      "phoneSubtitle": "24/7 Support",
+      "emailLabel": "support@24av.com",
+      "emailSubtitle": "Response in 24 hours",
+      "chatLabel": "Live Chat",
+      "chatSubtitle": "Available 9 AM - 9 PM"
+    },
+    "urgentHelp": {
+      "title": "Need Urgent Help?",
+      "description": "Our support team is available 24/7 to assist you with any travel emergencies",
+      "callNow": "Call Now"
+    },
+    "faq": {
+      "bookFlight": {
+        "question": "How do I book a flight on 24AV?",
+        "answer": "Simply enter your departure and destination cities, select your travel dates, and click 'Search Flights'. Browse through available options and complete your booking in just a few clicks."
+      },
+      "paymentMethods": {
+        "question": "What payment methods are accepted?",
+        "answer": "We accept all major credit cards, debit cards, UPI, net banking, and digital wallets. All transactions are secured with bank-grade encryption."
+      },
+      "cancelBooking": {
+        "question": "How do I cancel my booking?",
+        "answer": "You can cancel your booking through the 'My Bookings' section. Cancellation policies vary by airline and fare type. Please check the terms before booking."
+      },
+      "refundTimeline": {
+        "question": "When will I receive my refund?",
+        "answer": "Refunds are typically processed within 5-7 business days after cancellation approval. The amount will be credited to your original payment method."
+      },
+      "modifyBooking": {
+        "question": "Can I modify my booking?",
+        "answer": "Yes, you can modify your booking through the 'My Bookings' section. Modification policies and fees vary by airline and fare type."
+      },
+      "receiveTicket": {
+        "question": "How will I receive my ticket?",
+        "answer": "You will receive your e-ticket via email and SMS immediately after booking confirmation. You can also access it anytime from your 'My Bookings' section."
+      },
+      "isSafe": {
+        "question": "Is it safe to book online?",
+        "answer": "Absolutely! We use industry-standard SSL encryption and secure payment gateways to protect your personal and financial information. Your data is safe with us."
+      },
+      "missedFlight": {
+        "question": "What if I miss my flight?",
+        "answer": "If you miss your flight, please contact our support team immediately. Depending on the airline's policy, you may be able to rebook for a fee."
+      }
+    }
   }
 }

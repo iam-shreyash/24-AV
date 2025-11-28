@@ -1,10 +1,12 @@
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { clearAuth, getStoredAuth } from "../auth/Login";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const auth = getStoredAuth();
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     clearAuth();
@@ -17,7 +19,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div>
             <p className="text-sm uppercase text-slate-200">24AV</p>
-            <h1 className="text-2xl font-semibold">Aviation Platform</h1>
+            <h1 className="text-2xl font-semibold">{t("layout.title")}</h1>
           </div>
           <div className="flex items-center gap-3">
             {auth && (
@@ -26,7 +28,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               </span>
             )}
             <span className="rounded-full bg-white/15 px-3 py-1 text-sm text-white/90">
-              v0.1.0 Demo
+              {t("layout.demoBadge")}
             </span>
           </div>
         </div>
@@ -39,7 +41,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                 }
               >
-                Flights
+                {t("layout.nav.flights")}
               </NavLink>
               {auth?.role === "admin" && (
                 <NavLink
@@ -48,7 +50,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }
                 >
-                  Admin
+                  {t("layout.nav.admin")}
                 </NavLink>
               )}
               {auth?.role === "vendor" && (
@@ -58,7 +60,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }
                 >
-                  Vendor
+                  {t("layout.nav.vendor")}
                 </NavLink>
               )}
               {auth?.role === "passenger" && (
@@ -68,7 +70,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }
                 >
-                  Passenger
+                  {t("layout.nav.passenger")}
                 </NavLink>
               )}
             </div>
@@ -80,7 +82,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     `rounded px-3 py-1 ${isActive ? "bg-white text-primary" : "text-white/80 hover:text-white"}`
                   }
                 >
-                  Login
+                  {t("layout.nav.login")}
                 </NavLink>
               )}
               {auth && (
@@ -89,7 +91,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   onClick={handleLogout}
                   className="rounded px-3 py-1 text-xs font-medium text-white hover:bg-white/10"
                 >
-                  Logout
+                  {t("layout.nav.logout")}
                 </button>
               )}
             </div>

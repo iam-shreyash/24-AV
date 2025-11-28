@@ -1,4 +1,5 @@
 import { Plane, Sparkles, Users, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
@@ -106,6 +107,8 @@ const jets: Jet[] = [
 ];
 
 export default function Fleet() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-background">
       <section className="relative overflow-hidden py-12">
@@ -124,16 +127,16 @@ export default function Fleet() {
           <div className="mb-12 text-center">
             <Badge className="mx-auto mb-4 flex w-fit items-center gap-2 bg-primary/10 text-primary shadow-lg">
               <Sparkles className="h-4 w-4" />
-              Our Premium Fleet
+              {t("fleet.badge")}
             </Badge>
             <h1 className="font-heading text-4xl font-bold md:text-5xl">
-              Explore Our
+              {t("fleet.titlePrefix")}
               <span className="mt-2 block bg-gradient-to-r from-primary via-[var(--primary-glow)] to-accent bg-clip-text text-transparent">
-                Private Jet Fleet
+                {t("fleet.titleHighlight")}
               </span>
             </h1>
             <p className="mt-4 font-body text-lg text-muted-foreground">
-              Discover our curated collection of luxury private jets, each offering unparalleled comfort and performance.
+              {t("fleet.description")}
             </p>
           </div>
 
@@ -162,27 +165,33 @@ export default function Fleet() {
                     <div className="flex items-center gap-2">
                       <Users className="h-4 w-4 text-primary" />
                       <div>
-                        <p className="font-body text-xs text-muted-foreground">Capacity</p>
-                        <p className="font-heading text-sm font-semibold">{jet.capacity} passengers</p>
+                        <p className="font-body text-xs text-muted-foreground">{t("fleet.stats.capacity")}</p>
+                        <p className="font-heading text-sm font-semibold">
+                          {jet.capacity} {t("fleet.stats.passengersSuffix")}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Plane className="h-4 w-4 text-accent" />
                       <div>
-                        <p className="font-body text-xs text-muted-foreground">Range</p>
-                        <p className="font-heading text-sm font-semibold">{jet.rangeNm.toLocaleString()} nm</p>
+                        <p className="font-body text-xs text-muted-foreground">{t("fleet.stats.range")}</p>
+                        <p className="font-heading text-sm font-semibold">
+                          {jet.rangeNm.toLocaleString()} {t("fleet.stats.rangeUnit")}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-warning" />
                       <div>
-                        <p className="font-body text-xs text-muted-foreground">Max Speed</p>
-                        <p className="font-heading text-sm font-semibold">{jet.maxSpeed} kts</p>
+                        <p className="font-body text-xs text-muted-foreground">{t("fleet.stats.maxSpeed")}</p>
+                        <p className="font-heading text-sm font-semibold">
+                          {jet.maxSpeed} {t("fleet.stats.speedUnit")}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant="secondary" className="w-full justify-center">
-                        Available
+                        {t("fleet.stats.available")}
                       </Badge>
                     </div>
                   </div>

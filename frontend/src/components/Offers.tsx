@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Calendar, Gift } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -8,52 +9,53 @@ import { ScrollAnimate } from "./ui/ScrollAnimate";
 
 type Offer = {
   id: number;
-  category: string;
-  title: string;
-  description: string;
+  categoryKey: string;
+  titleKey: string;
+  descriptionKey: string;
   promoCode: string;
-  validity: string;
+  validityKey: string;
   icon: typeof Gift;
 };
 
 export default function Offers() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const offers: Offer[] = [
     {
       id: 1,
-      category: "First Booking",
-      title: "Flat ₹500 off on first booking",
-      description: "Welcome aboard! Use code WELCOME500 on your first flight booking",
+      categoryKey: "offers.items.first.category",
+      titleKey: "offers.items.first.title",
+      descriptionKey: "offers.items.first.description",
       promoCode: "WELCOME500",
-      validity: "Valid till 31 Dec 2025",
+      validityKey: "offers.items.first.validity",
       icon: Gift
     },
     {
       id: 2,
-      category: "Seasonal",
-      title: "Festive Sale - Up to 20% off",
-      description: "Special discount on select domestic routes during festive season",
+      categoryKey: "offers.items.seasonal.category",
+      titleKey: "offers.items.seasonal.title",
+      descriptionKey: "offers.items.seasonal.description",
       promoCode: "FESTIVE20",
-      validity: "Limited time offer",
+      validityKey: "offers.items.seasonal.validity",
       icon: Gift
     },
     {
       id: 3,
-      category: "Recurring",
-      title: "Weekend Special",
-      description: "Extra 10% off on weekend bookings for travel within India",
+      categoryKey: "offers.items.weekend.category",
+      titleKey: "offers.items.weekend.title",
+      descriptionKey: "offers.items.weekend.description",
       promoCode: "WEEKEND10",
-      validity: "Every Friday to Sunday",
+      validityKey: "offers.items.weekend.validity",
       icon: Gift
     },
     {
       id: 4,
-      category: "Group",
-      title: "Group Booking Discount",
-      description: "Book for 4 or more passengers and save up to 15%",
+      categoryKey: "offers.items.group.category",
+      titleKey: "offers.items.group.title",
+      descriptionKey: "offers.items.group.description",
       promoCode: "GROUP15",
-      validity: "Ongoing offer",
+      validityKey: "offers.items.group.validity",
       icon: Gift
     }
   ];
@@ -75,10 +77,10 @@ export default function Offers() {
         <ScrollAnimate type="fade-in" threshold={0.2}>
           <div className="mb-12 text-center">
             <h1 className="mb-4 font-heading text-4xl font-bold text-gray-900 md:text-5xl">
-              Offers & Discounts
+              {t("offers.title")}
             </h1>
             <p className="font-body text-lg text-gray-600">
-              Save more on your next flight with our exclusive deals
+              {t("offers.subtitle")}
             </p>
           </div>
         </ScrollAnimate>
@@ -102,24 +104,24 @@ export default function Offers() {
                 <div className="mb-4">
                   <Badge className="bg-blue-100 text-blue-800">
                     <offer.icon className="mr-1 h-3 w-3" />
-                    {offer.category}
+                    {t(offer.categoryKey)}
                   </Badge>
                 </div>
 
                 {/* Offer Title */}
                 <h3 className="mb-3 font-heading text-xl font-bold text-gray-900">
-                  {offer.title}
+                  {t(offer.titleKey)}
                 </h3>
 
                 {/* Description */}
                 <p className="mb-4 font-body text-sm text-gray-600">
-                  {offer.description}
+                  {t(offer.descriptionKey)}
                 </p>
 
                 {/* Promo Code */}
                 <div className="mb-4">
                   <label className="mb-2 block font-body text-xs font-medium text-gray-700">
-                    Promo Code
+                    {t("offers.promoCodeLabel")}
                   </label>
                   <div 
                     className="flex cursor-pointer items-center justify-between rounded-md border-2 border-dashed border-blue-200 bg-blue-50 px-4 py-3 transition-all duration-300 hover:border-blue-400 hover:bg-blue-100 hover:scale-105 hover:shadow-md"
@@ -128,14 +130,14 @@ export default function Offers() {
                     <span className="font-heading text-base font-bold text-blue-800">
                       {offer.promoCode}
                     </span>
-                    <span className="font-body text-xs text-blue-800">Click to copy</span>
+                    <span className="font-body text-xs text-blue-800">{t("offers.clickToCopy")}</span>
                   </div>
                 </div>
 
                 {/* Validity */}
                 <div className="mb-6 flex items-center gap-2 text-sm text-gray-600">
                   <Calendar className="h-4 w-4" />
-                  <span className="font-body">{offer.validity}</span>
+                  <span className="font-body">{t(offer.validityKey)}</span>
                 </div>
 
                 {/* Book Now Button */}
@@ -143,7 +145,7 @@ export default function Offers() {
                   onClick={() => handleBookNow(offer)}
                   className="w-full bg-blue-800 text-white hover:bg-blue-900"
                 >
-                  Book Now
+                  {t("offers.bookNow")}
                 </Button>
               </Card>
             </ScrollAnimate>
