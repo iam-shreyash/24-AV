@@ -21,8 +21,9 @@ export default function SearchBar() {
       }
     }
   }, [auth, navigate, location.pathname]);
-  const [from, setFrom] = useState("Mumbai (BOM)");
-  const [to, setTo] = useState("Delhi (DEL)");
+  // Start with empty fields so passengers can freely choose any cities.
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [departure, setDeparture] = useState("");
   const [passengers, setPassengers] = useState("1");
 
@@ -51,7 +52,7 @@ export default function SearchBar() {
           <div className="relative flex-1 min-w-[140px]">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="From"
+              placeholder="From city"
               value={from}
               onChange={(event) => setFrom(event.target.value)}
               className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
@@ -71,7 +72,7 @@ export default function SearchBar() {
           <div className="relative flex-1 min-w-[140px]">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="To"
+              placeholder="To city"
               value={to}
               onChange={(event) => setTo(event.target.value)}
               className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"

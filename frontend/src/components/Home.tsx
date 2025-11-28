@@ -174,7 +174,7 @@ export default function Home() {
 
           <ScrollAnimate type="scale-in" threshold={0.3} delay={300}>
             <div className="mt-8">
-              <SearchBar />
+              {auth?.role !== "vendor" && <SearchBar />}
             </div>
           </ScrollAnimate>
         </div>

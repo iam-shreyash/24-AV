@@ -11,9 +11,11 @@ export default function Header() {
   const auth = getStoredAuth();
 
   const getMyBookingsHref = () => {
+    // For passengers, always send "My Bookings" to the dedicated bookings route.
+    if (auth?.role === "passenger") return "/my-bookings";
     if (auth?.role === "vendor") return "/vendor/dashboard";
     if (auth?.role === "admin") return "/dashboard/admin";
-    return "/passenger/dashboard";
+    return "/my-bookings";
   };
 
   // For vendors, hide passenger-only navigation items
