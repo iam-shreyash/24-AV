@@ -1,8 +1,9 @@
-import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "./components/auth/AuthContext";
 import { useTranslation } from "react-i18next";
 import { setRTL } from "./utils/rtl";
+import { Loader2 } from "lucide-react";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -24,10 +25,44 @@ import { getStoredAuth } from "./components/auth/Login";
 
 // Component to prevent vendors from accessing passenger-only routes
 function VendorOnlyRoute({ children }: { children: React.ReactNode }) {
-  // Previously this component read localStorage synchronously and redirected
-  // vendors to their dashboard which could cause unexpected redirects.
-  // We now avoid auto-redirects here — routing role-checks should be handled
-  // by `RequireRole` when accessing dashboards. Keep this a no-op wrapper.
+  const { user, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Only run this effect after auth state is loaded
+    if (!loading && isAuthenticated && user?.role === 'vendor') {
+      // If vendor is trying to access a passenger route, redirect to vendor dashboard
+      if (!location.pathname.startsWith('/vendor')) {
+        navigate('/vendor/dashboard', { replace: true });
+      }
+    }
+  }, [user, loading, isAuthenticated, navigate, location.pathname]);
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  // If not authenticated, show the children (will be handled by other auth guards)
+  if (!isAuthenticated) {
+    return <>{children}</>;
+  }
+
+  // If user is a vendor trying to access a non-vendor route, show loading (will redirect)
+  if (user?.role === 'vendor' && !location.pathname.startsWith('/vendor')) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  // For all other cases, render the children
   return <>{children}</>;
 }
 

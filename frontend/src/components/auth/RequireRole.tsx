@@ -1,6 +1,6 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "./AuthContext";
-import { getStoredAuth } from "./Login";
+import { Loader2 } from "lucide-react";
 
 type RequireRoleProps = {
   role: "admin" | "vendor" | "passenger";
@@ -9,32 +9,33 @@ type RequireRoleProps = {
 
 export default function RequireRole({ role, children }: RequireRoleProps) {
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
 
-  // If auth is still loading, don't redirect yet — let caller handle a loading state.
-  if (loading) return null;
+  // Show loading state while auth is being checked
+  if (loading) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
-  // Fallback to stored auth from localStorage to avoid premature redirects
-  const stored = getStoredAuth();
-
-  if (!user && !stored) {
+  // If not authenticated, redirect to login with return URL
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  const effectiveRole = user?.role || stored?.role;
-
-  if (effectiveRole !== role) {
-    // If the user is logged in but has the wrong role, send them to their own dashboard.
-    const target =
-      effectiveRole === "admin"
-        ? "/dashboard/admin"
-        : effectiveRole === "vendor"
-          ? "/vendor/dashboard"
-          : "/passenger/dashboard";
+  // If user doesn't have the required role, redirect to their dashboard
+  if (user?.role !== role) {
+    const target = 
+      user?.role === "admin" ? "/dashboard/admin" :
+      user?.role === "vendor" ? "/vendor/dashboard" :
+      "/my-bookings";
+    
     return <Navigate to={target} replace />;
   }
 
+  // User is authenticated and has the required role
   return children;
 }
-
 

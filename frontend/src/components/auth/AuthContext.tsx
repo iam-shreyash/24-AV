@@ -1,17 +1,22 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { getStoredAuth } from './Login';
 
 type User = {
   id: string;
   email: string;
   role: string;
-  // Add other user properties as needed
+  token: string;
 };
 
 type AuthContextType = {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{
+    id: string;
+    email: string;
+    role: string;
+    token: string;
+  }>;
   logout: () => void;
   isAuthenticated: boolean;
 };
@@ -19,45 +24,62 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Populate initial user synchronously from local storage to avoid transient nulls
-  const stored = getStoredAuth();
-  const [user, setUser] = useState<User | null>(
-    stored ? { id: stored.email || stored.role || 'unknown', email: stored.email, role: stored.role } : null
-  );
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  // We no longer block rendering of the app while auth is being checked.
-  // Components can use the `loading` flag if they need to wait for auth verification.
-  const [loading, setLoading] = useState(false);
+  // Initialize auth state from localStorage on mount
+  useEffect(() => {
+    const initializeAuth = () => {
+      try {
+        const stored = getStoredAuth();
+        if (stored) {
+          setUser({
+            id: stored.email || 'unknown',
+            email: stored.email,
+            role: stored.role,
+            token: stored.token
+          });
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
 
   const login = async (email: string, password: string) => {
+    setLoading(true);
     try {
-      // TODO: Replace with your actual login API call
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password })
-      // });
-      // const data = await response.json();
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock response for now
+      // Mock response - in a real app, this would come from your API
       const mockUser = {
         id: '1',
         email,
-        role: 'passenger' // or 'driver', 'admin', etc.
+        role: email.includes('admin') ? 'admin' : email.includes('vendor') ? 'vendor' : 'passenger',
+        token: 'mock-jwt-token'
       };
       
       setUser(mockUser);
-      // localStorage.setItem('token', data.token);
+      // Store in localStorage
+      localStorage.setItem('auth', JSON.stringify(mockUser));
+      return mockUser;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('token');
-    // Redirect to login or home page
+    localStorage.removeItem('auth');
+    // Use window.location to ensure full page reload and clear all state
     window.location.href = '/login';
   };
 
@@ -66,11 +88,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loading,
     login,
     logout,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user?.token,
   };
 
   return (
-    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={value}>
+      {!loading ? children : null}
+    </AuthContext.Provider>
   );
 };
 
