@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "Accueil",
+    "searchFlights": "Rechercher des vols",
+    "myBookings": "Mes réservations",
+    "offers": "Offres",
+    "support": "Assistance",
+    "vendorPortal": "Portail fournisseur",
+    "adminPortal": "Portail administrateur",
+    "logout": "Déconnexion",
+    "signIn": "Connexion",
+    "register": "Inscription",
+    "language": "Langue"
+  },
+  "home": {
+    "hero": {
+      "badge": "Première plateforme aérienne en Inde",
+      "title": "Réservez vos vols avec 24AV",
+      "titleVendor": "Bienvenue sur le tableau de bord fournisseur",
+      "subtitle": "Recherche rapide, paiement simple, voyages inoubliables",
+      "subtitleVendor": "Gérez facilement vos vols, vos appareils et vos passagers."
+    },
+    "sections": {
+      "benefitsTitle": "Nos avantages",
+      "benefitsSubtitle": "Tout ce dont vous avez besoin pour un voyage sans stress",
+      "vendorToolsTitle": "Outils fournisseur",
+      "vendorToolsSubtitle": "Tout ce dont vous avez besoin pour gérer vos opérations aériennes."
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "Confirmation instantanée",
+        "description": "Recevez immédiatement votre confirmation de réservation par e-mail et SMS."
+      },
+      "securePayments": {
+        "title": "Paiements sécurisés",
+        "description": "Chiffrement de niveau bancaire pour toutes les transactions."
+      },
+      "exclusiveDeals": {
+        "title": "Offres exclusives",
+        "description": "Réductions spéciales et offres saisonnières."
+      },
+      "easyManagement": {
+        "title": "Gestion simplifiée",
+        "description": "Gérez toutes vos réservations depuis un seul tableau de bord."
+      },
+      "travelUpdates": {
+        "title": "Mises à jour de voyage",
+        "description": "Notifications en temps réel sur vos vols."
+      },
+      "groupBookings": {
+        "title": "Réservations de groupe",
+        "description": "Tarifs spéciaux pour les voyages en groupe."
+      },
+      "priceAlerts": {
+        "title": "Alertes de prix",
+        "description": "Soyez averti lorsque les prix baissent sur vos itinéraires."
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "Paiements sécurisés",
+        "description": "Versements rapides et transactions chiffrées."
+      },
+      "businessAnalytics": {
+        "title": "Analytique métier",
+        "description": "Consultez les tendances de réservation et les performances."
+      },
+      "documentVault": {
+        "title": "Coffre-fort de documents",
+        "description": "Téléchargez et gérez vos documents de vérification."
+      },
+      "easyDashboard": {
+        "title": "Tableau de bord intuitif",
+        "description": "Un tableau de bord centralisé pour toutes les opérations fournisseur."
+      }
+    },
+    "faq": {
+      "title": "Foire aux questions",
+      "subtitle": "Des réponses rapides aux questions les plus fréquentes sur les réservations avec 24AV",
+      "viewAll": "Voir toutes les FAQ",
+      "items": {
+        "howToBook": {
+          "question": "Comment réserver un vol sur 24AV ?",
+          "answer": "Saisissez simplement vos villes de départ et d'arrivée, choisissez vos dates de voyage et cliquez sur ‘Rechercher des vols’. Parcourez les options disponibles et finalisez votre réservation en quelques clics."
+        },
+        "paymentMethods": {
+          "question": "Quels moyens de paiement acceptez-vous ?",
+          "answer": "Nous acceptons toutes les principales cartes de crédit et de débit, l'UPI, le virement bancaire et les portefeuilles numériques. Toutes les transactions sont sécurisées par un chiffrement de niveau bancaire."
+        },
+        "modifyBooking": {
+          "question": "Puis-je annuler ou modifier ma réservation ?",
+          "answer": "Oui, vous pouvez annuler ou modifier votre réservation depuis la section ‘Mes réservations’. Les politiques d'annulation et de modification varient selon la compagnie aérienne et le tarif. Veuillez vérifier les conditions avant de réserver."
+        },
+        "receiveTicket": {
+          "question": "Comment vais-je recevoir mon billet ?",
+          "answer": "Vous recevrez votre e‑billet par e‑mail et SMS immédiatement après la confirmation. Vous pouvez également y accéder à tout moment depuis la section ‘Mes réservations’."
+        },
+        "isSafe": {
+          "question": "Est‑il sûr de réserver en ligne ?",
+          "answer": "Absolument. Nous utilisons le chiffrement SSL et des passerelles de paiement sécurisées pour protéger vos informations personnelles et financières."
+        }
+      }
+    }
+  }
+}

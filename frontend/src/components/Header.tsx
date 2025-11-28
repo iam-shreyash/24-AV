@@ -1,5 +1,6 @@
-import { Menu, Plane, User } from "lucide-react";
+import { Menu, Plane, User, Globe } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { clearAuth, getStoredAuth } from "./auth/Login";
 import { Button } from "./ui/button";
@@ -9,6 +10,7 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const auth = getStoredAuth();
+  const { t, i18n } = useTranslation();
 
   const getMyBookingsHref = () => {
     // For passengers, always send "My Bookings" to the dedicated bookings route.
@@ -18,16 +20,27 @@ export default function Header() {
     return "/my-bookings";
   };
 
+  const languages = [
+    { code: "en", label: "EN" },
+    { code: "fr", label: "FR" },
+    { code: "de", label: "DE" },
+    { code: "es", label: "ES" },
+    { code: "ar", label: "AR" },
+    { code: "jp", label: "JP" },
+    { code: "zh", label: "ZH" },
+    { code: "ru", label: "RU" },
+  ];
+
   // For vendors, hide passenger-only navigation items
-  const navigation = [
-    { name: "Home", href: "/" },
-    ...(auth?.role !== "vendor" ? [{ name: "Search Flights", href: "/search" }] : []),
-    ...(auth?.role === "passenger" ? [{ name: "My Bookings", href: getMyBookingsHref() }] : []),
-    { name: "Offers", href: "/offers" },
-    { name: "Support", href: "/support" },
+  const navigation: { key: string; href: string }[] = [
+    { key: "nav.home", href: "/" },
+    ...(auth?.role !== "vendor" ? [{ key: "nav.searchFlights", href: "/search" }] : []),
+    ...(auth?.role === "passenger" ? [{ key: "nav.myBookings", href: getMyBookingsHref() }] : []),
+    { key: "nav.offers", href: "/offers" },
+    { key: "nav.support", href: "/support" },
     // Only show Vendor Portal for vendors
-    ...(auth?.role === "vendor" ? [{ name: "Vendor Portal", href: "/vendor/dashboard" }] : []),
-    ...(auth?.role === "admin" ? [{ name: "Admin Portal", href: "/admin/portal" }] : [])
+    ...(auth?.role === "vendor" ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }] : []),
+    ...(auth?.role === "admin" ? [{ key: "nav.adminPortal", href: "/admin/portal" }] : [])
   ];
 
   const handleLogout = () => {
@@ -72,7 +85,7 @@ export default function Header() {
             };
             return (
               <Link
-                key={item.name}
+                key={item.key}
                 to={item.href}
                 onClick={handleClick}
                 className={`font-body text-sm font-medium transition-all duration-300 ${
@@ -81,23 +94,39 @@ export default function Header() {
                     : "text-gray-700 hover:text-blue-800 hover:scale-105"
                 }`}
               >
-                {item.name}
+                {t(item.key)}
               </Link>
             );
           })}
+          <div className="flex items-center space-x-2 ml-2">
+            <div className="flex items-center rounded-md border border-blue-100 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm">
+              <Globe className="mr-1 h-3 w-3 text-blue-700" />
+              <select
+                value={i18n.language}
+                onChange={(e) => i18n.changeLanguage(e.target.value)}
+                className="bg-transparent text-xs focus:outline-none cursor-pointer"
+              >
+                {languages.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
           {auth ? (
             <Button size="sm" className="ml-4 bg-blue-800 hover:bg-blue-900" onClick={handleLogout}>
               <User className="mr-2 h-4 w-4" />
-              Logout
+              {t("nav.logout")}
             </Button>
           ) : (
             <>
               <Button variant="outline" size="sm" className="ml-2 border-blue-800 text-blue-800 hover:bg-blue-50" onClick={() => navigate("/register")}>
-                Register
+                {t("nav.register")}
               </Button>
               <Button size="sm" className="ml-2 bg-blue-800 hover:bg-blue-900" onClick={handleLogin}>
                 <User className="mr-2 h-4 w-4" />
-                Sign In
+                {t("nav.signIn")}
               </Button>
             </>
           )}
@@ -125,7 +154,7 @@ export default function Header() {
                 };
                 return (
                   <Link
-                    key={item.name}
+                    key={item.key}
                     to={item.href}
                     onClick={handleClick}
                     className={`font-body text-base font-medium transition-all duration-300 ${
@@ -134,23 +163,40 @@ export default function Header() {
                         : "text-gray-700 hover:text-blue-800 hover:scale-105"
                     }`}
                   >
-                    {item.name}
+                    {t(item.key)}
                   </Link>
                 );
               })}
+              <div className="mt-4 flex items-center justify-between rounded-md border border-blue-100 bg-white px-3 py-2 text-xs text-gray-700">
+                <div className="flex items-center">
+                  <Globe className="mr-2 h-4 w-4 text-blue-700" />
+                  <span>{t("nav.language")}</span>
+                </div>
+                <select
+                  value={i18n.language}
+                  onChange={(e) => i18n.changeLanguage(e.target.value)}
+                  className="bg-transparent text-xs focus:outline-none cursor-pointer"
+                >
+                  {languages.map((lang) => (
+                    <option key={lang.code} value={lang.code}>
+                      {lang.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {auth ? (
                 <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleLogout}>
                   <User className="mr-2 h-4 w-4" />
-                  Logout
+                  {t("nav.logout")}
                 </Button>
               ) : (
                 <>
                   <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50" onClick={() => navigate("/register")}>
-                    Register
+                    {t("nav.register")}
                   </Button>
                   <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleLogin}>
                     <User className="mr-2 h-4 w-4" />
-                    Sign In
+                    {t("nav.signIn")}
                   </Button>
                 </>
               )}

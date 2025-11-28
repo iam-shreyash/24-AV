@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "ホーム",
+    "searchFlights": "フライト検索",
+    "myBookings": "予約一覧",
+    "offers": "オファー",
+    "support": "サポート",
+    "vendorPortal": "ベンダーポータル",
+    "adminPortal": "管理ポータル",
+    "logout": "ログアウト",
+    "signIn": "ログイン",
+    "register": "新規登録",
+    "language": "言語"
+  }
+}

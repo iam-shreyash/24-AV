@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Calendar, Plane, Sparkles, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { Badge } from "../ui/badge";
 import { extractMessage } from "../../lib/extractMessage";
@@ -48,6 +49,7 @@ type Flight = {
 export default function PassengerDashboard() {
   const auth = getStoredAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +87,7 @@ export default function PassengerDashboard() {
       setBookings(bookingsWithFlights);
     } catch (err: any) {
       console.error("Error loading bookings:", err);
-      setError(extractMessage(err.response?.data?.detail) || "Failed to load bookings. Please try again.");
+      setError(extractMessage(err.response?.data?.detail) || t("passenger.errorGeneric"));
     } finally {
       setLoading(false);
     }
@@ -202,7 +204,7 @@ export default function PassengerDashboard() {
     } catch (err: any) {
       console.error("Download error:", err);
       
-      let errorMessage = "Failed to download ticket. Please try again.";
+      let errorMessage = t("passenger.downloadError");
       
       if (err.response) {
         const status = err.response.status;
@@ -249,13 +251,13 @@ export default function PassengerDashboard() {
           <div className="mb-8 text-center">
             <Badge className="mx-auto mb-4 flex w-fit items-center gap-2 bg-accent text-accent-foreground shadow-lg">
               <Sparkles className="h-4 w-4" />
-              Passenger Dashboard
+              {t("passenger.badge")}
             </Badge>
             <h1 className="font-heading text-4xl font-bold md:text-5xl">
-              Welcome Back
+              {t("passenger.welcomeTitle")}
             </h1>
             <p className="mt-4 font-body text-lg text-muted-foreground">
-              Explore available flights and manage your bookings.
+              {t("passenger.welcomeSubtitle")}
             </p>
           </div>
 
@@ -268,15 +270,15 @@ export default function PassengerDashboard() {
                 <Calendar className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-heading text-2xl font-semibold">My Bookings</h3>
-                <p className="font-body text-sm text-muted-foreground">Your scheduled flights and bookings.</p>
+                <h3 className="font-heading text-2xl font-semibold">{t("passenger.myBookingsTitle")}</h3>
+                <p className="font-body text-sm text-muted-foreground">{t("passenger.myBookingsSubtitle")}</p>
               </div>
             </div>
 
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                <p className="mt-4 text-muted-foreground">Loading your bookings...</p>
+                <p className="mt-4 text-muted-foreground">{t("passenger.loading")}</p>
               </div>
             ) : error ? (
               <div className="text-center py-12">
@@ -285,21 +287,21 @@ export default function PassengerDashboard() {
                   onClick={loadBookings}
                   className="text-primary hover:underline"
                 >
-                  Try again
+                  {t("passenger.tryAgain")}
                 </button>
               </div>
             ) : bookings.length === 0 ? (
               <div className="text-center py-12">
                 <Plane className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                <h3 className="font-heading text-xl font-bold mb-2">No Bookings Yet</h3>
+                <h3 className="font-heading text-xl font-bold mb-2">{t("passenger.emptyTitle")}</h3>
                 <p className="text-muted-foreground mb-4">
-                  You haven't booked any flights yet. Start exploring available flights to book your next trip.
+                  {t("passenger.emptyBody")}
                 </p>
                 <a
                   href="/search"
                   className="inline-block text-primary hover:underline font-medium"
                 >
-                  Search for flights →
+                  {t("passenger.emptyCta")}
                 </a>
               </div>
             ) : (
@@ -360,7 +362,7 @@ export default function PassengerDashboard() {
                           className="gap-2"
                         >
                           <Download className="h-4 w-4" />
-                          Download Ticket
+                          {t("passenger.downloadTicket")}
                         </Button>
                       )}
                     </div>

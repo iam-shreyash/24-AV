@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "首页",
+    "searchFlights": "搜索航班",
+    "myBookings": "我的预订",
+    "offers": "优惠",
+    "support": "支持",
+    "vendorPortal": "供应商门户",
+    "adminPortal": "管理员门户",
+    "logout": "退出登录",
+    "signIn": "登录",
+    "register": "注册",
+    "language": "语言"
+  }
+}

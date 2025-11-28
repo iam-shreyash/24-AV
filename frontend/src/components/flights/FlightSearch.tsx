@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { MapPin, Plane, RefreshCw, Search, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -34,6 +35,7 @@ export default function FlightSearch() {
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
   const [bookingMode, setBookingMode] = useState<"seat" | "charter" | null>(null);
   const location = useLocation();
+  const { t } = useTranslation();
   const filters = useMemo(() => {
     const params = new URLSearchParams(location.search);
     return {
@@ -110,13 +112,13 @@ export default function FlightSearch() {
           <div className="mb-8 text-center">
             <Badge className="mx-auto mb-4 flex w-fit items-center gap-2 bg-blue-100 text-blue-800 shadow-lg">
               <Sparkles className="h-4 w-4" />
-              Flight Search
+              {t("flightSearch.badge")}
             </Badge>
             <h1 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">
-              Search Flights
+              {t("flightSearch.title")}
             </h1>
             <p className="mt-4 font-body text-lg text-gray-600">
-              Book single seats or entire jets in seconds.
+              {t("flightSearch.subtitle")}
             </p>
           </div>
 
@@ -126,7 +128,7 @@ export default function FlightSearch() {
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
                   <Input
-                    placeholder="Origin (e.g., Mumbai)"
+                    placeholder={t("flightSearch.originPlaceholder")}
                     value={origin}
                     onChange={(event) => setOrigin(event.target.value)}
                     className="h-12 bg-background pl-10"
@@ -135,7 +137,7 @@ export default function FlightSearch() {
                 <div className="relative">
                   <MapPin className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
                   <Input
-                    placeholder="Destination (e.g., Dubai)"
+                    placeholder={t("flightSearch.destinationPlaceholder")}
                     value={destination}
                     onChange={(event) => setDestination(event.target.value)}
                     className="h-12 bg-background pl-10"
@@ -148,7 +150,7 @@ export default function FlightSearch() {
                   className="h-12 bg-blue-800 font-semibold text-white shadow-lg transition-all hover:bg-blue-900 hover:scale-105 hover:shadow-xl"
                 >
                   <Search className="mr-2 h-5 w-5" />
-                  {loading ? "Searching..." : "Search"}
+                  {loading ? t("flightSearch.searching") : t("flightSearch.searchButton")}
                 </Button>
               </div>
               <Button
@@ -158,15 +160,17 @@ export default function FlightSearch() {
                 className="h-12 border-blue-800 text-blue-800 hover:bg-blue-50"
               >
                 <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-                Refresh
+                {t("flightSearch.refresh")}
               </Button>
             </div>
           </Card>
 
           <div className="mb-6 text-center">
-            <h3 className="font-heading text-2xl font-semibold text-blue-800">Available Flights</h3>
+            <h3 className="font-heading text-2xl font-semibold text-blue-800">{t("flightSearch.availableFlightsTitle")}</h3>
             <p className="mt-2 font-body text-sm text-gray-600">
-              {flights.length > 0 ? `${flights.length} flight(s) found` : "No flights available yet"}
+              {flights.length > 0
+                ? t("flightSearch.resultsCount", { count: flights.length })
+                : t("flightSearch.noFlights")}
             </p>
           </div>
 
@@ -183,7 +187,7 @@ export default function FlightSearch() {
                     </Badge>
                     {flight.available_seats !== null && flight.available_seats !== undefined && (
                       <Badge className="bg-green-100 text-green-800">
-                        {flight.available_seats} {flight.available_seats === 1 ? 'Seat' : 'Seats'} Available
+                        {t("flightSearch.seatsAvailable", { count: flight.available_seats })}
                       </Badge>
                     )}
                   </div>
@@ -201,7 +205,7 @@ export default function FlightSearch() {
                   </div>
                   <div className="flex flex-1 flex-col items-center">
                     <Plane className="h-6 w-6 text-primary" />
-                    <div className="mt-1 font-body text-xs text-muted-foreground">Direct</div>
+                    <div className="mt-1 font-body text-xs text-muted-foreground">{t("flightSearch.direct")}</div>
                   </div>
                   <div className="text-center">
                     <div className="font-heading text-xl font-bold">{flight.destination}</div>
@@ -232,7 +236,7 @@ export default function FlightSearch() {
               <Card className="col-span-2 border-2 border-dashed p-12 text-center">
                 <Plane className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <p className="font-body text-lg text-muted-foreground">
-                  No flights match the filters yet. Try adjusting your search.
+                  {t("flightSearch.noFlightsFiltered")}
                 </p>
               </Card>
             )}

@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "Главная",
+    "searchFlights": "Поиск рейсов",
+    "myBookings": "Мои бронирования",
+    "offers": "Предложения",
+    "support": "Поддержка",
+    "vendorPortal": "Портал партнёров",
+    "adminPortal": "Админ-портал",
+    "logout": "Выйти",
+    "signIn": "Войти",
+    "register": "Регистрация",
+    "language": "Язык"
+  }
+}

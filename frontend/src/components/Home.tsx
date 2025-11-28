@@ -14,6 +14,7 @@ import {
   ChevronDown,
   ChevronUp
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import SearchBar from "./SearchBar";
 import { getStoredAuth } from "./auth/Login";
@@ -26,6 +27,7 @@ export default function Home() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const navigate = useNavigate();
   const auth = getStoredAuth();
+  const { t } = useTranslation();
 
   const whyChooseFeatures = [
     {
@@ -52,85 +54,85 @@ export default function Home() {
   const benefits = [
     {
       icon: Clock,
-      title: "Instant Confirmation",
-      description: "Get booking confirmation instantly via email and SMS"
+      title: t("home.benefits.instantConfirmation.title"),
+      description: t("home.benefits.instantConfirmation.description"),
     },
     {
       icon: Lock,
-      title: "Secure Payments",
-      description: "Bank-grade encryption for all transactions"
+      title: t("home.benefits.securePayments.title"),
+      description: t("home.benefits.securePayments.description"),
     },
     {
       icon: Gift,
-      title: "Exclusive Deals",
-      description: "Special discounts and seasonal offers"
+      title: t("home.benefits.exclusiveDeals.title"),
+      description: t("home.benefits.exclusiveDeals.description"),
     },
     {
       icon: FolderOpen,
-      title: "Easy Management",
-      description: "Manage all bookings from one dashboard"
+      title: t("home.benefits.easyManagement.title"),
+      description: t("home.benefits.easyManagement.description"),
     },
     {
       icon: Mail,
-      title: "Travel Updates",
-      description: "Real-time notifications about your flights"
+      title: t("home.benefits.travelUpdates.title"),
+      description: t("home.benefits.travelUpdates.description"),
     },
     {
       icon: UsersIcon,
-      title: "Group Bookings",
-      description: "Special rates for group travel bookings"
+      title: t("home.benefits.groupBookings.title"),
+      description: t("home.benefits.groupBookings.description"),
     },
     {
       icon: Bell,
-      title: "Price Alerts",
-      description: "Get notified when prices drop on your routes"
-    }
+      title: t("home.benefits.priceAlerts.title"),
+      description: t("home.benefits.priceAlerts.description"),
+    },
   ];
 
   const vendorTools = [
     {
       icon: Lock,
-      title: "Secure Payments",
-      description: "Fast payouts and encrypted transactions."
+      title: t("home.vendorTools.securePayments.title"),
+      description: t("home.vendorTools.securePayments.description"),
     },
     {
       icon: Bell,
-      title: "Business Analytics",
-      description: "View booking trends and performance insights."
+      title: t("home.vendorTools.businessAnalytics.title"),
+      description: t("home.vendorTools.businessAnalytics.description"),
     },
     {
       icon: FolderOpen,
-      title: "Document Vault",
-      description: "Upload and manage required verification documents."
+      title: t("home.vendorTools.documentVault.title"),
+      description: t("home.vendorTools.documentVault.description"),
     },
     {
       icon: Clock,
-      title: "Easy Dashboard",
-      description: "One centralized dashboard for all vendor operations."
-    }
+      title: t("home.vendorTools.easyDashboard.title"),
+      description: t("home.vendorTools.easyDashboard.description"),
+    },
   ];
 
   const faqs = [
     {
-      question: "How do I book a flight on 24AV?",
-      answer: "Simply enter your departure and destination cities, select your travel dates, and click 'Search Flights'. Browse through available options and complete your booking in just a few clicks."
+      question: t("home.faq.items.howToBook.question"),
+      answer: t("home.faq.items.howToBook.answer"),
     },
     {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards, debit cards, UPI, net banking, and digital wallets. All transactions are secured with bank-grade encryption."
+      question: t("home.faq.items.paymentMethods.question"),
+      answer: t("home.faq.items.paymentMethods.answer"),
     },
     {
-      question: "Can I cancel or modify my booking?",
-      answer: "Yes, you can cancel or modify your booking through the 'My Bookings' section. Cancellation and modification policies vary by airline and fare type. Please check the terms before booking."
+      question: t("home.faq.items.modifyBooking.question"),
+      answer: t("home.faq.items.modifyBooking.answer"),
     },
     {
-      question: "How will I receive my ticket?",
-      answer: "You will receive your e-ticket via email and SMS immediately after booking confirmation. You can also access it anytime from your 'My Bookings' section."
+      question: t("home.faq.items.receiveTicket.question"),
+      answer: t("home.faq.items.receiveTicket.answer"),
     },
     {
-      question: "Is it safe to book online?",
-      answer: "Absolutely! We use industry-standard SSL encryption and secure payment gateways to protect your personal and financial information. Your data is safe with us."
-    }
+      question: t("home.faq.items.isSafe.question"),
+      answer: t("home.faq.items.isSafe.answer"),
+    },
   ];
 
   return (
@@ -155,19 +157,17 @@ export default function Home() {
             <div className="mb-8 text-center">
               <Badge className="mx-auto mb-4 flex w-fit items-center gap-2 bg-white/20 text-white backdrop-blur-sm border-white/30">
                 <Plane className="h-4 w-4" />
-                India's Premier Aviation Platform
+                {t("home.hero.badge")}
               </Badge>
               <h1 className="font-heading text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-                {auth?.role === "vendor" 
-                  ? "Welcome to the Vendor Dashboard"
-                  : "Book Flights the 24AV Way"
-                }
+                {auth?.role === "vendor"
+                  ? t("home.hero.titleVendor")
+                  : t("home.hero.title")}
               </h1>
               <p className="mt-4 font-body text-xl text-white/90 md:text-2xl">
                 {auth?.role === "vendor"
-                  ? "Manage your flights, aircraft, and passengers with ease."
-                  : "Fast search, simple checkout, unforgettable journeys"
-                }
+                  ? t("home.hero.subtitleVendor")
+                  : t("home.hero.subtitle")}
               </p>
             </div>
           </ScrollAnimate>
@@ -188,13 +188,14 @@ export default function Home() {
           <ScrollAnimate type="fade-in" threshold={0.2}>
             <div className="mb-12 text-center">
               <h2 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">
-                {auth?.role === "vendor" ? "Vendor Tools" : "Our Benefits"}
+                {auth?.role === "vendor"
+                  ? t("home.sections.vendorToolsTitle")
+                  : t("home.sections.benefitsTitle")}
               </h2>
               <p className="mt-4 font-body text-lg text-gray-600">
                 {auth?.role === "vendor"
-                  ? "Everything you need to manage your aviation operations."
-                  : "Everything you need for a seamless travel experience"
-                }
+                  ? t("home.sections.vendorToolsSubtitle")
+                  : t("home.sections.benefitsSubtitle")}
               </p>
             </div>
           </ScrollAnimate>
@@ -227,10 +228,10 @@ export default function Home() {
           <ScrollAnimate type="fade-in" threshold={0.2}>
             <div className="mb-12 text-center">
               <h2 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">
-                Frequently Asked Questions
+                {t("home.faq.title")}
               </h2>
               <p className="mt-4 font-body text-lg text-gray-600">
-                Quick answers to common questions about booking with 24AV
+                {t("home.faq.subtitle")}
               </p>
             </div>
           </ScrollAnimate>
@@ -260,7 +261,7 @@ export default function Home() {
             </div>
             <div className="mt-8 text-center">
               <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50">
-                View All FAQs
+                {t("home.faq.viewAll")}
               </Button>
             </div>
             </Card>

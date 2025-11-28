@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Calendar, MapPin, Search as SearchIcon, Users, ArrowRightLeft } from "lucide-react";
 
 import { Button } from "./ui/button";
@@ -10,6 +11,7 @@ export default function SearchBar() {
   const navigate = useNavigate();
   const auth = getStoredAuth();
   const location = useLocation();
+  const { t } = useTranslation();
 
   // Redirect vendors away from search
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function SearchBar() {
           <div className="relative flex-1 min-w-[140px]">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="From city"
+              placeholder={t("searchBar.fromPlaceholder")}
               value={from}
               onChange={(event) => setFrom(event.target.value)}
               className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
@@ -63,7 +65,7 @@ export default function SearchBar() {
           <button
             onClick={handleSwap}
             className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition-all hover:bg-blue-700 hover:scale-105 active:scale-95 shadow-md"
-            aria-label="Swap origin and destination"
+            aria-label={t("searchBar.swapAria")}
           >
             <ArrowRightLeft className="h-5 w-5" />
           </button>
@@ -72,7 +74,7 @@ export default function SearchBar() {
           <div className="relative flex-1 min-w-[140px]">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
-              placeholder="To city"
+              placeholder={t("searchBar.toPlaceholder")}
               value={to}
               onChange={(event) => setTo(event.target.value)}
               className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
@@ -84,7 +86,7 @@ export default function SearchBar() {
             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
               type="date"
-              placeholder="Departure"
+              placeholder={t("searchBar.departurePlaceholder")}
               value={departure}
               onChange={(event) => setDeparture(event.target.value)}
               className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
@@ -96,7 +98,7 @@ export default function SearchBar() {
             <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
               type="number"
-              placeholder="Passengers"
+              placeholder={t("searchBar.passengersPlaceholder")}
               value={passengers}
               onChange={(event) => setPassengers(event.target.value)}
               min="1"
@@ -110,7 +112,7 @@ export default function SearchBar() {
             className="h-14 bg-blue-600 px-8 font-semibold text-white shadow-lg hover:bg-blue-700 transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
           >
             <SearchIcon className="h-5 w-5" />
-            Search Flights
+            {t("searchBar.searchButton")}
           </Button>
         </div>
       </div>

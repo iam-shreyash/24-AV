@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "Startseite",
+    "searchFlights": "Flüge suchen",
+    "myBookings": "Meine Buchungen",
+    "offers": "Angebote",
+    "support": "Support",
+    "vendorPortal": "Anbieterportal",
+    "adminPortal": "Admin-Portal",
+    "logout": "Abmelden",
+    "signIn": "Anmelden",
+    "register": "Registrieren",
+    "language": "Sprache"
+  },
+  "home": {
+    "hero": {
+      "badge": "Indiens führende Luftfahrtplattform",
+      "title": "Flüge buchen auf die 24AV‑Art",
+      "titleVendor": "Willkommen im Anbieter-Dashboard",
+      "subtitle": "Schnelle Suche, einfacher Checkout, unvergessliche Reisen",
+      "subtitleVendor": "Verwalten Sie Flüge, Flugzeuge und Passagiere mit Leichtigkeit."
+    },
+    "sections": {
+      "benefitsTitle": "Unsere Vorteile",
+      "benefitsSubtitle": "Alles für ein reibungsloses Reiseerlebnis",
+      "vendorToolsTitle": "Anbietertools",
+      "vendorToolsSubtitle": "Alles, was Sie für den Betrieb Ihrer Flotte benötigen."
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "Sofortige Bestätigung",
+        "description": "Erhalten Sie Ihre Buchungsbestätigung sofort per E‑Mail und SMS."
+      },
+      "securePayments": {
+        "title": "Sichere Zahlungen",
+        "description": "Bankenstarke Verschlüsselung für alle Transaktionen."
+      },
+      "exclusiveDeals": {
+        "title": "Exklusive Angebote",
+        "description": "Spezielle Rabatte und saisonale Aktionen."
+      },
+      "easyManagement": {
+        "title": "Einfache Verwaltung",
+        "description": "Verwalten Sie alle Buchungen in einem zentralen Dashboard."
+      },
+      "travelUpdates": {
+        "title": "Reise-Updates",
+        "description": "Echtzeit‑Benachrichtigungen zu Ihren Flügen."
+      },
+      "groupBookings": {
+        "title": "Gruppenbuchungen",
+        "description": "Sonderkonditionen für Gruppenreisen."
+      },
+      "priceAlerts": {
+        "title": "Preisalarme",
+        "description": "Werden Sie informiert, wenn die Preise auf Ihren Strecken fallen."
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "Sichere Zahlungen",
+        "description": "Schnelle Auszahlungen und verschlüsselte Transaktionen."
+      },
+      "businessAnalytics": {
+        "title": "Geschäftsanalysen",
+        "description": "Einblicke in Buchungstrends und Performance."
+      },
+      "documentVault": {
+        "title": "Dokumentenarchiv",
+        "description": "Hochladen und Verwalten aller erforderlichen Dokumente."
+      },
+      "easyDashboard": {
+        "title": "Übersichtliches Dashboard",
+        "description": "Ein zentrales Dashboard für alle Anbieter‑Operationen."
+      }
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "subtitle": "Schnelle Antworten auf häufige Fragen zur Buchung mit 24AV",
+      "viewAll": "Alle FAQs anzeigen",
+      "items": {
+        "howToBook": {
+          "question": "Wie buche ich einen Flug bei 24AV?",
+          "answer": "Geben Sie einfach Abflug‑ und Zielstadt ein, wählen Sie Ihre Reisedaten und klicken Sie auf ‚Flüge suchen‘. Wählen Sie ein Angebot aus und schließen Sie die Buchung in wenigen Schritten ab."
+        },
+        "paymentMethods": {
+          "question": "Welche Zahlungsmethoden werden akzeptiert?",
+          "answer": "Wir akzeptieren alle gängigen Kredit‑ und Debitkarten, UPI, Online‑Banking und digitale Wallets. Alle Zahlungen sind mit starker Verschlüsselung geschützt."
+        },
+        "modifyBooking": {
+          "question": "Kann ich meine Buchung stornieren oder ändern?",
+          "answer": "Ja, über den Bereich ‚Meine Buchungen‘ können Sie Buchungen stornieren oder ändern. Gebühren und Bedingungen hängen von Airline und Tarif ab."
+        },
+        "receiveTicket": {
+          "question": "Wie erhalte ich mein Ticket?",
+          "answer": "Sie erhalten Ihr E‑Ticket sofort nach der Bestätigung per E‑Mail und SMS und können es jederzeit im Bereich ‚Meine Buchungen‘ einsehen."
+        },
+        "isSafe": {
+          "question": "Ist Online‑Buchen sicher?",
+          "answer": "Ja. Wir verwenden SSL‑Verschlüsselung und sichere Zahlungsanbieter, um Ihre persönlichen und finanziellen Daten zu schützen."
+        }
+      }
+    }
+  }
+}

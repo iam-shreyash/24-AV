@@ -1,0 +1,206 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "Home",
+    "searchFlights": "Search Flights",
+    "myBookings": "My Bookings",
+    "offers": "Offers",
+    "support": "Support",
+    "vendorPortal": "Vendor Portal",
+    "adminPortal": "Admin Portal",
+    "logout": "Logout",
+    "signIn": "Sign In",
+    "register": "Register",
+    "language": "Language"
+  },
+  "home": {
+    "hero": {
+      "badge": "India's Premier Aviation Platform",
+      "title": "Book Flights the 24AV Way",
+      "titleVendor": "Welcome to the Vendor Dashboard",
+      "subtitle": "Fast search, simple checkout, unforgettable journeys",
+      "subtitleVendor": "Manage your flights, aircraft, and passengers with ease."
+    },
+    "sections": {
+      "benefitsTitle": "Our Benefits",
+      "benefitsSubtitle": "Everything you need for a seamless travel experience",
+      "vendorToolsTitle": "Vendor Tools",
+      "vendorToolsSubtitle": "Everything you need to manage your aviation operations."
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "Instant Confirmation",
+        "description": "Get booking confirmation instantly via email and SMS"
+      },
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Bank-grade encryption for all transactions"
+      },
+      "exclusiveDeals": {
+        "title": "Exclusive Deals",
+        "description": "Special discounts and seasonal offers"
+      },
+      "easyManagement": {
+        "title": "Easy Management",
+        "description": "Manage all bookings from one dashboard"
+      },
+      "travelUpdates": {
+        "title": "Travel Updates",
+        "description": "Real-time notifications about your flights"
+      },
+      "groupBookings": {
+        "title": "Group Bookings",
+        "description": "Special rates for group travel bookings"
+      },
+      "priceAlerts": {
+        "title": "Price Alerts",
+        "description": "Get notified when prices drop on your routes"
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "Secure Payments",
+        "description": "Fast payouts and encrypted transactions."
+      },
+      "businessAnalytics": {
+        "title": "Business Analytics",
+        "description": "View booking trends and performance insights."
+      },
+      "documentVault": {
+        "title": "Document Vault",
+        "description": "Upload and manage required verification documents."
+      },
+      "easyDashboard": {
+        "title": "Easy Dashboard",
+        "description": "One centralized dashboard for all vendor operations."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Quick answers to common questions about booking with 24AV",
+      "viewAll": "View All FAQs",
+      "items": {
+        "howToBook": {
+          "question": "How do I book a flight on 24AV?",
+          "answer": "Simply enter your departure and destination cities, select your travel dates, and click 'Search Flights'. Browse through available options and complete your booking in just a few clicks."
+        },
+        "paymentMethods": {
+          "question": "What payment methods do you accept?",
+          "answer": "We accept all major credit cards, debit cards, UPI, net banking, and digital wallets. All transactions are secured with bank-grade encryption."
+        },
+        "modifyBooking": {
+          "question": "Can I cancel or modify my booking?",
+          "answer": "Yes, you can cancel or modify your booking through the 'My Bookings' section. Cancellation and modification policies vary by airline and fare type. Please check the terms before booking."
+        },
+        "receiveTicket": {
+          "question": "How will I receive my ticket?",
+          "answer": "You will receive your e-ticket via email and SMS immediately after booking confirmation. You can also access it anytime from your 'My Bookings' section."
+        },
+        "isSafe": {
+          "question": "Is it safe to book online?",
+          "answer": "Absolutely! We use industry-standard SSL encryption and secure payment gateways to protect your personal and financial information. Your data is safe with us."
+        }
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "badge": "Welcome Back",
+      "title": "Sign in to Your Account",
+      "subtitle": "Log in as an admin, vendor, or passenger to access your dashboard.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "Enter your email",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "registerHere": "Register here"
+    }
+  },
+  "vendor": {
+    "headerTitle": "Vendor Dashboard",
+    "headerSubtitle": "Manage your fleet and operations",
+    "buttons": {
+      "addAircraft": "Add Aircraft",
+      "addFlight": "Add Flight",
+      "refresh": "Refresh",
+      "createFlight": "Create Flight",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "Aircraft form opened",
+      "flightFormOpened": "Flight creation form opened"
+    },
+    "cards": {
+      "myFlightsTitle": "My Flights",
+      "myFlightsSubtitle": "All flights you've created"
+    },
+    "table": {
+      "flight": "Flight",
+      "route": "Route",
+      "departure": "Departure",
+      "arrival": "Arrival",
+      "price": "Price",
+      "status": "Status",
+      "actions": "Actions",
+      "priceSuffix": "per seat"
+    },
+    "status": {
+      "completed": "Completed",
+      "active": "Active"
+    },
+    "emptyState": {
+      "title": "No Flights Yet",
+      "description": "Create your first flight to start accepting bookings."
+    },
+    "confirmDelete": "Are you sure you want to delete flight {{flight}}? This will also remove it from passenger search.",
+    "errors": {
+      "deleteGeneric": "Failed to delete flight. Please try again."
+    },
+    "loading": "Loading flights..."
+  },
+  "passenger": {
+    "badge": "Passenger Dashboard",
+    "welcomeTitle": "Welcome Back",
+    "welcomeSubtitle": "Explore available flights and manage your bookings.",
+    "myBookingsTitle": "My Bookings",
+    "myBookingsSubtitle": "Your scheduled flights and bookings.",
+    "loading": "Loading your bookings...",
+    "errorGeneric": "Failed to load bookings. Please try again.",
+    "tryAgain": "Try again",
+    "emptyTitle": "No Bookings Yet",
+    "emptyBody": "You haven't booked any flights yet. Start exploring available flights to book your next trip.",
+    "emptyCta": "Search for flights \u2192",
+    "downloadTicket": "Download Ticket",
+    "downloadError": "Failed to download ticket. Please try again."
+  },
+  "searchBar": {
+    "fromPlaceholder": "From city",
+    "toPlaceholder": "To city",
+    "departurePlaceholder": "Departure",
+    "passengersPlaceholder": "Passengers",
+    "searchButton": "Search Flights",
+    "swapAria": "Swap origin and destination"
+  },
+  "flightSearch": {
+    "badge": "Flight Search",
+    "title": "Search Flights",
+    "subtitle": "Book single seats or entire jets in seconds.",
+    "originPlaceholder": "Origin (e.g., Mumbai)",
+    "destinationPlaceholder": "Destination (e.g., Dubai)",
+    "searchButton": "Search",
+    "searching": "Searching...",
+    "refresh": "Refresh",
+    "availableFlightsTitle": "Available Flights",
+    "resultsCount_one": "{{count}} flight found",
+    "resultsCount_other": "{{count}} flights found",
+    "noFlights": "No flights available yet",
+    "direct": "Direct",
+    "seatsAvailable_one": "{{count}} Seat Available",
+    "seatsAvailable_other": "{{count}} Seats Available",
+    "noFlightsFiltered": "No flights match the filters yet. Try adjusting your search."
+  }
+}

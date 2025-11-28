@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { LogIn, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { extractMessage } from "../../lib/extractMessage";
 
 import { Badge } from "../ui/badge";
@@ -71,10 +72,12 @@ export default function Login() {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (location.state?.message) {
-      setSuccessMessage(location.state.message);
+      // Preserve any message passed in navigation state (e.g. after logout)
+      setSuccessMessage(location.state.message as string);
       // Clear the state to prevent showing the message on refresh
       window.history.replaceState({}, document.title);
     }
@@ -145,14 +148,14 @@ export default function Login() {
             <div className="mb-8 text-center">
               <Badge className="mx-auto mb-4 flex w-fit items-center gap-2 bg-blue-100 text-blue-800 shadow-lg">
                 <Sparkles className="h-4 w-4" />
-                Welcome Back
+                {t("auth.login.badge")}
               </Badge>
               <h1 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">
-                Sign in to Your Account
+                {t("auth.login.title")}
               </h1>
                 <p className="mt-4 font-body text-lg text-gray-600">
-                Log in as an admin, vendor, or passenger to access your dashboard.
-              </p>
+                  {t("auth.login.subtitle")}
+                </p>
             </div>
 
             <Card className="border border-gray-200 bg-white p-8 shadow-lg">
@@ -164,11 +167,11 @@ export default function Login() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="font-body text-sm font-medium text-foreground">
-                    Email
+                    {t("auth.login.emailLabel")}
                   </label>
                   <Input
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder={t("auth.login.emailPlaceholder")}
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     className="h-12 bg-background"
@@ -177,11 +180,11 @@ export default function Login() {
                 </div>
                 <div className="space-y-2">
                   <label className="font-body text-sm font-medium text-foreground">
-                    Password
+                    {t("auth.login.passwordLabel")}
                   </label>
                   <Input
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder={t("auth.login.passwordPlaceholder")}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     className="h-12 bg-background"
@@ -200,16 +203,16 @@ export default function Login() {
             className="w-full bg-blue-800 font-semibold text-white shadow-lg transition-all hover:bg-blue-900 hover:scale-105 hover:shadow-xl"
           >
                   <LogIn className="mr-2 h-5 w-5" />
-                  {loading ? "Signing in..." : "Sign in"}
+                  {loading ? t("auth.login.submitting") : t("auth.login.submit")}
                 </Button>
                 <p className="text-center text-xs text-gray-600">
-                  Don't have an account?{" "}
+                  {t("auth.login.noAccount")} {" "}
                   <button
                     type="button"
                     onClick={() => navigate("/register")}
                     className="font-medium text-blue-800 hover:underline"
                   >
-                    Register here
+                    {t("auth.login.registerHere")}
                   </button>
                 </p>
               </form>

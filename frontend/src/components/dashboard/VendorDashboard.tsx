@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 import { Plane, Plus, Calendar, Clock, MapPin, RefreshCw, Edit, Trash2 } from "lucide-react";
 
 import { Badge } from "../ui/badge";
@@ -23,6 +24,7 @@ export default function VendorDashboard() {
   // Use AuthContext to determine authenticated user and loading state
   const { user, loading } = useAuth();
   const auth = getStoredAuth();
+  const { t } = useTranslation();
   const [isAircraftFormOpen, setIsAircraftFormOpen] = useState(false);
   const [isFlightFormOpen, setIsFlightFormOpen] = useState(false);
   const [isEditFlightFormOpen, setIsEditFlightFormOpen] = useState(false);
@@ -124,8 +126,8 @@ export default function VendorDashboard() {
                 <Plane className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h1 className="font-heading text-xl font-bold">Vendor Dashboard</h1>
-                <p className="font-body text-xs text-muted-foreground">Manage your fleet and operations</p>
+                <h1 className="font-heading text-xl font-bold">{t("vendor.headerTitle")}</h1>
+                <p className="font-body text-xs text-muted-foreground">{t("vendor.headerSubtitle")}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -134,24 +136,24 @@ export default function VendorDashboard() {
                 size="sm"
                 onClick={() => {
                   setIsAircraftFormOpen(true);
-                  showSuccess("Aircraft form opened");
+                  showSuccess(t("vendor.toasts.aircraftFormOpened"));
                 }}
                 className="gap-1.5"
               >
                 <Plus className="h-4 w-4" />
-                Add Aircraft
+                {t("vendor.buttons.addAircraft")}
               </Button>
               <Button
                 variant="default"
                 size="sm"
                 onClick={() => {
                   setIsFlightFormOpen(true);
-                  showSuccess("Flight creation form opened");
+                  showSuccess(t("vendor.toasts.flightFormOpened"));
                 }}
                 className="gap-1.5"
               >
                 <Plus className="h-4 w-4" />
-                Add Flight
+                {t("vendor.buttons.addFlight")}
               </Button>
               
             </div>
@@ -235,8 +237,8 @@ export default function VendorDashboard() {
                       <Plane className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-heading text-2xl font-semibold">My Flights</h3>
-                      <p className="font-body text-sm text-muted-foreground">All flights you've created</p>
+                      <h3 className="font-heading text-2xl font-semibold">{t("vendor.cards.myFlightsTitle")}</h3>
+                      <p className="font-body text-sm text-muted-foreground">{t("vendor.cards.myFlightsSubtitle")}</p>
                     </div>
                   </div>
                   <Button
@@ -250,24 +252,24 @@ export default function VendorDashboard() {
                     className="gap-2"
                   >
                     <RefreshCw className={`h-4 w-4 ${flightsLoading ? "animate-spin" : ""}`} />
-                    Refresh
+                    {t("vendor.buttons.refresh")}
                   </Button>
                 </div>
                 {flightsLoading ? (
                   <div className="text-center py-12">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                    <p className="mt-4 text-muted-foreground">Loading flights...</p>
+                    <p className="mt-4 text-muted-foreground">{t("vendor.loading")}</p>
                   </div>
                 ) : flights.length === 0 ? (
                   <div className="text-center py-12">
                     <Plane className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                    <h4 className="font-heading text-xl font-bold mb-2">No Flights Yet</h4>
+                    <h4 className="font-heading text-xl font-bold mb-2">{t("vendor.emptyState.title")}</h4>
                     <p className="text-muted-foreground mb-4">
-                      Create your first flight to start accepting bookings.
+                      {t("vendor.emptyState.description")}
                     </p>
                     <Button onClick={() => setIsFlightFormOpen(true)} className="gap-2">
                       <Calendar className="h-4 w-4" />
-                      Create Flight
+                      {t("vendor.buttons.createFlight")}
                     </Button>
                   </div>
                 ) : (
@@ -275,13 +277,13 @@ export default function VendorDashboard() {
                     <table className="min-w-full">
                       <thead>
                         <tr className="border-b border-border">
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Flight</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Route</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Departure</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Arrival</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Price</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Status</th>
-                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">Actions</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.flight")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.route")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.departure")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.arrival")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.price")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.status")}</th>
+                          <th className="py-3 pr-6 text-left font-body text-sm font-medium text-muted-foreground">{t("vendor.table.actions")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -360,7 +362,7 @@ export default function VendorDashboard() {
                                 <div className="font-heading font-semibold text-primary">
                                   ₹{parseFloat(flight.base_price).toLocaleString()}
                                 </div>
-                                <div className="font-body text-xs text-muted-foreground">per seat</div>
+                                <div className="font-body text-xs text-muted-foreground">{t("vendor.table.priceSuffix")}</div>
                               </td>
                               <td className="py-4 pr-6">
                                 <Badge
@@ -370,7 +372,7 @@ export default function VendorDashboard() {
                                       : "bg-accent text-accent-foreground"
                                   }
                                 >
-                                  {isPast ? "Completed" : "Active"}
+                                  {isPast ? t("vendor.status.completed") : t("vendor.status.active")}
                                 </Badge>
                               </td>
                               <td className="py-4 pr-6">
@@ -382,7 +384,7 @@ export default function VendorDashboard() {
                                     className="gap-1"
                                   >
                                     <Edit className="h-3 w-3" />
-                                    Edit
+                                    {t("vendor.buttons.edit")}
                                   </Button>
                                   <Button
                                     variant="outline"
@@ -392,7 +394,7 @@ export default function VendorDashboard() {
                                     className="gap-1 text-destructive hover:text-destructive hover:bg-destructive/10"
                                   >
                                     <Trash2 className="h-3 w-3" />
-                                    {deletingFlightId === flight.id ? "Deleting..." : "Delete"}
+                                    {deletingFlightId === flight.id ? t("vendor.buttons.deleting") : t("vendor.buttons.delete")}
                                   </Button>
                                 </div>
                               </td>

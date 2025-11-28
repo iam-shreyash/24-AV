@@ -1,0 +1,106 @@
+{
+  "nav": {
+    "brand": "24AV",
+    "home": "Inicio",
+    "searchFlights": "Buscar vuelos",
+    "myBookings": "Mis reservas",
+    "offers": "Ofertas",
+    "support": "Soporte",
+    "vendorPortal": "Portal de proveedores",
+    "adminPortal": "Portal de administrador",
+    "logout": "Cerrar sesión",
+    "signIn": "Iniciar sesión",
+    "register": "Registrarse",
+    "language": "Idioma"
+  },
+  "home": {
+    "hero": {
+      "badge": "La principal plataforma aérea de la India",
+      "title": "Reserva tus vuelos con 24AV",
+      "titleVendor": "Bienvenido al panel de proveedor",
+      "subtitle": "Búsqueda rápida, pago sencillo y viajes inolvidables",
+      "subtitleVendor": "Gestiona tus vuelos, aeronaves y pasajeros con facilidad."
+    },
+    "sections": {
+      "benefitsTitle": "Nuestros beneficios",
+      "benefitsSubtitle": "Todo lo que necesitas para un viaje sin complicaciones",
+      "vendorToolsTitle": "Herramientas para proveedores",
+      "vendorToolsSubtitle": "Todo lo que necesitas para gestionar tus operaciones aéreas."
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "Confirmación instantánea",
+        "description": "Recibe la confirmación de tu reserva al instante por correo electrónico y SMS."
+      },
+      "securePayments": {
+        "title": "Pagos seguros",
+        "description": "Cifrado de nivel bancario para todas las transacciones."
+      },
+      "exclusiveDeals": {
+        "title": "Ofertas exclusivas",
+        "description": "Descuentos especiales y promociones de temporada."
+      },
+      "easyManagement": {
+        "title": "Gestión sencilla",
+        "description": "Administra todas tus reservas desde un solo panel."
+      },
+      "travelUpdates": {
+        "title": "Actualizaciones de viaje",
+        "description": "Notificaciones en tiempo real sobre tus vuelos."
+      },
+      "groupBookings": {
+        "title": "Reservas de grupo",
+        "description": "Tarifas especiales para viajes en grupo."
+      },
+      "priceAlerts": {
+        "title": "Alertas de precios",
+        "description": "Recibe avisos cuando bajen los precios en tus rutas."
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "Pagos seguros",
+        "description": "Pagos rápidos y transacciones cifradas."
+      },
+      "businessAnalytics": {
+        "title": "Analítica de negocio",
+        "description": "Consulta las tendencias de reservas y el rendimiento."
+      },
+      "documentVault": {
+        "title": "Gestor de documentos",
+        "description": "Sube y gestiona los documentos de verificación requeridos."
+      },
+      "easyDashboard": {
+        "title": "Panel intuitivo",
+        "description": "Un panel centralizado para todas las operaciones del proveedor."
+      }
+    },
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "subtitle": "Respuestas rápidas a las preguntas más comunes sobre las reservas en 24AV",
+      "viewAll": "Ver todas las preguntas",
+      "items": {
+        "howToBook": {
+          "question": "¿Cómo reservo un vuelo en 24AV?",
+          "answer": "Introduce tu ciudad de origen y destino, selecciona las fechas de viaje y haz clic en ‘Buscar vuelos’. Elige la opción que prefieras y completa la reserva en pocos pasos."
+        },
+        "paymentMethods": {
+          "question": "¿Qué métodos de pago aceptan?",
+          "answer": "Aceptamos las principales tarjetas de crédito y débito, UPI, banca en línea y monederos digitales. Todas las transacciones están protegidas con cifrado de nivel bancario."
+        },
+        "modifyBooking": {
+          "question": "¿Puedo cancelar o modificar mi reserva?",
+          "answer": "Sí. Puedes cancelar o modificar tu reserva desde la sección ‘Mis reservas’. Las políticas y cargos dependen de la aerolínea y la tarifa."
+        },
+        "receiveTicket": {
+          "question": "¿Cómo recibiré mi billete?",
+          "answer": "Recibirás tu billete electrónico por correo electrónico y SMS inmediatamente después de la confirmación, y podrás acceder a él desde la sección ‘Mis reservas’."
+        },
+        "isSafe": {
+          "question": "¿Es seguro reservar en línea?",
+          "answer": "Por supuesto. Utilizamos cifrado SSL y pasarelas de pago seguras para proteger tus datos personales y financieros."
+        }
+      }
+    }
+  }
+}
