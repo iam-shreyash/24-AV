@@ -1,6 +1,8 @@
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { useAuth } from "./components/auth/AuthContext";
+import { useTranslation } from "react-i18next";
+import { setRTL } from "./utils/rtl";
 
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -36,6 +38,25 @@ function App() {
   useEffect(() => {
     console.log("App rendered, current path:", location.pathname);
   }, [location.pathname]);
+  const { i18n } = useTranslation();
+
+// Add RTL effect
+useEffect(() => {
+  // Set RTL based on current language
+  setRTL(i18n.language === 'ar' || i18n.language === 'he' /* add other RTL languages */);
+  
+  // Listen for language changes
+  const handleLanguageChange = (lng: string) => {
+    setRTL(lng === 'ar' || lng === 'he' /* add other RTL languages */);
+  };
+
+  i18n.on('languageChanged', handleLanguageChange);
+  
+  // Cleanup
+  return () => {
+    i18n.off('languageChanged', handleLanguageChange);
+  };
+}, [i18n]);
   
   return (
     <ToastProvider>

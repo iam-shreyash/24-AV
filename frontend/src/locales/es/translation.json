@@ -82,7 +82,7 @@
       "items": {
         "howToBook": {
           "question": "¿Cómo reservo un vuelo en 24AV?",
-          "answer": "Introduce tu ciudad de origen y destino, selecciona las fechas de viaje y haz clic en ‘Buscar vuelos’. Elige la opción que prefieras y completa la reserva en pocos pasos."
+          "answer": "Introduce tu ciudad de origen y destino, selecciona las fechas de viaje y haz clic en 'Buscar vuelos'. Elige la opción que prefieras y completa la reserva en pocos pasos."
         },
         "paymentMethods": {
           "question": "¿Qué métodos de pago aceptan?",
@@ -90,11 +90,11 @@
         },
         "modifyBooking": {
           "question": "¿Puedo cancelar o modificar mi reserva?",
-          "answer": "Sí. Puedes cancelar o modificar tu reserva desde la sección ‘Mis reservas’. Las políticas y cargos dependen de la aerolínea y la tarifa."
+          "answer": "Sí. Puedes cancelar o modificar tu reserva desde la sección 'Mis reservas'. Las políticas y cargos dependen de la aerolínea y la tarifa."
         },
         "receiveTicket": {
           "question": "¿Cómo recibiré mi billete?",
-          "answer": "Recibirás tu billete electrónico por correo electrónico y SMS inmediatamente después de la confirmación, y podrás acceder a él desde la sección ‘Mis reservas’."
+          "answer": "Recibirás tu billete electrónico por correo electrónico y SMS inmediatamente después de la confirmación, y podrás acceder a él desde la sección 'Mis reservas'."
         },
         "isSafe": {
           "question": "¿Es seguro reservar en línea?",
@@ -102,5 +102,105 @@
         }
       }
     }
+  },
+  "auth": {
+    "login": {
+      "badge": "Bienvenido de nuevo",
+      "title": "Inicia sesión en tu cuenta",
+      "subtitle": "Inicia sesión como administrador, proveedor o pasajero para acceder a tu panel de control.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "Tu correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "Tu contraseña",
+      "submit": "Iniciar sesión",
+      "submitting": "Iniciando sesión...",
+      "noAccount": "¿No tienes una cuenta?",
+      "registerHere": "Regístrate aquí"
+    }
+  },
+  "vendor": {
+    "headerTitle": "Panel de proveedor",
+    "headerSubtitle": "Gestiona tu flota y operaciones",
+    "buttons": {
+      "addAircraft": "Añadir aeronave",
+      "addFlight": "Añadir vuelo",
+      "refresh": "Actualizar",
+      "createFlight": "Crear vuelo",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleting": "Eliminando..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "Formulario de aeronave abierto",
+      "flightFormOpened": "Formulario de creación de vuelo abierto"
+    },
+    "cards": {
+      "myFlightsTitle": "Mis vuelos",
+      "myFlightsSubtitle": "Todos los vuelos que has creado"
+    },
+    "table": {
+      "flight": "Vuelo",
+      "route": "Ruta",
+      "departure": "Salida",
+      "arrival": "Llegada",
+      "price": "Precio",
+      "status": "Estado",
+      "actions": "Acciones",
+      "priceSuffix": "por asiento"
+    },
+    "status": {
+      "completed": "Completado",
+      "active": "Activo"
+    },
+    "emptyState": {
+      "title": "Aún no hay vuelos",
+      "description": "Crea tu primer vuelo para comenzar a aceptar reservas."
+    },
+    "confirmDelete": "¿Estás seguro de que deseas eliminar el vuelo {{flight}}? También se eliminará de los resultados de búsqueda de pasajeros.",
+    "errors": {
+      "deleteGeneric": "Error al eliminar el vuelo. Por favor, inténtalo de nuevo."
+    },
+    "loading": "Cargando vuelos..."
+  },
+  "passenger": {
+    "badge": "Panel de pasajero",
+    "welcomeTitle": "Bienvenido de nuevo",
+    "welcomeSubtitle": "Explora vuelos disponibles y gestiona tus reservas.",
+    "myBookingsTitle": "Mis reservas",
+    "myBookingsSubtitle": "Tus vuelos y viajes programados.",
+    "loading": "Cargando tus reservas...",
+    "errorGeneric": "Error al cargar las reservas. Por favor, inténtalo de nuevo.",
+    "tryAgain": "Reintentar",
+    "emptyTitle": "Aún no hay reservas",
+    "emptyBody": "Aún no has reservado ningún vuelo. Explora los vuelos disponibles para reservar tu próximo viaje.",
+    "emptyCta": "Buscar vuelos →",
+    "downloadTicket": "Descargar billete",
+    "downloadError": "Error al descargar el billete. Por favor, inténtalo de nuevo."
+  },
+  "searchBar": {
+    "fromPlaceholder": "Origen",
+    "toPlaceholder": "Destino",
+    "departurePlaceholder": "Fecha de salida",
+    "passengersPlaceholder": "Pasajeros",
+    "searchButton": "Buscar vuelos",
+    "swapAria": "Intercambiar origen y destino"
+  },
+  "flightSearch": {
+    "badge": "Búsqueda de vuelos",
+    "title": "Buscar vuelos",
+    "subtitle": "Reserva asientos individuales o aviones completos en segundos.",
+    "originPlaceholder": "Ciudad de origen (ej. Bombay)",
+    "destinationPlaceholder": "Destino (ej. Dubái)",
+    "searchButton": "Buscar",
+    "searching": "Buscando...",
+    "refresh": "Actualizar",
+    "availableFlightsTitle": "Vuelos disponibles",
+    "resultsCount_one": "{{count}} vuelo encontrado",
+    "resultsCount_other": "{{count}} vuelos encontrados",
+    "noFlights": "No hay vuelos disponibles en este momento",
+    "direct": "Directo",
+    "seatsAvailable_one": "Queda {{count}} asiento",
+    "seatsAvailable_other": "Quedan {{count}} asientos",
+    "noFlightsFiltered": "No hay vuelos que coincidan con tus criterios de búsqueda. Por favor, ajusta los filtros."
   }
 }

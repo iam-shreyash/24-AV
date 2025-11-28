@@ -12,5 +12,195 @@
     "signIn": "登录",
     "register": "注册",
     "language": "语言"
+  },
+  "home": {
+    "hero": {
+      "badge": "印度领先的航空平台",
+      "title": "通过24AV预订航班",
+      "titleVendor": "欢迎使用供应商控制面板",
+      "subtitle": "快速搜索，简单支付，难忘旅程",
+      "subtitleVendor": "轻松管理您的航班、飞机和乘客"
+    },
+    "sections": {
+      "benefitsTitle": "我们的优势",
+      "benefitsSubtitle": "无忧旅行所需的一切",
+      "vendorToolsTitle": "供应商工具",
+      "vendorToolsSubtitle": "管理航空业务所需的一切"
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "即时确认",
+        "description": "通过电子邮件和短信立即接收预订确认"
+      },
+      "securePayments": {
+        "title": "安全支付",
+        "description": "银行级加密保障所有交易安全"
+      },
+      "exclusiveDeals": {
+        "title": "独家优惠",
+        "description": "特别折扣和季节性促销"
+      },
+      "easyManagement": {
+        "title": "轻松管理",
+        "description": "通过一个控制面板管理所有预订"
+      },
+      "travelUpdates": {
+        "title": "旅行更新",
+        "description": "实时航班通知"
+      },
+      "groupBookings": {
+        "title": "团体预订",
+        "description": "团体旅行特惠价格"
+      },
+      "priceAlerts": {
+        "title": "价格提醒",
+        "description": "航线降价时获取通知"
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "安全支付",
+        "description": "快速支付和加密交易"
+      },
+      "businessAnalytics": {
+        "title": "业务分析",
+        "description": "查看预订趋势和表现"
+      },
+      "documentVault": {
+        "title": "文档保管库",
+        "description": "上传和管理验证所需文件"
+      },
+      "easyDashboard": {
+        "title": "直观的控制面板",
+        "description": "集中式控制面板处理所有供应商操作"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "subtitle": "24AV预订常见问题解答",
+      "viewAll": "查看所有问题",
+      "items": {
+        "howToBook": {
+          "question": "如何在24AV上预订航班？",
+          "answer": "只需输入出发地和目的地城市，选择旅行日期，然后点击'搜索航班'。从可用选项中选择，完成预订只需几个简单步骤。"
+        },
+        "paymentMethods": {
+          "question": "接受哪些付款方式？",
+          "answer": "我们接受所有主要信用卡和借记卡、UPI、网上银行和数字钱包。所有交易均通过银行级加密保护。"
+        },
+        "modifyBooking": {
+          "question": "我可以取消或修改预订吗？",
+          "answer": "是的，您可以通过'我的预订'部分取消或修改预订。取消和修改政策及费用因航空公司和票价类型而异。"
+        },
+        "receiveTicket": {
+          "question": "如何收到我的机票？",
+          "answer": "确认后，您将立即通过电子邮件和短信收到电子机票。您也可以随时从'我的预订'部分访问。"
+        },
+        "isSafe": {
+          "question": "在线预订安全吗？",
+          "answer": "当然安全。我们使用SSL加密和安全支付网关来保护您的个人和财务信息。"
+        }
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "badge": "欢迎回来",
+      "title": "登录您的账户",
+      "subtitle": "以管理员、供应商或乘客身份登录访问控制面板",
+      "emailLabel": "电子邮件",
+      "emailPlaceholder": "您的电子邮件地址",
+      "passwordLabel": "密码",
+      "passwordPlaceholder": "您的密码",
+      "submit": "登录",
+      "submitting": "登录中...",
+      "noAccount": "没有账户？",
+      "registerHere": "立即注册"
+    }
+  },
+  "vendor": {
+    "headerTitle": "供应商控制面板",
+    "headerSubtitle": "管理您的机队和运营",
+    "buttons": {
+      "addAircraft": "添加飞机",
+      "addFlight": "添加航班",
+      "refresh": "刷新",
+      "createFlight": "创建航班",
+      "edit": "编辑",
+      "delete": "删除",
+      "deleting": "删除中..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "飞机表单已打开",
+      "flightFormOpened": "航班创建表单已打开"
+    },
+    "cards": {
+      "myFlightsTitle": "我的航班",
+      "myFlightsSubtitle": "您创建的所有航班"
+    },
+    "table": {
+      "flight": "航班",
+      "route": "航线",
+      "departure": "出发",
+      "arrival": "到达",
+      "price": "价格",
+      "status": "状态",
+      "actions": "操作",
+      "priceSuffix": "每座"
+    },
+    "status": {
+      "completed": "已完成",
+      "active": "活跃"
+    },
+    "emptyState": {
+      "title": "暂无航班",
+      "description": "创建您的第一个航班以开始接受预订"
+    },
+    "confirmDelete": "确定要删除航班{{flight}}吗？这也会从乘客的搜索结果中删除。",
+    "errors": {
+      "deleteGeneric": "删除航班失败，请重试。"
+    },
+    "loading": "加载航班中..."
+  },
+  "passenger": {
+    "badge": "乘客控制面板",
+    "welcomeTitle": "欢迎回来",
+    "welcomeSubtitle": "探索可用航班并管理您的预订",
+    "myBookingsTitle": "我的预订",
+    "myBookingsSubtitle": "您的航班和行程安排",
+    "loading": "正在加载您的预订...",
+    "errorGeneric": "加载预订时出错，请重试。",
+    "tryAgain": "重试",
+    "emptyTitle": "暂无预订",
+    "emptyBody": "您尚未预订任何航班。浏览可用航班预订您的下一次旅行。",
+    "emptyCta": "搜索航班 →",
+    "downloadTicket": "下载机票",
+    "downloadError": "下载机票失败，请重试。"
+  },
+  "searchBar": {
+    "fromPlaceholder": "出发地",
+    "toPlaceholder": "目的地",
+    "departurePlaceholder": "出发日期",
+    "passengersPlaceholder": "乘客",
+    "searchButton": "搜索航班",
+    "swapAria": "交换出发地和目的地"
+  },
+  "flightSearch": {
+    "badge": "航班搜索",
+    "title": "搜索航班",
+    "subtitle": "几秒钟内预订单个座位或整架飞机",
+    "originPlaceholder": "出发城市（例如：孟买）",
+    "destinationPlaceholder": "目的地（例如：迪拜）",
+    "searchButton": "搜索",
+    "searching": "搜索中...",
+    "refresh": "刷新",
+    "availableFlightsTitle": "可用航班",
+    "resultsCount_one": "找到{{count}}个航班",
+    "resultsCount_other": "找到{{count}}个航班",
+    "noFlights": "当前没有可用航班",
+    "direct": "直飞",
+    "seatsAvailable_one": "剩余{{count}}个座位",
+    "seatsAvailable_other": "剩余{{count}}个座位",
+    "noFlightsFiltered": "没有符合您搜索条件的航班。请调整筛选条件。"
   }
 }

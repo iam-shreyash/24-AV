@@ -82,7 +82,7 @@
       "items": {
         "howToBook": {
           "question": "Comment réserver un vol sur 24AV ?",
-          "answer": "Saisissez simplement vos villes de départ et d'arrivée, choisissez vos dates de voyage et cliquez sur ‘Rechercher des vols’. Parcourez les options disponibles et finalisez votre réservation en quelques clics."
+          "answer": "Saisissez simplement vos villes de départ et d'arrivée, choisissez vos dates de voyage et cliquez sur 'Rechercher des vols'. Parcourez les options disponibles et finalisez votre réservation en quelques clics."
         },
         "paymentMethods": {
           "question": "Quels moyens de paiement acceptez-vous ?",
@@ -90,11 +90,11 @@
         },
         "modifyBooking": {
           "question": "Puis-je annuler ou modifier ma réservation ?",
-          "answer": "Oui, vous pouvez annuler ou modifier votre réservation depuis la section ‘Mes réservations’. Les politiques d'annulation et de modification varient selon la compagnie aérienne et le tarif. Veuillez vérifier les conditions avant de réserver."
+          "answer": "Oui, vous pouvez annuler ou modifier votre réservation depuis la section 'Mes réservations'. Les politiques d'annulation et de modification varient selon la compagnie aérienne et le tarif. Veuillez vérifier les conditions avant de réserver."
         },
         "receiveTicket": {
           "question": "Comment vais-je recevoir mon billet ?",
-          "answer": "Vous recevrez votre e‑billet par e‑mail et SMS immédiatement après la confirmation. Vous pouvez également y accéder à tout moment depuis la section ‘Mes réservations’."
+          "answer": "Vous recevrez votre e‑billet par e‑mail et SMS immédiatement après la confirmation. Vous pouvez également y accéder à tout moment depuis la section 'Mes réservations'."
         },
         "isSafe": {
           "question": "Est‑il sûr de réserver en ligne ?",
@@ -102,5 +102,105 @@
         }
       }
     }
+  },
+  "auth": {
+    "login": {
+      "badge": "Content de vous revoir",
+      "title": "Connectez-vous à votre compte",
+      "subtitle": "Connectez-vous en tant qu'administrateur, fournisseur ou passager pour accéder à votre tableau de bord.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "Votre adresse e-mail",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "registerHere": "Inscrivez-vous ici"
+    }
+  },
+  "vendor": {
+    "headerTitle": "Tableau de bord fournisseur",
+    "headerSubtitle": "Gérez votre flotte et vos opérations",
+    "buttons": {
+      "addAircraft": "Ajouter un avion",
+      "addFlight": "Ajouter un vol",
+      "refresh": "Actualiser",
+      "createFlight": "Créer un vol",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleting": "Suppression..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "Formulaire d'ajout d'avion ouvert",
+      "flightFormOpened": "Formulaire de création de vol ouvert"
+    },
+    "cards": {
+      "myFlightsTitle": "Mes vols",
+      "myFlightsSubtitle": "Tous les vols que vous avez créés"
+    },
+    "table": {
+      "flight": "Vol",
+      "route": "Itinéraire",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "price": "Prix",
+      "status": "Statut",
+      "actions": "Actions",
+      "priceSuffix": "par siège"
+    },
+    "status": {
+      "completed": "Terminé",
+      "active": "Actif"
+    },
+    "emptyState": {
+      "title": "Aucun vol pour le moment",
+      "description": "Créez votre premier vol pour commencer à accepter des réservations."
+    },
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer le vol {{flight}} ? Cela le retirera également des résultats de recherche des passagers.",
+    "errors": {
+      "deleteGeneric": "Échec de la suppression du vol. Veuillez réessayer."
+    },
+    "loading": "Chargement des vols..."
+  },
+  "passenger": {
+    "badge": "Tableau de bord passager",
+    "welcomeTitle": "Content de vous revoir",
+    "welcomeSubtitle": "Explorez les vols disponibles et gérez vos réservations.",
+    "myBookingsTitle": "Mes réservations",
+    "myBookingsSubtitle": "Vos vols et voyages programmés.",
+    "loading": "Chargement de vos réservations...",
+    "errorGeneric": "Impossible de charger les réservations. Veuillez réessayer.",
+    "tryAgain": "Réessayer",
+    "emptyTitle": "Aucune réservation pour le moment",
+    "emptyBody": "Vous n'avez pas encore réservé de vol. Parcourez les vols disponibles pour réserver votre prochain voyage.",
+    "emptyCta": "Rechercher des vols →",
+    "downloadTicket": "Télécharger le billet",
+    "downloadError": "Échec du téléchargement du billet. Veuillez réessayer."
+  },
+  "searchBar": {
+    "fromPlaceholder": "De",
+    "toPlaceholder": "Vers",
+    "departurePlaceholder": "Date de départ",
+    "passengersPlaceholder": "Passagers",
+    "searchButton": "Rechercher des vols",
+    "swapAria": "Inverser la recherche"
+  },
+  "flightSearch": {
+    "badge": "Recherche de vols",
+    "title": "Rechercher des vols",
+    "subtitle": "Réservez des sièges individuels ou des avions entiers en quelques secondes.",
+    "originPlaceholder": "Ville de départ (ex. Mumbai)",
+    "destinationPlaceholder": "Destination (ex. Dubaï)",
+    "searchButton": "Rechercher",
+    "searching": "Recherche en cours...",
+    "refresh": "Actualiser",
+    "availableFlightsTitle": "Vols disponibles",
+    "resultsCount_one": "{{count}} vol trouvé",
+    "resultsCount_other": "{{count}} vols trouvés",
+    "noFlights": "Aucun vol disponible pour le moment",
+    "direct": "Direct",
+    "seatsAvailable_one": "{{count}} place restante",
+    "seatsAvailable_other": "{{count}} places restantes",
+    "noFlightsFiltered": "Aucun vol ne correspond à vos critères de recherche. Veuillez ajuster les filtres."
   }
 }

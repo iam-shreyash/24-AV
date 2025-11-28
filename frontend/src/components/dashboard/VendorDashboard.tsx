@@ -301,7 +301,7 @@ export default function VendorDashboard() {
                           
                           const handleDelete = async (e: React.MouseEvent) => {
                             e.stopPropagation();
-                            if (!window.confirm(`Are you sure you want to delete flight ${flight.flight_number || `FL-${flight.id}`}? This will also remove it from passenger search.`)) {
+                            if (!window.confirm(t('vendor.confirmDelete', { flight: flight.flight_number || `FL-${flight.id}` }))) {
                               return;
                             }
                             
@@ -315,7 +315,7 @@ export default function VendorDashboard() {
                               loadVendorFlights(true);
                             } catch (error: any) {
                               const raw = error.response?.data?.detail || error.response?.data?.message || error.message || "Failed to delete flight. Please try again.";
-                              alert(extractMessage(raw) || "Failed to delete flight. Please try again.");
+                              alert(extractMessage(raw) || t('vendor.errors.deleteGeneric'));
                             } finally {
                               setDeletingFlightId(null);
                             }

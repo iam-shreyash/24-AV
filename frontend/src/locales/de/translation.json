@@ -102,5 +102,105 @@
         }
       }
     }
+  },
+  "auth": {
+    "login": {
+      "badge": "Willkommen zurück",
+      "title": "Melden Sie sich an",
+      "subtitle": "Melden Sie sich als Administrator, Anbieter oder Passagier an, um auf Ihr Dashboard zuzugreifen.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "Ihre E-Mail-Adresse",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Ihr Passwort",
+      "submit": "Anmelden",
+      "submitting": "Anmeldung läuft...",
+      "noAccount": "Noch kein Konto?",
+      "registerHere": "Jetzt registrieren"
+    }
+  },
+  "vendor": {
+    "headerTitle": "Anbieter-Dashboard",
+    "headerSubtitle": "Verwaltung Ihrer Flotte und Flüge",
+    "buttons": {
+      "addAircraft": "Flugzeug hinzufügen",
+      "addFlight": "Flug hinzufügen",
+      "refresh": "Aktualisieren",
+      "createFlight": "Flug erstellen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "deleting": "Wird gelöscht..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "Flugzeug-Formular geöffnet",
+      "flightFormOpened": "Flug-Erstellungsformular geöffnet"
+    },
+    "cards": {
+      "myFlightsTitle": "Meine Flüge",
+      "myFlightsSubtitle": "Alle von Ihnen erstellten Flüge"
+    },
+    "table": {
+      "flight": "Flug",
+      "route": "Strecke",
+      "departure": "Abflug",
+      "arrival": "Ankunft",
+      "price": "Preis",
+      "status": "Status",
+      "actions": "Aktionen",
+      "priceSuffix": "pro Sitz"
+    },
+    "status": {
+      "completed": "Abgeschlossen",
+      "active": "Aktiv"
+    },
+    "emptyState": {
+      "title": "Noch keine Flüge",
+      "description": "Erstellen Sie Ihren ersten Flug, um mit der Annahme von Buchungen zu beginnen."
+    },
+    "confirmDelete": "Sind Sie sicher, dass Sie Flug {{flight}} löschen möchten? Er wird auch aus den Suchergebnissen der Passagiere entfernt.",
+    "errors": {
+      "deleteGeneric": "Löschen des Fluges fehlgeschlagen. Bitte versuchen Sie es erneut."
+    },
+    "loading": "Flüge werden geladen..."
+  },
+  "passenger": {
+    "badge": "Passagier-Dashboard",
+    "welcomeTitle": "Willkommen zurück",
+    "welcomeSubtitle": "Entdecken Sie verfügbare Flüge und verwalten Sie Ihre Buchungen.",
+    "myBookingsTitle": "Meine Buchungen",
+    "myBookingsSubtitle": "Ihre Flüge und geplanten Reisen.",
+    "loading": "Ihre Buchungen werden geladen...",
+    "errorGeneric": "Buchungen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "tryAgain": "Erneut versuchen",
+    "emptyTitle": "Noch keine Buchungen",
+    "emptyBody": "Sie haben noch keine Flüge gebucht. Durchsuchen Sie die verfügbaren Flüge, um Ihre nächste Reise zu buchen.",
+    "emptyCta": "Flüge suchen →",
+    "downloadTicket": "Ticket herunterladen",
+    "downloadError": "Herunterladen des Tickets fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
+  "searchBar": {
+    "fromPlaceholder": "Von",
+    "toPlaceholder": "Nach",
+    "departurePlaceholder": "Abflugdatum",
+    "passengersPlaceholder": "Passagiere",
+    "searchButton": "Flüge suchen",
+    "swapAria": "Start- und Zielflughafen tauschen"
+  },
+  "flightSearch": {
+    "badge": "Flugsuche",
+    "title": "Flüge suchen",
+    "subtitle": "Buchen Sie einzelne Sitze oder ganze Flugzeuge in Sekundenschnelle.",
+    "originPlaceholder": "Abflugsort (z.B. Mumbai)",
+    "destinationPlaceholder": "Zielort (z.B. Dubai)",
+    "searchButton": "Suchen",
+    "searching": "Suche läuft...",
+    "refresh": "Aktualisieren",
+    "availableFlightsTitle": "Verfügbare Flüge",
+    "resultsCount_one": "{{count}} Flug gefunden",
+    "resultsCount_other": "{{count}} Flüge gefunden",
+    "noFlights": "Aktuell keine Flüge verfügbar",
+    "direct": "Direktflug",
+    "seatsAvailable_one": "Noch {{count}} Sitzplatz",
+    "seatsAvailable_other": "Noch {{count}} Sitzplätze",
+    "noFlightsFiltered": "Keine Flüge entsprechen Ihren Suchkriterien. Bitte passen Sie Ihre Filter an."
   }
 }

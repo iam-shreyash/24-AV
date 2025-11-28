@@ -1,6 +1,8 @@
+// src/i18n.ts
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
+import { setRTL } from "./utils/rtl";
 
 import en from "./locales/en/translation.json";
 import fr from "./locales/fr/translation.json";
@@ -24,7 +26,8 @@ const resources = {
 
 const STORAGE_KEY = "i18n_language";
 
-void i18n
+// Initialize i18n
+i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -40,21 +43,25 @@ void i18n
     },
   });
 
+// Handle language changes
 if (typeof window !== "undefined") {
+  // Set initial RTL state
+  setRTL(i18n.language === "ar");
+  
   i18n.on("languageChanged", (lang: string) => {
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch {
       // ignore storage errors
     }
-    const dir = lang === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = lang;
-    document.documentElement.dir = dir;
+    // Set RTL for Arabic
+    setRTL(lang === "ar");
   });
 }
 
-export function setLanguage(lang: string) {
+// Export a function to change language
+export const setLanguage = (lang: string) => {
   i18n.changeLanguage(lang);
-}
+};
 
 export default i18n;

@@ -12,5 +12,195 @@
     "signIn": "ログイン",
     "register": "新規登録",
     "language": "言語"
+  },
+  "home": {
+    "hero": {
+      "badge": "インドを代表する航空プラットフォーム",
+      "title": "24AVでフライトを予約",
+      "titleVendor": "ベンダーダッシュボードへようこそ",
+      "subtitle": "簡単な検索、シンプルな決済、忘れられない旅",
+      "subtitleVendor": "フライト、航空機、お客様情報を簡単に管理"
+    },
+    "sections": {
+      "benefitsTitle": "当社の特長",
+      "benefitsSubtitle": "快適な旅に必要なすべてが揃っています",
+      "vendorToolsTitle": "ベンダーツール",
+      "vendorToolsSubtitle": "航空事業運営に必要なすべてのツール"
+    },
+    "benefits": {
+      "instantConfirmation": {
+        "title": "即時確認",
+        "description": "予約確認をメールとSMSですぐにお届けします"
+      },
+      "securePayments": {
+        "title": "安全な決済",
+        "description": "銀行レベルの暗号化で全ての取引を保護"
+      },
+      "exclusiveDeals": {
+        "title": "限定オファー",
+        "description": "特別割引と季節ごとのプロモーション"
+      },
+      "easyManagement": {
+        "title": "簡単な管理",
+        "description": "すべての予約を1つのダッシュボードで管理"
+      },
+      "travelUpdates": {
+        "title": "旅行情報の更新",
+        "description": "フライトに関するリアルタイム通知"
+      },
+      "groupBookings": {
+        "title": "グループ予約",
+        "description": "グループ旅行の特別料金"
+      },
+      "priceAlerts": {
+        "title": "プライスアラート",
+        "description": "行き先の料金が下がったら通知"
+      }
+    },
+    "vendorTools": {
+      "securePayments": {
+        "title": "安全な決済",
+        "description": "迅速な支払いと暗号化された取引"
+      },
+      "businessAnalytics": {
+        "title": "ビジネス分析",
+        "description": "予約動向とパフォーマンスを確認"
+      },
+      "documentVault": {
+        "title": "書類管理",
+        "description": "必要な検証書類をアップロード・管理"
+      },
+      "easyDashboard": {
+        "title": "使いやすいダッシュボード",
+        "description": "ベンダー業務のための一元化されたダッシュボード"
+      }
+    },
+    "faq": {
+      "title": "よくある質問",
+      "subtitle": "24AVでの予約に関するよくある質問と回答",
+      "viewAll": "すべての質問を見る",
+      "items": {
+        "howToBook": {
+          "question": "24AVでのフライト予約方法は？",
+          "answer": "出発地と到着地を入力し、出発日を選択して「フライト検索」をクリックするだけです。表示されたオプションからお選びいただき、数ステップで予約を完了できます。"
+        },
+        "paymentMethods": {
+          "question": "利用可能な支払い方法は？",
+          "answer": "主要なクレジットカード・デビットカード、UPI、ネットバンキング、デジタルウォレットをご利用いただけます。すべての取引は銀行レベルの暗号化で保護されています。"
+        },
+        "modifyBooking": {
+          "question": "予約のキャンセルや変更は可能ですか？",
+          "answer": "はい、「予約一覧」セクションから予約のキャンセルや変更が可能です。キャンセル・変更ポリシーや手数料は航空会社や運賃タイプによって異なります。"
+        },
+        "receiveTicket": {
+          "question": "チケットの受け取り方法は？",
+          "answer": "ご予約確定後、すぐにEチケットをメールとSMSでお送りします。「予約一覧」からもいつでもアクセス可能です。"
+        },
+        "isSafe": {
+          "question": "オンライン予約は安全ですか？",
+          "answer": "はい、SSL暗号化と安全な決済ゲートウェイを使用して、お客様の個人情報と金融情報を保護しています。"
+        }
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "badge": "ようこそ",
+      "title": "アカウントにログイン",
+      "subtitle": "管理者、ベンダー、または乗客としてログインしてダッシュボードにアクセス",
+      "emailLabel": "メールアドレス",
+      "emailPlaceholder": "メールアドレスを入力",
+      "passwordLabel": "パスワード",
+      "passwordPlaceholder": "パスワードを入力",
+      "submit": "ログイン",
+      "submitting": "ログイン中...",
+      "noAccount": "アカウントをお持ちでない方",
+      "registerHere": "新規登録はこちら"
+    }
+  },
+  "vendor": {
+    "headerTitle": "ベンダーダッシュボード",
+    "headerSubtitle": "機体と運航の管理",
+    "buttons": {
+      "addAircraft": "機体を追加",
+      "addFlight": "フライトを追加",
+      "refresh": "更新",
+      "createFlight": "フライトを作成",
+      "edit": "編集",
+      "delete": "削除",
+      "deleting": "削除中..."
+    },
+    "toasts": {
+      "aircraftFormOpened": "機体フォームを開きました",
+      "flightFormOpened": "フライト作成フォームを開きました"
+    },
+    "cards": {
+      "myFlightsTitle": "マイフライト",
+      "myFlightsSubtitle": "作成したすべてのフライト"
+    },
+    "table": {
+      "flight": "フライト",
+      "route": "ルート",
+      "departure": "出発",
+      "arrival": "到着",
+      "price": "料金",
+      "status": "ステータス",
+      "actions": "操作",
+      "priceSuffix": "1席あたり"
+    },
+    "status": {
+      "completed": "完了",
+      "active": "有効"
+    },
+    "emptyState": {
+      "title": "フライトがありません",
+      "description": "予約を受け付けるには、最初のフライトを作成してください"
+    },
+    "confirmDelete": "フライト{{flight}}を削除してもよろしいですか？ この操作は取り消せず、乗客の検索結果からも削除されます。",
+    "errors": {
+      "deleteGeneric": "フライトの削除に失敗しました。もう一度お試しください。"
+    },
+    "loading": "フライトを読み込み中..."
+  },
+  "passenger": {
+    "badge": "乗客ダッシュボード",
+    "welcomeTitle": "おかえりなさい",
+    "welcomeSubtitle": "利用可能なフライトを探して予約を管理",
+    "myBookingsTitle": "マイ予約",
+    "myBookingsSubtitle": "あなたのフライトと予定された旅行",
+    "loading": "予約を読み込み中...",
+    "errorGeneric": "予約の読み込み中にエラーが発生しました。もう一度お試しください。",
+    "tryAgain": "再試行",
+    "emptyTitle": "予約がありません",
+    "emptyBody": "まだフライトを予約していません。次の旅行のフライトを探しましょう。",
+    "emptyCta": "フライトを検索 →",
+    "downloadTicket": "チケットをダウンロード",
+    "downloadError": "チケットのダウンロードに失敗しました。もう一度お試しください。"
+  },
+  "searchBar": {
+    "fromPlaceholder": "出発地",
+    "toPlaceholder": "到着地",
+    "departurePlaceholder": "出発日",
+    "passengersPlaceholder": "乗客数",
+    "searchButton": "フライトを検索",
+    "swapAria": "出発地と到着地を入れ替え"
+  },
+  "flightSearch": {
+    "badge": "フライト検索",
+    "title": "フライトを検索",
+    "subtitle": "座席1席から航空機1機まで、数秒で予約可能",
+    "originPlaceholder": "出発都市（例：ムンバイ）",
+    "destinationPlaceholder": "行き先（例：ドバイ）",
+    "searchButton": "検索",
+    "searching": "検索中...",
+    "refresh": "更新",
+    "availableFlightsTitle": "利用可能なフライト",
+    "resultsCount_one": "{{count}}件のフライトが見つかりました",
+    "resultsCount_other": "{{count}}件のフライトが見つかりました",
+    "noFlights": "現在利用可能なフライトはありません",
+    "direct": "直行便",
+    "seatsAvailable_one": "残り{{count}}席",
+    "seatsAvailable_other": "残り{{count}}席",
+    "noFlightsFiltered": "検索条件に一致するフライトがありません。フィルターを調整してください。"
   }
 }
