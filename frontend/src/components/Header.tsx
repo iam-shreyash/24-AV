@@ -5,50 +5,41 @@ import { useTranslation } from "react-i18next";
 import { clearAuth, getStoredAuth } from "./auth/Login";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+import LanguageSelector from "./LanguageSelector";
 
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
   const auth = getStoredAuth();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const getMyBookingsHref = () => {
-    // For passengers, always send "My Bookings" to the dedicated bookings route.
     if (auth?.role === "passenger") return "/my-bookings";
     if (auth?.role === "vendor") return "/vendor/dashboard";
     if (auth?.role === "admin") return "/dashboard/admin";
     return "/my-bookings";
   };
 
-  const languages = [
-    { code: "en", label: "EN" },
-    { code: "fr", label: "FR" },
-    { code: "de", label: "DE" },
-    { code: "es", label: "ES" },
-    { code: "ar", label: "AR" },
-    { code: "jp", label: "JP" },
-    { code: "zh", label: "ZH" },
-    { code: "ru", label: "RU" },
-  ];
-
-  // For vendors, hide passenger-only navigation items
-  const navigation: { key: string; href: string }[] = [
+  const navigation = [
     { key: "nav.home", href: "/" },
-    ...(auth?.role !== "vendor" ? [{ key: "nav.searchFlights", href: "/search" }] : []),
-    ...(auth?.role === "passenger" ? [{ key: "nav.myBookings", href: getMyBookingsHref() }] : []),
+    ...(auth?.role !== "vendor"
+      ? [{ key: "nav.searchFlights", href: "/search" }]
+      : []),
+    ...(auth?.role === "passenger"
+      ? [{ key: "nav.myBookings", href: getMyBookingsHref() }]
+      : []),
     { key: "nav.offers", href: "/offers" },
     { key: "nav.support", href: "/support" },
-    // Only show Vendor Portal for vendors
-    ...(auth?.role === "vendor" ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }] : []),
-    ...(auth?.role === "admin" ? [{ key: "nav.adminPortal", href: "/admin/portal" }] : [])
+    ...(auth?.role === "vendor"
+      ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }]
+      : []),
+    ...(auth?.role === "admin"
+      ? [{ key: "nav.adminPortal", href: "/admin/portal" }]
+      : []),
   ];
 
   const handleLogout = () => {
     clearAuth();
-    navigate("/login");
-  };
-
-  const handleLogin = () => {
     navigate("/login");
   };
 
@@ -66,23 +57,19 @@ export default function Header() {
           </div>
         </Link>
 
+        {/* Desktop Menu */}
         <nav className="hidden items-center space-x-6 md:flex">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href;
-            // For Home link, attach a stronger navigate fallback and debug logging
-            const handleClick = (e: React.MouseEvent) => {
+
+            const handleClick = (e: React.MouseEvent<HTMLElement>) => {
               if (item.href === "/") {
-                try {
-                  console.debug("Header Home clicked - executing fallback navigate", { href: item.href, target: e.currentTarget });
-                } catch (err) {
-                  // ignore
-                }
-                // Prevent default behavior and force navigation via router
                 e.preventDefault();
                 e.stopPropagation();
                 navigate("/");
               }
             };
+
             return (
               <Link
                 key={item.key}
@@ -98,33 +85,34 @@ export default function Header() {
               </Link>
             );
           })}
-          <div className="flex items-center space-x-2 ml-2">
-            <div className="flex items-center rounded-md border border-blue-100 bg-white px-2 py-1 text-xs text-gray-700 shadow-sm">
-              <Globe className="mr-1 h-3 w-3 text-blue-700" />
-              <select
-                value={i18n.language}
-                onChange={(e) => i18n.changeLanguage(e.target.value)}
-                className="bg-transparent text-xs focus:outline-none cursor-pointer"
-              >
-                {languages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {lang.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
+
+          {/* New Beautiful Dropdown Language Selector */}
+          <LanguageSelector />
+
           {auth ? (
-            <Button size="sm" className="ml-4 bg-blue-800 hover:bg-blue-900" onClick={handleLogout}>
+            <Button
+              size="sm"
+              className="ml-4 bg-blue-800 hover:bg-blue-900"
+              onClick={handleLogout}
+            >
               <User className="mr-2 h-4 w-4" />
               {t("nav.logout")}
             </Button>
           ) : (
             <>
-              <Button variant="outline" size="sm" className="ml-2 border-blue-800 text-blue-800 hover:bg-blue-50" onClick={() => navigate("/register")}>
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-2 border-blue-800 text-blue-800 hover:bg-blue-50"
+                onClick={() => navigate("/register")}
+              >
                 {t("nav.register")}
               </Button>
-              <Button size="sm" className="ml-2 bg-blue-800 hover:bg-blue-900" onClick={handleLogin}>
+              <Button
+                size="sm"
+                className="ml-2 bg-blue-800 hover:bg-blue-900"
+                onClick={() => navigate("/login")}
+              >
                 <User className="mr-2 h-4 w-4" />
                 {t("nav.signIn")}
               </Button>
@@ -132,26 +120,30 @@ export default function Header() {
           )}
         </nav>
 
+        {/* Mobile Menu */}
         <Sheet>
           <SheetTrigger asChild className="md:hidden">
-            <Button variant="ghost" size="icon">
-              <Menu className="h-6 w-6" />
-            </Button>
+            <div className="flex items-center space-x-4">
+              <LanguageSelector />
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </div>
           </SheetTrigger>
+
           <SheetContent side="right" className="w-[300px] bg-white">
             <nav className="mt-8 flex flex-col space-y-4">
               {navigation.map((item) => {
                 const isActive = location.pathname === item.href;
-                const handleClick = (e: React.MouseEvent) => {
+
+                const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                   if (item.href === "/") {
-                    try {
-                      console.debug("Mobile nav Home clicked - executing fallback navigate", { href: item.href, target: e.currentTarget });
-                    } catch (err) {}
                     e.preventDefault();
                     e.stopPropagation();
                     navigate("/");
                   }
                 };
+
                 return (
                   <Link
                     key={item.key}
@@ -160,41 +152,38 @@ export default function Header() {
                     className={`font-body text-base font-medium transition-all duration-300 ${
                       isActive
                         ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
-                        : "text-gray-700 hover:text-blue-800 hover:scale-105"
+                        : "text-gray-700 hover:text-blue-800"
                     }`}
                   >
                     {t(item.key)}
                   </Link>
                 );
               })}
-              <div className="mt-4 flex items-center justify-between rounded-md border border-blue-100 bg-white px-3 py-2 text-xs text-gray-700">
-                <div className="flex items-center">
-                  <Globe className="mr-2 h-4 w-4 text-blue-700" />
-                  <span>{t("nav.language")}</span>
-                </div>
-                <select
-                  value={i18n.language}
-                  onChange={(e) => i18n.changeLanguage(e.target.value)}
-                  className="bg-transparent text-xs focus:outline-none cursor-pointer"
-                >
-                  {languages.map((lang) => (
-                    <option key={lang.code} value={lang.code}>
-                      {lang.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+
+              {/* Language selector in mobile menu */}
+              <LanguageSelector />
+
               {auth ? (
-                <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleLogout}>
+                <Button
+                  className="bg-blue-800 hover:bg-blue-900"
+                  onClick={handleLogout}
+                >
                   <User className="mr-2 h-4 w-4" />
                   {t("nav.logout")}
                 </Button>
               ) : (
                 <>
-                  <Button variant="outline" className="border-blue-800 text-blue-800 hover:bg-blue-50" onClick={() => navigate("/register")}>
+                  <Button
+                    variant="outline"
+                    className="border-blue-800 text-blue-800 hover:bg-blue-50"
+                    onClick={() => navigate("/register")}
+                  >
                     {t("nav.register")}
                   </Button>
-                  <Button className="bg-blue-800 hover:bg-blue-900" onClick={handleLogin}>
+                  <Button
+                    className="bg-blue-800 hover:bg-blue-900"
+                    onClick={() => navigate("/login")}
+                  >
                     <User className="mr-2 h-4 w-4" />
                     {t("nav.signIn")}
                   </Button>
