@@ -106,8 +106,6 @@ class PlaneBase(BaseModel):
     model: str
     registration_number: str
     seat_capacity: PositiveInt
-    amenities: list[str] = []
-
 
 class PlaneCreate(PlaneBase):
     # Extended fields (stored in amenities as JSON or separate fields)
