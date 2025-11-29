@@ -110,6 +110,14 @@ useEffect(() => {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/vendor/application" element={<VendorApplication />} />
+        <Route 
+          path="/vendor" 
+          element={
+            <RequireRole role="vendor">
+              <VendorDashboard />
+            </RequireRole>
+          } 
+        />
         <Route
           path="/admin/portal"
           element={

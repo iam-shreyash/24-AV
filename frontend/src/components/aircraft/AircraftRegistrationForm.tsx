@@ -111,9 +111,23 @@ export default function AircraftRegistrationForm({
       return;
     }
 
-    setLoading(true);
-
     try {
+      setLoading(true);
+      setError("");
+
+      // Validate required fields
+      if (!formData.model?.trim()) {
+        setError("Model is required");
+        setLoading(false);
+        return;
+      }
+
+      if (!formData.registration_number?.trim()) {
+        setError("Registration number is required");
+        setLoading(false);
+        return;
+      }
+
       // Build amenities list
       const amenities: string[] = [];
       if (formData.wifi_available) amenities.push("Wi-Fi");
@@ -196,13 +210,23 @@ export default function AircraftRegistrationForm({
         uploadFormData.append("range_km", payload.range_km.toString());
       }
       uploadFormData.append("wifi_available", payload.wifi_available.toString());
-      uploadFormData.append("wifi_type", payload.wifi_type || "");
       uploadFormData.append("dining_service", payload.dining_service.toString());
       uploadFormData.append("entertainment_system", payload.entertainment_system.toString());
       uploadFormData.append("pet_onboard_allowed", payload.pet_onboard_allowed.toString());
       uploadFormData.append("air_conditioning", payload.air_conditioning.toString());
-      uploadFormData.append("other_amenities", JSON.stringify(payload.other_amenities));
-      uploadFormData.append("amenities", JSON.stringify(payload.amenities));
+      
+      // Add amenities as separate form fields
+      if (Array.isArray(payload.amenities)) {
+        payload.amenities.forEach((item: string) => {
+          uploadFormData.append("amenities", item);
+        });
+      }
+      
+      if (Array.isArray(payload.other_amenities)) {
+        payload.other_amenities.forEach((item: string) => {
+          uploadFormData.append("other_amenities", item);
+        });
+      }
       
       // Add image files if provided
       if (exteriorImage) {
@@ -228,15 +252,47 @@ export default function AircraftRegistrationForm({
         onClose();
       }, 1500);
     } catch (err: any) {
-      console.error("Error creating aircraft:", err);
-      const detail = err.response?.data?.detail;
-      const message = err.response?.data?.message;
-      const errorMessage = extractMessage(detail) ||
-                           (typeof message === 'string' ? message : '') ||
-                           err.message ||
-                           "Failed to register aircraft. Please try again.";
+      console.error('Error creating aircraft:', err);
+      
+      // Log detailed error information
+      if (err.response) {
+        console.log('Error status:', err.response.status);
+        console.log('Error response data:', err.response.data);
+        
+        // Log validation errors if present
+        if (err.response.status === 422 && err.response.data?.detail) {
+          console.log('Validation errors:');
+          err.response.data.detail.forEach((error: any, index: number) => {
+            console.log(`Error ${index + 1}:`, error);
+            console.log('  Location:', error.loc);
+            console.log('  Message:', error.msg);
+            console.log('  Type:', error.type);
+          });
+        }
+      }
+      
+      // Extract error message
+      let errorMessage = 'Failed to register aircraft. Please try again.';
+      
+      if (err.response?.data?.detail) {
+        // Handle FastAPI validation errors
+        const details = Array.isArray(err.response.data.detail) 
+          ? err.response.data.detail 
+          : [err.response.data.detail];
+          
+        errorMessage = details
+          .map((d: any) => {
+            if (typeof d === 'string') return d;
+            return d.msg || JSON.stringify(d);
+          })
+          .join('\n');
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
       setError(errorMessage);
-      console.error("Full error response:", err.response?.data);
     } finally {
       setLoading(false);
     }

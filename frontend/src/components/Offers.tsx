@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Bookmark, Calendar, Gift } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useEffect } from "react";
+import { useAuth } from "./auth/AuthContext";
 
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
@@ -20,6 +22,18 @@ type Offer = {
 export default function Offers() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useAuth();
+
+  // Redirect vendors to their dashboard
+  useEffect(() => {
+    if (user?.role === 'vendor') {
+      navigate('/vendor/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
+
+  if (user?.role === 'vendor') {
+    return null; // Return null while redirecting
+  }
 
   const offers: Offer[] = [
     {

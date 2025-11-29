@@ -28,7 +28,6 @@ export default function Header() {
     ...(auth?.role === "passenger"
       ? [{ key: "nav.myBookings", href: getMyBookingsHref() }]
       : []),
-    { key: "nav.offers", href: "/offers" },
     { key: "nav.support", href: "/support" },
     ...(auth?.role === "vendor"
       ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }]
