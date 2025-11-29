@@ -1,4 +1,4 @@
-{
+﻿{
   "nav": {
     "brand": "24AV",
     "home": "首页",
@@ -13,6 +13,7 @@
     "register": "注册",
     "language": "语言"
   },
+
   "home": {
     "hero": {
       "badge": "印度领先的航空平台",
@@ -57,6 +58,7 @@
         "description": "航线降价时获取通知"
       }
     },
+
     "vendorTools": {
       "securePayments": {
         "title": "安全支付",
@@ -67,7 +69,7 @@
         "description": "查看预订趋势和表现"
       },
       "documentVault": {
-        "title": "文档保管库",
+        "title": "文件保管库",
         "description": "上传和管理验证所需文件"
       },
       "easyDashboard": {
@@ -75,6 +77,7 @@
         "description": "集中式控制面板处理所有供应商操作"
       }
     },
+
     "faq": {
       "title": "常见问题",
       "subtitle": "24AV预订常见问题解答",
@@ -82,19 +85,19 @@
       "items": {
         "howToBook": {
           "question": "如何在24AV上预订航班？",
-          "answer": "只需输入出发地和目的地城市，选择旅行日期，然后点击'搜索航班'。从可用选项中选择，完成预订只需几个简单步骤。"
+          "answer": "只需输入出发地和目的地城市，选择旅行日期，然后点击 '搜索航班'。从可用选项中选择，完成预订只需几个简单步骤。"
         },
         "paymentMethods": {
           "question": "接受哪些付款方式？",
-          "answer": "我们接受所有主要信用卡和借记卡、UPI、网上银行和数字钱包。所有交易均通过银行级加密保护。"
+          "answer": "我们接受所有主要信用卡和借记卡、UPI、网上银行以及数字钱包。所有交易均通过银行级加密保护。"
         },
         "modifyBooking": {
           "question": "我可以取消或修改预订吗？",
-          "answer": "是的，您可以通过'我的预订'部分取消或修改预订。取消和修改政策及费用因航空公司和票价类型而异。"
+          "answer": "可以，您可以通过 '我的预订' 部分取消或修改预订。取消和修改政策及费用因航空公司和票价类型而异。"
         },
         "receiveTicket": {
           "question": "如何收到我的机票？",
-          "answer": "确认后，您将立即通过电子邮件和短信收到电子机票。您也可以随时从'我的预订'部分访问。"
+          "answer": "确认后，您将立即通过电子邮件和短信收到电子机票。也可以随时从 '我的预订' 访问。"
         },
         "isSafe": {
           "question": "在线预订安全吗？",
@@ -103,6 +106,7 @@
       }
     }
   },
+
   "auth": {
     "login": {
       "badge": "欢迎回来",
@@ -118,6 +122,7 @@
       "registerHere": "立即注册"
     }
   },
+
   "vendor": {
     "headerTitle": "供应商控制面板",
     "headerSubtitle": "管理您的机队和运营",
@@ -156,12 +161,13 @@
       "title": "暂无航班",
       "description": "创建您的第一个航班以开始接受预订"
     },
-    "confirmDelete": "确定要删除航班{{flight}}吗？这也会从乘客的搜索结果中删除。",
+    "confirmDelete": "确定要删除航班 {{flight}} 吗？这也会从乘客的搜索结果中删除。",
     "errors": {
       "deleteGeneric": "删除航班失败，请重试。"
     },
     "loading": "加载航班中..."
   },
+
   "passenger": {
     "badge": "乘客控制面板",
     "welcomeTitle": "欢迎回来",
@@ -177,6 +183,7 @@
     "downloadTicket": "下载机票",
     "downloadError": "下载机票失败，请重试。"
   },
+
   "searchBar": {
     "fromPlaceholder": "出发地",
     "toPlaceholder": "目的地",
@@ -185,24 +192,26 @@
     "searchButton": "搜索航班",
     "swapAria": "交换出发地和目的地"
   },
+
   "flightSearch": {
     "badge": "航班搜索",
     "title": "搜索航班",
     "subtitle": "几秒钟内预订单个座位或整架飞机",
     "originPlaceholder": "出发城市（例如：孟买）",
-    "destinationPlaceholder": "目的地（例如：迪拜）",
+    "destinationPlaceholder": "目的地（例如：德里）",
     "searchButton": "搜索",
     "searching": "搜索中...",
     "refresh": "刷新",
     "availableFlightsTitle": "可用航班",
-    "resultsCount_one": "找到{{count}}个航班",
-    "resultsCount_other": "找到{{count}}个航班",
+    "resultsCount_one": "找到 {{count}} 个航班",
+    "resultsCount_other": "找到 {{count}} 个航班",
     "noFlights": "当前没有可用航班",
     "direct": "直飞",
-    "seatsAvailable_one": "剩余{{count}}个座位",
-    "seatsAvailable_other": "剩余{{count}}个座位",
+    "seatsAvailable_one": "剩余 {{count}} 个座位",
+    "seatsAvailable_other": "剩余 {{count}} 个座位",
     "noFlightsFiltered": "没有符合您搜索条件的航班。请调整筛选条件。"
   },
+
   "offers": {
     "title": "优惠与折扣",
     "subtitle": "使用我们的独家优惠，为您的下一次飞行节省更多",
@@ -213,265 +222,91 @@
       "first": {
         "category": "首次预订",
         "title": "首次预订立减500元",
-        "description": "欢迎登机！首次预订使用代码WELCOME500可享优惠",
-        "validity": "有效期至2025年12月31日"
+        "description": "欢迎登机！首次预订使用代码 WELCOME500 可享优惠",
+        "validity": "有效期至 2025 年 12 月 31 日"
       },
       "seasonal": {
         "category": "季节性",
-        "title": "节日特惠 - 最高20%折扣",
+        "title": "节日特惠 - 最高 20% 折扣",
         "description": "节日期间精选国内航线特别折扣",
         "validity": "限时优惠"
       },
       "weekend": {
         "category": "每周",
         "title": "周末特惠",
-        "description": "印度国内周末航班额外9折",
+        "description": "印度国内周末航班额外 9 折",
         "validity": "每周五至周日"
       },
       "group": {
         "category": "团体",
         "title": "团体预订优惠",
-  }
-},
-"vendorTools": {
-  "securePayments": {
-    "title": "安全支付",
-    "description": "快速支付和加密交易"
+        "description": "4人及以上同行，最高可享 8.5 折",
+        "validity": "长期有效"
+      }
+    }
   },
-  "businessAnalytics": {
-    "title": "业务分析",
-    "description": "查看预订趋势和表现"
-  },
-  "documentVault": {
-    "title": "文档保管库",
-    "description": "上传和管理验证所需文件"
-  },
-  "easyDashboard": {
-    "title": "直观的控制面板",
-    "description": "集中式控制面板处理所有供应商操作"
-  }
-},
-"faq": {
-  "title": "常见问题",
-  "subtitle": "24AV预订常见问题解答",
-  "viewAll": "查看所有问题",
-  "items": {
-    "howToBook": {
-      "question": "如何在24AV上预订航班？",
-      "answer": "只需输入出发地和目的地城市，选择旅行日期，然后点击'搜索航班'。从可用选项中选择，完成预订只需几个简单步骤。"
+
+  "support": {
+    "title": "帮助与支持",
+    "faqTitle": "常见问题",
+    "contactCard": {
+      "title": "联系我们",
+      "success": "您的消息已成功发送！我们将尽快与您联系。",
+      "nameLabel": "您的姓名",
+      "namePlaceholder": "请输入您的姓名",
+      "emailLabel": "电子邮箱",
+      "emailPlaceholder": "请输入您的电子邮箱",
+      "messageLabel": "我们如何帮助您？",
+      "messagePlaceholder": "请描述您的问题或需求...",
+      "submit": "发送消息"
     },
-    "paymentMethods": {
-      "question": "接受哪些付款方式？",
-      "answer": "我们接受所有主要信用卡和借记卡、UPI、网上银行和数字钱包。所有交易均通过银行级加密保护。"
+    "quickContact": {
+      "title": "快速联系",
+      "phoneLabel": "24/7 客户服务",
+      "phoneSubtitle": "+86 10 1234 5678",
+      "emailLabel": "发送邮件",
+      "emailSubtitle": "support@24av.cn",
+      "chatLabel": "在线聊天",
+      "chatSubtitle": "上午9:00 至 晚上9:00"
     },
-    "modifyBooking": {
-      "question": "我可以取消或修改预订吗？",
-      "answer": "是的，您可以通过'我的预订'部分取消或修改预订。取消和修改政策及费用因航空公司和票价类型而异。"
+    "urgentHelp": {
+      "title": "需要紧急帮助？",
+      "description": "我们的客服团队全天候 24 小时为您提供与预订或旅行相关的紧急帮助。",
+      "callNow": "立即致电"
     },
-    "receiveTicket": {
-      "question": "如何收到我的机票？",
-      "answer": "确认后，您将立即通过电子邮件和短信收到电子机票。您也可以随时从'我的预订'部分访问。"
-    },
-    "isSafe": {
-      "question": "在线预订安全吗？",
-      "answer": "当然安全。我们使用SSL加密和安全支付网关来保护您的个人和财务信息。"
+    "faq": {
+      "bookFlight": {
+        "question": "如何预订航班？",
+        "answer": "输入出发地和目的地城市，选择日期，然后点击 '搜索航班' 并完成预订流程。"
+      },
+      "paymentMethods": {
+        "question": "接受哪些付款方式？",
+        "answer": "我们接受所有主要信用卡、借记卡、UPI、银行转账和数字钱包。"
+      },
+      "cancelBooking": {
+        "question": "如何取消我的预订？",
+        "answer": "您可以在 '我的预订' 部分取消。政策和费用因航空公司而异。"
+      },
+      "refundTimeline": {
+        "question": "退款需要多久？",
+        "answer": "退款通常需要 5-7 个工作日，具体取决于您的银行或支付方式。"
+      },
+      "modifyBooking": {
+        "question": "我可以修改我的预订吗？",
+        "answer": "可以，您可以在 '我的预订' 中修改预订。"
+      },
+      "receiveTicket": {
+        "question": "我什么时候能收到机票？",
+        "answer": "确认预订后，机票将立即通过电子邮件发送。"
+      },
+      "missedFlight": {
+        "question": "如果我错过航班怎么办？",
+        "answer": "请立即联系客户服务。您可能会被重新安排航班（可能需要费用）。"
+      },
+      "isSafe": {
+        "question": "在线预订航班安全吗？",
+        "answer": "是的，我们使用行业级加密来保护您的信息。"
+      }
     }
   }
-},
-"auth": {
-  "login": {
-    "badge": "欢迎回来",
-    "title": "登录您的账户",
-    "subtitle": "以管理员、供应商或乘客身份登录访问控制面板",
-    "emailLabel": "电子邮件",
-    "emailPlaceholder": "您的电子邮件地址",
-    "passwordLabel": "密码",
-    "passwordPlaceholder": "您的密码",
-    "submit": "登录",
-    "submitting": "登录中...",
-    "noAccount": "没有账户？",
-    "registerHere": "立即注册"
-  }
-},
-"vendor": {
-  "headerTitle": "供应商控制面板",
-  "headerSubtitle": "管理您的机队和运营",
-  "buttons": {
-    "addAircraft": "添加飞机",
-    "addFlight": "添加航班",
-    "refresh": "刷新",
-    "createFlight": "创建航班",
-    "edit": "编辑",
-    "delete": "删除",
-    "deleting": "删除中..."
-  },
-  "toasts": {
-    "aircraftFormOpened": "飞机表单已打开",
-    "flightFormOpened": "航班创建表单已打开"
-  },
-  "cards": {
-    "myFlightsTitle": "我的航班",
-    "myFlightsSubtitle": "您创建的所有航班"
-  },
-  "table": {
-    "flight": "航班",
-    "route": "航线",
-    "departure": "出发",
-    "arrival": "到达",
-    "price": "价格",
-    "status": "状态",
-    "actions": "操作",
-    "priceSuffix": "每座"
-  },
-  "status": {
-    "completed": "已完成",
-    "active": "活跃"
-  },
-  "emptyState": {
-    "title": "暂无航班",
-    "description": "创建您的第一个航班以开始接受预订"
-  },
-  "confirmDelete": "确定要删除航班{{flight}}吗？这也会从乘客的搜索结果中删除。",
-  "errors": {
-    "deleteGeneric": "删除航班失败，请重试。"
-  },
-  "loading": "加载航班中..."
-},
-"passenger": {
-  "badge": "乘客控制面板",
-  "welcomeTitle": "欢迎回来",
-  "welcomeSubtitle": "探索可用航班并管理您的预订",
-  "myBookingsTitle": "我的预订",
-  "myBookingsSubtitle": "您的航班和行程安排",
-  "loading": "正在加载您的预订...",
-  "errorGeneric": "加载预订时出错，请重试。",
-  "tryAgain": "重试",
-  "emptyTitle": "暂无预订",
-  "emptyBody": "您尚未预订任何航班。浏览可用航班预订您的下一次旅行。",
-  "emptyCta": "搜索航班 →",
-  "downloadTicket": "下载机票",
-  "downloadError": "下载机票失败，请重试。"
-},
-"searchBar": {
-  "fromPlaceholder": "出发地",
-  "toPlaceholder": "目的地",
-  "departurePlaceholder": "出发日期",
-  "passengersPlaceholder": "乘客",
-  "searchButton": "搜索航班",
-  "swapAria": "交换出发地和目的地"
-},
-"flightSearch": {
-  "badge": "航班搜索",
-  "title": "搜索航班",
-  "subtitle": "几秒钟内预订单个座位或整架飞机",
-  "originPlaceholder": "出发城市（例如：孟买）",
-  "destinationPlaceholder": "目的地（例如：迪拜）",
-  "searchButton": "搜索",
-  "searching": "搜索中...",
-  "refresh": "刷新",
-  "availableFlightsTitle": "可用航班",
-  "resultsCount_one": "找到{{count}}个航班",
-  "resultsCount_other": "找到{{count}}个航班",
-  "noFlights": "当前没有可用航班",
-  "direct": "直飞",
-  "seatsAvailable_one": "剩余{{count}}个座位",
-  "seatsAvailable_other": "剩余{{count}}个座位",
-  "noFlightsFiltered": "没有符合您搜索条件的航班。请调整筛选条件。"
-},
-"offers": {
-  "title": "优惠与折扣",
-  "subtitle": "使用我们的独家优惠，为您的下一次飞行节省更多",
-  "promoCodeLabel": "优惠码",
-  "clickToCopy": "点击复制",
-  "bookNow": "立即预订",
-  "items": {
-    "first": {
-      "category": "首次预订",
-      "title": "首次预订立减500元",
-      "description": "欢迎登机！首次预订使用代码WELCOME500可享优惠",
-      "validity": "有效期至2025年12月31日"
-    },
-    "seasonal": {
-      "category": "季节性",
-      "title": "节日特惠 - 最高20%折扣",
-      "description": "节日期间精选国内航线特别折扣",
-      "validity": "限时优惠"
-    },
-    "weekend": {
-      "category": "每周",
-      "title": "周末特惠",
-      "description": "印度国内周末航班额外9折",
-      "validity": "每周五至周日"
-    },
-    "group": {
-      "category": "团体",
-      "title": "团体预订优惠",
-      "description": "4人及以上同行，最高可享85折",
-      "validity": "长期有效"
-    }
-  }
-},
-"support": {
-  "title": "帮助与支持",
-  "faqTitle": "常见问题",
-  "contactCard": {
-    "title": "联系我们",
-    "success": "您的消息已成功发送！我们将尽快与您联系。",
-    "nameLabel": "您的姓名",
-    "namePlaceholder": "请输入您的姓名",
-    "emailLabel": "电子邮箱",
-    "emailPlaceholder": "请输入您的电子邮箱",
-    "messageLabel": "我们需要如何帮助您？",
-    "messagePlaceholder": "请描述您的问题或需求...",
-    "submit": "发送消息"
-  },
-  "quickContact": {
-    "title": "快速联系",
-    "phoneLabel": "24/7客户服务",
-    "phoneSubtitle": "+86 10 1234 5678",
-    "emailLabel": "发送邮件",
-    "emailSubtitle": "support@24av.cn",
-    "chatLabel": "在线聊天",
-    "chatSubtitle": "上午9:00至晚上9:00"
-  },
-  "urgentHelp": {
-    "title": "需要紧急帮助？",
-    "description": "我们的客户服务团队全天候24小时为您提供与预订或旅行相关的紧急帮助。",
-    "callNow": "立即致电"
-  },
-  "faq": {
-    "bookFlight": {
-      "question": "如何预订航班？",
-      "answer": "只需输入出发地和目的地城市，选择旅行日期，然后点击'搜索航班'。选择您喜欢的航班并完成预订流程。"
-    },
-    "paymentMethods": {
-      "question": "接受哪些支付方式？",
-      "answer": "我们接受所有主要信用卡、借记卡、UPI、银行转账和数字钱包。所有交易均受银行级加密保护。"
-    },
-    "cancelBooking": {
-      "question": "如何取消我的预订？",
-      "answer": "您可以在'我的预订'部分取消预订。取消政策和费用因航空公司和票价类型而异。"
-    },
-    "refundTimeline": {
-      "question": "退款需要多长时间？",
-      "answer": "退款通常需要5-7个工作日处理。具体时间取决于您的银行或付款方式。"
-    },
-    "modifyBooking": {
-      "question": "我可以修改我的预订吗？",
-      "answer": "是的，您可以在'我的预订'部分修改预订。修改选项取决于航空公司的政策和票价条件。"
-    },
-    "receiveTicket": {
-      "question": "我什么时候能收到电子机票？",
-      "answer": "您的电子机票将在预订确认后立即通过电子邮件发送。您也可以从'我的预订'部分下载。"
-    },
-    "isSafe": {
-      "question": "在线预订航班安全吗？",
-      "answer": "是的，我们使用工业级加密来保护您的个人和支付信息。"
-    },
-    "missedFlight": {
-      "question": "如果我错过航班该怎么办？",
-      "answer": "请立即联系我们的客户服务。根据航空公司的政策，您可能会被重新安排到下一个可用航班，可能需要支付额外费用。"
-    }
-  }
-}
 }
