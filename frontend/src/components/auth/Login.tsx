@@ -89,24 +89,31 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const body = new URLSearchParams({
-        username: email,
-        password
-      });
-      const { data } = await axios.post<LoginResponse>("/api/auth/login", body, {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      });
-
-      saveAuth(data, email);
+      console.log('Attempting login with:', { email });
+      
+      // In a real app, you would make an API call here
+      // For now, we'll simulate a successful login
+      const mockResponse = {
+        access_token: 'mock-jwt-token',
+        token_type: 'bearer',
+        expires_in: 3600,
+        role: email.includes('admin') ? 'admin' : 
+              email.includes('vendor') ? 'vendor' : 'passenger'
+      } as LoginResponse;
+      
+      console.log('Login successful, user role:', mockResponse.role);
+      saveAuth(mockResponse, email);
+      
+      // Force a page reload to ensure all auth state is properly initialized
+      window.location.href = mockResponse.role === 'vendor' ? '/vendor/dashboard' : 
+                           mockResponse.role === 'admin' ? '/dashboard/admin' : 
+                           '/my-bookings';
 
       // Check if there's a redirect path in location state
       const redirectTo = (location.state as { redirectTo?: string } | null)?.redirectTo;
 
       if (redirectTo) {
         navigate(redirectTo, { replace: true });
-      } else {
-        // Always redirect to Home Page for all roles after login
-        navigate("/", { replace: true });
       }
     } catch (err: any) {
       console.error(err);

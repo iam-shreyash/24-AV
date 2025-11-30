@@ -68,11 +68,15 @@ function VendorOnlyRoute({ children }: { children: React.ReactNode }) {
 
 function App() {
   const location = useLocation();
+  const { user } = useAuth();
   const hideHeader = location.pathname.startsWith("/admin");
 
+  // Log route changes and auth state
   useEffect(() => {
     console.log("App rendered, current path:", location.pathname);
-  }, [location.pathname]);
+    console.log("Current user role:", user?.role);
+  }, [location.pathname, user?.role]);
+
   const { i18n } = useTranslation();
 
 // Add RTL effect
@@ -99,9 +103,16 @@ useEffect(() => {
         {!hideHeader && <Header />}
         <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/search" element={<VendorOnlyRoute><FlightSearch /></VendorOnlyRoute>} />
-        <Route path="/book" element={<VendorOnlyRoute><FlightSearch /></VendorOnlyRoute>} />
-        <Route path="/my-bookings" element={<VendorOnlyRoute><PassengerDashboard /></VendorOnlyRoute>} />
+        <Route path="/search" element={<FlightSearch />} />
+        <Route path="/book" element={<FlightSearch />} />
+        <Route 
+          path="/my-bookings" 
+          element={
+            <RequireRole role="passenger">
+              <PassengerDashboard />
+            </RequireRole>
+          } 
+        />
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/offers" element={<Offers />} />
         <Route path="/support" element={<Support />} />

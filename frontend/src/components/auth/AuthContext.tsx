@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const initializeAuth = () => {
       try {
         const stored = getStoredAuth();
+        console.log('Initializing auth with stored data:', stored);
         if (stored) {
           setUser({
             id: stored.email || 'unknown',
@@ -39,6 +40,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: stored.role,
             token: stored.token
           });
+          console.log('Auth initialized with user role:', stored.role);
+        } else {
+          console.log('No stored auth found');
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -48,6 +52,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     initializeAuth();
+    
+    // Listen for storage events to handle auth changes in other tabs
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'auth') {
+        initializeAuth();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   const login = async (email: string, password: string) => {
