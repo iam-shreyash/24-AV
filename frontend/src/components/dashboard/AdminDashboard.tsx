@@ -5,7 +5,7 @@ import { AlertTriangle, CheckCircle, DollarSign, Plane, Shield, TrendingUp, Buil
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 
 const metrics = [
   { label: "Active Flights", value: "42", trend: "+5% WoW", icon: Plane, color: "text-primary" },

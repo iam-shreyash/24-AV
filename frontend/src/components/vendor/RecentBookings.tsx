@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Calendar, Clock, MapPin, User, DollarSign, Download, RefreshCw, Bell, BellOff } from "lucide-react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -7,7 +6,8 @@ import { Badge } from "../ui/badge";
 import { extractMessage } from "../../lib/extractMessage";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { getStoredAuth } from "../auth/Login";
+import { useNavigate } from "react-router-dom";
+import api from "../../api/client";
 
 type Booking = {
   id: number;
@@ -47,39 +47,32 @@ type Notification = {
 };
 
 export default function RecentBookings() {
-  const auth = getStoredAuth();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [notificationsLoading, setNotificationsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [notificationsLoading, setNotificationsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
+  const navigate = useNavigate();
 
   const fetchBookings = async () => {
-    if (!auth || auth.role !== "vendor") return;
-    
-    setLoading(true);
     try {
-      const response = await axios.get("/api/vendors/recent-bookings", {
-        headers: { Authorization: `Bearer ${auth.token}` },
+      setLoading(true);
+      setError(null);
+      const response = await api.get("/vendors/recent-bookings", {
         params: { limit: 50 }
       });
       setBookings(response.data);
     } catch (error: any) {
-      console.error("Error fetching bookings:");
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error('Response data:', error.response.data);
-        console.error('Status code:', error.response.status);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error('No response received:', error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error('Error:', error.message);
+      console.error('Error fetching bookings:', error);
+      
+      if (error.response?.status === 403) {
+        setError('You do not have permission to view these bookings.');
+      } else if (error.response?.status !== 401) { // 401 is handled by interceptor
+        setError('Failed to fetch bookings. Please try again later.');
       }
-      // Reset bookings to empty array to prevent rendering issues
+      
       setBookings([]);
     } finally {
       setLoading(false);
@@ -87,67 +80,55 @@ export default function RecentBookings() {
   };
 
   const fetchNotifications = async () => {
-    if (!auth || auth.role !== "vendor") return;
-    
-    setNotificationsLoading(true);
     try {
-      const response = await axios.get("/api/vendors/notifications", {
-        headers: { Authorization: `Bearer ${auth.token}` },
+      setNotificationsLoading(true);
+      const response = await api.get("/vendors/notifications", {
         params: { unread_only: false, limit: 20 }
       });
       setNotifications(response.data);
     } catch (error: any) {
-      console.error("Error fetching notifications:");
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Status code:', error.response.status);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-      } else {
-        console.error('Error:', error.message);
-      }
-      // Reset notifications to empty array to prevent rendering issues
+      console.error('Error fetching notifications:', error);
       setNotifications([]);
+      
+      if (error.response?.status !== 401) { // 401 is handled by interceptor
+        console.error('Notification fetch error details:', {
+          status: error.response?.status,
+          data: error.response?.data
+        });
+      }
     } finally {
       setNotificationsLoading(false);
     }
   };
 
   const markNotificationRead = async (notificationId: number) => {
-    if (!auth) return;
-    
     try {
-      await axios.patch(`/api/vendors/notifications/${notificationId}/read`, {}, {
-        headers: { Authorization: `Bearer ${auth.token}` }
-      });
-      // Update local state
+      await api.patch(`/vendors/notifications/${notificationId}/read`);
+      
+      // Optimistically update the UI
       setNotifications(prev => 
         prev.map(n => n.id === notificationId ? { ...n, is_read: true } : n)
       );
     } catch (error: any) {
       console.error("Error marking notification as read:", error);
-      // Normalize error to a string to prevent React rendering issues
-      const raw = error.response?.data?.message || error.message || "Failed to mark notification as read";
-      const errorMessage = extractMessage(raw) || "Failed to mark notification as read";
+      // Show error to user if needed
+      const errorMessage = extractMessage(error.response?.data?.message || error.message) || 
+                          "Failed to mark notification as read";
       console.error(errorMessage);
-      // You might want to show this error in the UI using a toast or error state
     }
   };
 
   const handleDownloadTicket = async (bookingId: number) => {
-    if (!auth) return;
-    
     try {
-      const response = await axios.get(`/api/bookings/${bookingId}/ticket`, {
-        headers: { 
-          Authorization: `Bearer ${auth.token}`,
-          'Content-Type': 'application/json',
+      const response = await api.get(`/bookings/${bookingId}/ticket`, {
+        responseType: 'blob',
+        headers: {
           'Accept': 'application/pdf,text/html' 
-        },
-        responseType: "blob"
+        }
       });
 
       const contentType = response.headers['content-type'];
+      
 
       // If it's already a PDF, download it directly
       if (contentType === 'application/pdf') {

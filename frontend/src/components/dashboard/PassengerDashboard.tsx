@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Calendar, Plane, Sparkles, Download } from "lucide-react";
+import { Calendar, Plane, Sparkles, Download, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../auth/AuthContext";
 
 import { Badge } from "../ui/badge";
 import { extractMessage } from "../../lib/extractMessage";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { getStoredAuth } from "../auth/Login";
 
 type Booking = {
   id: number;
@@ -47,7 +47,7 @@ type Flight = {
 };
 
 export default function PassengerDashboard() {
-  const auth = getStoredAuth();
+  const { token, isAuthenticated, userRole, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -56,17 +56,26 @@ export default function PassengerDashboard() {
   const [availableFlights, setAvailableFlights] = useState<Flight[]>([]);
   const [flightsLoading, setFlightsLoading] = useState(true);
 
+  if (authLoading) return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+    </div>
+  );
+
   useEffect(() => {
-    loadBookings();
-    loadAvailableFlights();
-  }, []);
+    if (token) {
+      loadBookings();
+      loadAvailableFlights();
+    }
+  }, [token]);
 
   const loadBookings = async () => {
     setLoading(true);
     setError(null);
     try {
+      console.log("PassengerDashboard - Making API call with token:", token ? "Bearer [REDACTED]" : "NO TOKEN");
       const response = await axios.get("/api/bookings/", {
-        headers: { Authorization: `Bearer ${auth?.token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       
       // Fetch flight details for each booking
@@ -74,7 +83,7 @@ export default function PassengerDashboard() {
         response.data.map(async (booking: Booking) => {
           try {
             const flightResponse = await axios.get(`/api/flights/${booking.flight_id}`, {
-              headers: { Authorization: `Bearer ${auth?.token}` }
+              headers: { Authorization: `Bearer ${token}` }
             });
             return { ...booking, flight: flightResponse.data };
           } catch (err) {
@@ -162,7 +171,7 @@ export default function PassengerDashboard() {
       console.log(`Attempting to download ticket for booking ${bookingId}`);
       
       const response = await axios.get(`/api/bookings/${bookingId}/ticket`, {
-        headers: { Authorization: `Bearer ${auth?.token}` },
+        headers: { Authorization: `Bearer ${token}` },
         responseType: "blob"
       });
 

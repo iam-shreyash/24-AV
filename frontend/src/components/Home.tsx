@@ -17,7 +17,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 import SearchBar from "./SearchBar";
-import { getStoredAuth } from "./auth/Login";
+import { getStoredAuth } from "../utils/getStoredAuth";
 import { Badge } from "./ui/badge";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
@@ -160,12 +160,12 @@ export default function Home() {
                 {t("home.hero.badge")}
               </Badge>
               <h1 className="font-heading text-5xl font-bold text-white md:text-6xl lg:text-7xl">
-                {auth?.role === "vendor"
+                {auth?.userRole === "vendor"
                   ? t("home.hero.titleVendor")
                   : t("home.hero.title")}
               </h1>
               <p className="mt-4 font-body text-xl text-white/90 md:text-2xl">
-                {auth?.role === "vendor"
+                {auth?.userRole === "vendor"
                   ? t("home.hero.subtitleVendor")
                   : t("home.hero.subtitle")}
               </p>
@@ -174,7 +174,7 @@ export default function Home() {
 
           <ScrollAnimate type="scale-in" threshold={0.3} delay={300}>
             <div className="mt-8">
-              {auth?.role !== "vendor" && <SearchBar />}
+              {auth?.userRole !== "vendor" && <SearchBar />}
             </div>
           </ScrollAnimate>
         </div>
@@ -188,19 +188,19 @@ export default function Home() {
           <ScrollAnimate type="fade-in" threshold={0.2}>
             <div className="mb-12 text-center">
               <h2 className="font-heading text-4xl font-bold text-blue-800 md:text-5xl">
-                {auth?.role === "vendor"
+                {auth?.userRole === "vendor"
                   ? t("home.sections.vendorToolsTitle")
                   : t("home.sections.benefitsTitle")}
               </h2>
               <p className="mt-4 font-body text-lg text-gray-600">
-                {auth?.role === "vendor"
+                {auth?.userRole === "vendor"
                   ? t("home.sections.vendorToolsSubtitle")
                   : t("home.sections.benefitsSubtitle")}
               </p>
             </div>
           </ScrollAnimate>
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
-            {(auth?.role === "vendor" ? vendorTools : benefits).map((item, index) => (
+            {(auth?.userRole === "vendor" ? vendorTools : benefits).map((item, index) => (
               <ScrollAnimate 
                 key={index} 
                 type="scale-in" 

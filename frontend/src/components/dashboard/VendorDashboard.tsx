@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { Tabs, TabsContent } from "../ui/tabs";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 import { useAuth } from "../auth/AuthContext";
 import AircraftRegistrationForm from "../aircraft/AircraftRegistrationForm";
 import CreateFlightForm from "../flights/CreateFlightForm";
@@ -22,7 +22,7 @@ import { useToast } from "../ui/use-toast";
 export default function VendorDashboard() {
   const navigate = useNavigate();
   // Use AuthContext to determine authenticated user and loading state
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
   const auth = getStoredAuth();
   const { t } = useTranslation();
   const [isAircraftFormOpen, setIsAircraftFormOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function VendorDashboard() {
   
 
   const loadVendorFlights = useCallback(async (force = false) => {
-    if (!auth || auth.role !== "vendor") return;
+    if (!auth || auth.userRole !== "vendor") return;
     if (!force && hasLoadedFlights.current) return;
     
     setFlightsLoading(true);
@@ -65,13 +65,13 @@ export default function VendorDashboard() {
       if (loading) return;
 
       // If no authenticated user or wrong role, send to login
-      if (!user || user.role !== "vendor") {
+      if (!auth || auth.userRole !== "vendor") {
         navigate("/login", { replace: true });
         return;
       }
 
       // At this point user exists and is vendor
-      if (!auth || auth.role !== "vendor") {
+      if (!auth || auth.userRole !== "vendor") {
         // If token missing, send to login
         navigate("/login", { replace: true });
         return;
@@ -100,9 +100,9 @@ export default function VendorDashboard() {
     };
 
     checkApprovalStatus();
-  }, [user, loading, auth, navigate, loadVendorFlights]);
+  }, [loading, auth, navigate, loadVendorFlights]);
 
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("flights");
 
   // Function to handle tab change
@@ -112,7 +112,7 @@ export default function VendorDashboard() {
 
   // Function to show success message
   const showSuccess = (message: string) => {
-    showToast(message, "success");
+    toast({ description: message });
   };
 
   return (

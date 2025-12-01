@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { clearAuth, getStoredAuth } from "../auth/Login";
+import { clearStoredAuth as clearAuth, getStoredAuth } from "../../utils/getStoredAuth";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-3">
             {auth && (
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/90">
-                {auth.role} / {auth.email}
+                {auth.userRole}
               </span>
             )}
             <span className="rounded-full bg-white/15 px-3 py-1 text-sm text-white/90">
@@ -43,7 +43,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               >
                 {t("layout.nav.flights")}
               </NavLink>
-              {auth?.role === "admin" && (
+              {auth?.userRole === "admin" && (
                 <NavLink
                   to="/dashboard/admin"
                   className={({ isActive }) =>
@@ -53,7 +53,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   {t("layout.nav.admin")}
                 </NavLink>
               )}
-              {auth?.role === "vendor" && (
+              {auth?.userRole === "vendor" && (
                 <NavLink
                   to="/vendor/dashboard"
                   className={({ isActive }) =>
@@ -63,7 +63,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   {t("layout.nav.vendor")}
                 </NavLink>
               )}
-              {auth?.role === "passenger" && (
+              {auth?.userRole === "passenger" && (
                 <NavLink
                   to="/passenger/dashboard"
                   className={({ isActive }) =>
@@ -98,7 +98,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           </div>
         </nav>
       </header>
-      <main className="mx-auto max-w-6xl px-6 py-8">{children}</main>
+      <main className="w-full p-0 m-0">{children}</main>
     </div>
   );
 }

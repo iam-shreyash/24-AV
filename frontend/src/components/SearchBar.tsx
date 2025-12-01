@@ -5,7 +5,7 @@ import { Calendar, MapPin, Search as SearchIcon, Users, ArrowRightLeft } from "l
 
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { getStoredAuth } from "./auth/Login";
+import { getStoredAuth } from "../utils/getStoredAuth";
 
 export default function SearchBar() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function SearchBar() {
 
   // Redirect vendors away from search
   useEffect(() => {
-    if (auth?.role === "vendor") {
+    if (auth?.userRole === "vendor") {
       // Only redirect vendors when they are on dedicated search or booking routes,
       // not when the shared SearchBar is rendered on the home page.
       if (location.pathname === "/search" || location.pathname === "/book") {

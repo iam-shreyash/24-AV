@@ -8,7 +8,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import { saveAuth } from "./Login";
+import { setStoredAuth as saveAuth } from "../../utils/getStoredAuth";
 
 type Role = "admin" | "vendor" | "passenger";
 
@@ -48,7 +48,7 @@ export default function AdminLogin() {
         return;
       }
 
-      saveAuth(data, email);
+      saveAuth({ token: data.access_token, userRole: data.role });
 
       // Redirect to admin portal
       navigate("/admin/portal", { replace: true });

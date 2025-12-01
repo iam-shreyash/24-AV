@@ -13,7 +13,7 @@ import {
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 
 type Flight = {
   id: number;

@@ -7,7 +7,7 @@ import { extractMessage } from "../../lib/extractMessage";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 
 type ApiKey = {
   id: number;

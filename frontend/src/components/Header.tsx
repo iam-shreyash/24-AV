@@ -2,7 +2,7 @@ import { Menu, Plane, User, Globe } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { clearAuth, getStoredAuth } from "./auth/Login";
+import { clearStoredAuth as clearAuth, getStoredAuth } from "../utils/getStoredAuth";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import LanguageSelector from "./LanguageSelector";
@@ -14,25 +14,25 @@ export default function Header() {
   const { t } = useTranslation();
 
   const getMyBookingsHref = () => {
-    if (auth?.role === "passenger") return "/my-bookings";
-    if (auth?.role === "vendor") return "/vendor/dashboard";
-    if (auth?.role === "admin") return "/dashboard/admin";
+    if (auth?.userRole === "passenger") return "/my-bookings";
+    if (auth?.userRole === "vendor") return "/vendor/dashboard";
+    if (auth?.userRole === "admin") return "/dashboard/admin";
     return "/my-bookings";
   };
 
   const navigation = [
     { key: "nav.home", href: "/" },
-    ...(auth?.role !== "vendor"
+    ...(auth?.userRole !== "vendor"
       ? [{ key: "nav.searchFlights", href: "/search" }]
       : []),
-    ...(auth?.role === "passenger"
+    ...(auth?.userRole === "passenger"
       ? [{ key: "nav.myBookings", href: getMyBookingsHref() }]
       : []),
     { key: "nav.support", href: "/support" },
-    ...(auth?.role === "vendor"
+    ...(auth?.userRole === "vendor"
       ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }]
       : []),
-    ...(auth?.role === "admin"
+    ...(auth?.userRole === "admin"
       ? [{ key: "nav.adminPortal", href: "/admin/portal" }]
       : []),
   ];

@@ -67,7 +67,7 @@ const getAirportName = (city: string): string => {
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 
 type Flight = {
   id: number;
@@ -140,7 +140,7 @@ export default function BookingModal({ flight, mode, onClose, onSuccess }: Booki
     fetchFlightDetails();
   }, [flight.id]);
   const [passengerName, setPassengerName] = useState("");
-  const [passengerEmail, setPassengerEmail] = useState(auth?.email || "");
+  const [passengerEmail, setPassengerEmail] = useState("");
   const [passengerPhone, setPassengerPhone] = useState("");
   const [specialRequests, setSpecialRequests] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");

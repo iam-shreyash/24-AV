@@ -16,7 +16,7 @@ import {
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 
 type AircraftRegistrationFormProps = {
   onClose: () => void;
@@ -136,20 +136,20 @@ export default function AircraftRegistrationForm({
       amenities.push(...formData.other_amenities);
 
       // Prepare JSON payload matching backend schema
-      const payload: any = {
-        aircraft_name: formData.aircraft_name || null,
-        manufacturer: formData.manufacturer || null,
+      const payload = {
+        aircraft_name: formData.aircraft_name,
+        manufacturer: formData.manufacturer || "",
         model: formData.model,
-        model_number: formData.model_number || null,
+        model_number: formData.model_number || "",
         year_of_manufacture: formData.year_of_manufacture
-          ? parseInt(formData.year_of_manufacture)
-          : null,
+          ? Number(formData.year_of_manufacture)
+          : "",
         registration_number: formData.registration_number,
-        seat_capacity: seatCapacity,
-        luggage_load_kg: luggageLoad,
-        maximum_speed: maxSpeed,
-        speed_unit: formData.speed_unit || null,
-        range_km: rangeKm,
+        seat_capacity: Number(formData.seat_capacity),
+        luggage_load_kg: Number(formData.luggage_load_kg),
+        maximum_speed: Number(formData.maximum_speed),
+        speed_unit: formData.speed_unit,
+        range_km: Number(formData.range_km),
         wifi_available: formData.wifi_available,
         dining_service: formData.dining_service,
         entertainment_system: formData.entertainment_system,
@@ -159,94 +159,59 @@ export default function AircraftRegistrationForm({
         amenities: amenities
       };
 
+
       console.log("Payload being sent:", payload);
 
-      // Prepare FormData for file uploads
       const uploadFormData = new FormData();
 
-      console.log("FormData entries:");
-      for (let pair of uploadFormData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-      // Add all form fields
-      uploadFormData.append("aircraft_name", payload.aircraft_name || "");
-      uploadFormData.append("manufacturer", payload.manufacturer || "");
+// Basic fields (never send null)
+      uploadFormData.append("aircraft_name", payload.aircraft_name);
+      uploadFormData.append("manufacturer", payload.manufacturer);
       uploadFormData.append("model", payload.model);
-      uploadFormData.append("model_number", payload.model_number || "");
-
-      if (payload.year_of_manufacture) {
-        uploadFormData.append(
-          "year_of_manufacture",
-          payload.year_of_manufacture.toString()
-        );
-      }
+      uploadFormData.append("model_number", payload.model_number);
+      uploadFormData.append(
+        "year_of_manufacture",
+        payload.year_of_manufacture.toString()
+      );
 
       uploadFormData.append("registration_number", payload.registration_number);
       uploadFormData.append("seat_capacity", payload.seat_capacity.toString());
+      uploadFormData.append("luggage_load_kg", payload.luggage_load_kg.toString());
+      uploadFormData.append("maximum_speed", payload.maximum_speed.toString());
+      uploadFormData.append("speed_unit", payload.speed_unit);
+      uploadFormData.append("range_km", payload.range_km.toString());
 
-      if (payload.luggage_load_kg) {
-        uploadFormData.append(
-          "luggage_load_kg",
-          payload.luggage_load_kg.toString()
-        );
-      }
-
-      if (payload.maximum_speed) {
-        uploadFormData.append(
-          "maximum_speed",
-          payload.maximum_speed.toString()
-        );
-      }
-
-      uploadFormData.append("speed_unit", payload.speed_unit || "");
-
-      if (payload.range_km) {
-        uploadFormData.append("range_km", payload.range_km.toString());
-      }
-
-      uploadFormData.append(
-        "wifi_available",
-        payload.wifi_available.toString()
-      );
-      uploadFormData.append(
-        "dining_service",
-        payload.dining_service.toString()
-      );
+// Boolean fields must be string: “true” / “false”
+      uploadFormData.append("wifi_available", String(payload.wifi_available));
+      uploadFormData.append("dining_service", String(payload.dining_service));
       uploadFormData.append(
         "entertainment_system",
-        payload.entertainment_system.toString()
+        String(payload.entertainment_system)
       );
       uploadFormData.append(
         "pet_onboard_allowed",
-        payload.pet_onboard_allowed.toString()
+        String(payload.pet_onboard_allowed)
       );
-      uploadFormData.append(
-        "air_conditioning",
-        payload.air_conditioning.toString()
+      uploadFormData.append("air_conditioning", String(payload.air_conditioning));
+
+// Array fields
+      payload.amenities.forEach((item: string) =>
+        uploadFormData.append("amenities", item)
       );
 
-      // Add amenities as separate fields
-      if (Array.isArray(payload.amenities)) {
-        payload.amenities.forEach((item: string) => {
-          uploadFormData.append("amenities", item);
-        });
-      }
+      payload.other_amenities.forEach((item: string) =>
+        uploadFormData.append("other_amenities", item)
+);
 
-      if (Array.isArray(payload.other_amenities)) {
-        payload.other_amenities.forEach((item: string) => {
-          uploadFormData.append("other_amenities", item);
-        });
-      }
-
-      // Add exterior image
+// Exterior image
       if (exteriorImage) {
         uploadFormData.append("exterior_image", exteriorImage);
       }
 
-      // Add interior images
-      interiorImages.forEach(image => {
-        if (image) {
-          uploadFormData.append("interior_image", image);
+      // Add interior images - FastAPI expects multiple files with the same field name
+      interiorImages.forEach((img) => {
+        if (img) {
+          uploadFormData.append('interior_image', img);
         }
       });
 
@@ -263,6 +228,8 @@ export default function AircraftRegistrationForm({
         onClose();
       }, 1500);
     } catch (err: any) {
+      console.log("Backend Validation Error:", err.response?.data);
+      console.log("Full error details:", JSON.stringify(err.response?.data, null, 2));
       console.error("Error creating aircraft:", err);
 
       let errorMessage = "Failed to register aircraft. Please try again.";

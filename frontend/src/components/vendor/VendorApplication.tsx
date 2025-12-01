@@ -9,7 +9,7 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Stepper } from "../ui/stepper";
 import { extractMessage } from "../../lib/extractMessage";
-import { getStoredAuth, clearAuth } from "../auth/Login";
+import { getStoredAuth, clearStoredAuth as clearAuth } from "../../utils/getStoredAuth";
 import { countries, getStates, getCities } from "../../data/locations";
 
 type VendorApplicationData = {
@@ -122,7 +122,7 @@ export default function VendorApplication() {
       return;
     }
 
-    if (auth.role !== "vendor") {
+    if (auth.userRole !== "vendor") {
       navigate("/login");
       return;
     }
@@ -345,7 +345,7 @@ export default function VendorApplication() {
       console.error("Error status:", err.response?.status);
       console.error("Full error:", JSON.stringify(err.response?.data, null, 2));
       
-      const errorMessage = extractMessage(detail) || 
+      const errorMessage = extractMessage(err.response?.data?.detail) || 
                           (typeof err.response?.data?.message === 'string' ? err.response?.data?.message : '') ||
                           (typeof err.message === 'string' ? err.message : '') ||
                           "Failed to submit application. Please try again.";

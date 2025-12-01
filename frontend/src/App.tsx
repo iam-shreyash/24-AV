@@ -1,169 +1,179 @@
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { useAuth } from "./components/auth/AuthContext";
-import { useTranslation } from "react-i18next";
-import { setRTL } from "./utils/rtl";
-import { Loader2 } from "lucide-react";
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Suspense, lazy, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Loader2 } from 'lucide-react';
+import api from './api/client';
 
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
-import AdminLogin from "./components/auth/AdminLogin";
-import RequireRole from "./components/auth/RequireRole";
-import Header from "./components/Header";
-import Home from "./components/Home";
-import FlightSearch from "./components/flights/FlightSearch";
-import Fleet from "./components/Fleet";
-import VendorApplication from "./components/vendor/VendorApplication";
-import AdminDashboard from "./components/dashboard/AdminDashboard";
-import AdminPortal from "./components/admin/AdminPortal";
-import VendorDashboard from "./components/dashboard/VendorDashboard";
-import PassengerDashboard from "./components/dashboard/PassengerDashboard";
-import Support from "./components/Support";
-import Offers from "./components/Offers";
-import { ToastProvider } from "./components/ui/toast";
-import { getStoredAuth } from "./components/auth/Login";
+// Providers
+import { AuthProvider, useAuth } from './components/auth/AuthContext';
+import { ThemeProvider } from './components/theme-provider';
+import { Toaster } from './components/ui/toaster';
+import { setRTL } from './utils/rtl';
 
-// Component to prevent vendors from accessing passenger-only routes
-function VendorOnlyRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+// Lazy load components
+const Login = lazy(() => import('./components/auth/Login'));
+const Register = lazy(() => import('./components/auth/Register'));
+const AdminLogin = lazy(() => import('./components/auth/AdminLogin'));
+const RequireRole = lazy(() => import('./components/auth/RequireRole'));
+const AdminDashboard = lazy(() => import('./components/dashboard/AdminDashboard'));
+const VendorDashboard = lazy(() => import('./components/dashboard/VendorDashboard'));
+const PassengerDashboard = lazy(() => import('./components/dashboard/PassengerDashboard'));
+const Home = lazy(() => import('./components/Home'));
+const FlightSearch = lazy(() => import('./components/flights/FlightSearch'));
+const Fleet = lazy(() => import('./components/Fleet'));
+const Support = lazy(() => import('./components/Support'));
+const Header = lazy(() => import('./components/Header'));
+const Offers = lazy(() => import('./components/Offers'));
+const VendorApplication = lazy(() => import('./components/vendor/VendorApplication'));
+const AdminPortal = lazy(() => import('./components/admin/AdminPortal'));
 
-  useEffect(() => {
-    // Only run this effect after auth state is loaded
-    if (!loading && isAuthenticated && user?.role === 'vendor') {
-      // If vendor is trying to access a passenger route, redirect to vendor dashboard
-      if (!location.pathname.startsWith('/vendor')) {
-        navigate('/vendor/dashboard', { replace: true });
-      }
-    }
-  }, [user, loading, isAuthenticated, navigate, location.pathname]);
+function AppRoutes() {
+  const { loading } = useAuth();
 
-  // Show loading state while checking auth
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
       </div>
     );
   }
 
-  // If not authenticated, show the children (will be handled by other auth guards)
-  if (!isAuthenticated) {
-    return <>{children}</>;
-  }
-
-  // If user is a vendor trying to access a non-vendor route, show loading (will redirect)
-  if (user?.role === 'vendor' && !location.pathname.startsWith('/vendor')) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
-
-  // For all other cases, render the children
-  return <>{children}</>;
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/admin" element={<AdminLogin />} />
+      
+      {/* Protected Routes */}
+      <Route
+        path="/dashboard/admin/*"
+        element={
+          <RequireRole role="admin">
+            <AdminDashboard />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/vendor/dashboard/*"
+        element={
+          <RequireRole role="vendor">
+            <VendorDashboard />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/my-bookings"
+        element={
+          <RequireRole role="passenger">
+            <PassengerDashboard />
+          </RequireRole>
+        }
+      />
+      
+      {/* Public Routes */}
+      <Route path="/search" element={<FlightSearch />} />
+      <Route path="/fleet" element={<Fleet />} />
+      <Route path="/support" element={<Support />} />
+      <Route path="/offers" element={<Offers />} />
+      <Route path="/vendor/application" element={<VendorApplication />} />
+      <Route path="/admin/portal" element={<AdminPortal />} />
+      
+      {/* Catch-all route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }
 
-function App() {
+function AppContent() {
   const location = useLocation();
-  const { user } = useAuth();
+  const { userRole, setAuth } = useAuth();
+  const { i18n } = useTranslation();
   const hideHeader = location.pathname.startsWith("/admin");
+
+  // Check authentication status on app load
+  const checkAuth = useCallback(async () => {
+    const token = localStorage.getItem('authToken');
+    const userRole = localStorage.getItem('userRole');
+    
+    if (token && userRole) {
+      try {
+        // Verify token is still valid
+        await api.get('/auth/verify');
+        // If verification succeeds, update auth state
+        setAuth({
+          isAuthenticated: true,
+          userRole: userRole as 'admin' | 'vendor' | 'passenger',
+          token
+        });
+      } catch (error) {
+        console.error('Session expired or invalid token:', error);
+        // Clear invalid auth data
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userRole');
+        setAuth({
+          isAuthenticated: false,
+          userRole: null,
+          token: null
+        });
+        // Only redirect if not already on login page
+        if (!location.pathname.startsWith('/login')) {
+          window.location.href = '/login';
+        }
+      }
+    }
+  }, [setAuth, location.pathname]);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   // Log route changes and auth state
   useEffect(() => {
     console.log("App rendered, current path:", location.pathname);
-    console.log("Current user role:", user?.role);
-  }, [location.pathname, user?.role]);
+    console.log("Current user role:", userRole);
+  }, [location.pathname, userRole]);
 
-  const { i18n } = useTranslation();
+  // Handle RTL layout based on language
+  useEffect(() => {
+    // Set RTL based on current language
+    setRTL(i18n.language === 'ar' || i18n.language === 'he');
+    
+    // Listen for language changes
+    const handleLanguageChange = (lng: string) => {
+      setRTL(lng === 'ar' || lng === 'he');
+    };
 
-// Add RTL effect
-useEffect(() => {
-  // Set RTL based on current language
-  setRTL(i18n.language === 'ar' || i18n.language === 'he' /* add other RTL languages */);
-  
-  // Listen for language changes
-  const handleLanguageChange = (lng: string) => {
-    setRTL(lng === 'ar' || lng === 'he' /* add other RTL languages */);
-  };
-
-  i18n.on('languageChanged', handleLanguageChange);
-  
-  // Cleanup
-  return () => {
-    i18n.off('languageChanged', handleLanguageChange);
-  };
-}, [i18n]);
+    i18n.on('languageChanged', handleLanguageChange);
+    
+    // Cleanup
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18n]);
   
   return (
-    <ToastProvider>
-      <div className="min-h-screen bg-background text-foreground">
-        {!hideHeader && <Header />}
-        <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<FlightSearch />} />
-        <Route path="/book" element={<FlightSearch />} />
-        <Route 
-          path="/my-bookings" 
-          element={
-            <RequireRole role="passenger">
-              <PassengerDashboard />
-            </RequireRole>
-          } 
-        />
-        <Route path="/fleet" element={<Fleet />} />
-        <Route path="/offers" element={<Offers />} />
-        <Route path="/support" element={<Support />} />
-        <Route path="/flights" element={<Navigate to="/search" replace />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/vendor/application" element={<VendorApplication />} />
-        <Route 
-          path="/vendor" 
-          element={
-            <RequireRole role="vendor">
-              <VendorDashboard />
-            </RequireRole>
-          } 
-        />
-        <Route
-          path="/admin/portal"
-          element={
-            <RequireRole role="admin">
-              <AdminPortal />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="/dashboard/admin"
-          element={
-            <RequireRole role="admin">
-              <AdminDashboard />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="/vendor/dashboard"
-          element={
-            <RequireRole role="vendor">
-              <VendorDashboard />
-            </RequireRole>
-          }
-        />
-        <Route
-          path="/passenger/dashboard"
-          element={
-            <RequireRole role="passenger">
-              <PassengerDashboard />
-            </RequireRole>
-          }
-        />
-      </Routes>
+    <div className="min-h-screen bg-background text-foreground">
+      {!hideHeader && <Header />}
+      <main className="">
+        <AppRoutes />
+      </main>
+      <Toaster />
     </div>
-    </ToastProvider>
+  );
+}
+
+function App() {
+  return (
+    <Suspense
+        fallback={
+          <div className="flex h-screen w-full items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+          </div>
+        }
+      >
+        <AppContent />
+      </Suspense>
   );
 }
 

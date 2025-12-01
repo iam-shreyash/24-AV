@@ -1,113 +1,102 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { getStoredAuth } from './Login';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import axios from 'axios';
 
-type User = {
-  id: string;
-  email: string;
-  role: string;
-  token: string;
+type UserRole = 'admin' | 'vendor' | 'passenger' | null;
+
+type AuthState = {
+  isAuthenticated: boolean;
+  userRole: UserRole;
+  token: string | null;
 };
 
-type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<{
-    id: string;
-    email: string;
-    role: string;
-    token: string;
-  }>;
+type AuthContextType = AuthState & {
+  login: (email: string, password: string) => Promise<AuthState>;
   logout: () => void;
-  isAuthenticated: boolean;
+  loading: boolean;
+  setAuth: (auth: AuthState) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [auth, setAuthState] = useState<AuthState>({
+    isAuthenticated: false,
+    userRole: null,
+    token: null,
+  });
+  const [loading, setLoading] = useState(true);
 
-  // Initialize auth state from localStorage on mount
+  // Initialize auth from localStorage
   useEffect(() => {
-    const initializeAuth = () => {
+    const stored = localStorage.getItem('auth');
+    if (stored) {
       try {
-        const stored = getStoredAuth();
-        console.log('Initializing auth with stored data:', stored);
-        if (stored) {
-          setUser({
-            id: stored.email || 'unknown',
-            email: stored.email,
-            role: stored.role,
-            token: stored.token
-          });
-          console.log('Auth initialized with user role:', stored.role);
-        } else {
-          console.log('No stored auth found');
+        const parsed = JSON.parse(stored);
+        if (parsed.token) {
+          setAuthState(parsed);
         }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-      } finally {
-        setLoading(false);
+      } catch (e) {
+        console.error('Failed to parse auth from localStorage', e);
       }
-    };
-
-    initializeAuth();
-    
-    // Listen for storage events to handle auth changes in other tabs
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'auth') {
-        initializeAuth();
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    }
+    setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string) => {
-    setLoading(true);
+  const setAuth = useCallback((newAuth: Partial<AuthState>) => {
+    setAuthState(prev => {
+      const updated = { ...prev, ...newAuth };
+      localStorage.setItem('auth', JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const login = async (email: string, password: string): Promise<AuthState> => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Make real API call to backend with form data format
+      const body = new URLSearchParams({
+        username: email,
+        password
+      });
       
-      // Mock response - in a real app, this would come from your API
-      const mockUser = {
-        id: '1',
-        email,
-        role: email.includes('admin') ? 'admin' : email.includes('vendor') ? 'vendor' : 'passenger',
-        token: 'mock-jwt-token'
+      const response = await axios.post('/api/auth/login', body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
+
+      const authData = {
+        isAuthenticated: true,
+        userRole: response.data.role,
+        token: response.data.access_token,
       };
-      
-      setUser(mockUser);
-      // Store in localStorage
-      localStorage.setItem('auth', JSON.stringify(mockUser));
-      return mockUser;
+
+      setAuth(authData);
+      return authData;
+
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const logout = () => {
-    setUser(null);
+    setAuthState({
+      isAuthenticated: false,
+      userRole: null,
+      token: null,
+    });
     localStorage.removeItem('auth');
-    // Use window.location to ensure full page reload and clear all state
-    window.location.href = '/login';
-  };
-
-  const value = {
-    user,
-    loading,
-    login,
-    logout,
-    isAuthenticated: !!user?.token,
   };
 
   return (
-    <AuthContext.Provider value={value}>
-      {!loading ? children : null}
+    <AuthContext.Provider
+      value={{
+        ...auth,
+        login,
+        logout,
+        loading,
+        setAuth,
+      }}
+    >
+      {children}
     </AuthContext.Provider>
   );
 };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -54,8 +54,8 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { Dialog, DialogContent, DialogFooter } from "../ui/dialog";
-import { useToast } from "../ui/toast";
-import { getStoredAuth, clearAuth } from "../auth/Login";
+import { useToast } from "../ui/use-toast";
+import { getStoredAuth, clearStoredAuth as clearAuth } from "../../utils/getStoredAuth";
 import AdminFlightsManagement from "./AdminFlightsManagement";
 import EditUserForm from "./EditUserForm";
 import ApiKeysManagement from "./ApiKeysManagement";
@@ -205,11 +205,11 @@ export default function AdminPortal() {
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   
-  const { showToast } = useToast();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Check if user is admin
-    if (!auth || auth.role !== "admin") {
+    if (!auth || auth.userRole !== "admin") {
       navigate("/admin", { replace: true });
       return;
     }
@@ -217,43 +217,85 @@ export default function AdminPortal() {
     if (activeSection === "users" && auth?.token) {
       loadPendingVendors();
     }
-  }, [auth, navigate]);
+  }, [auth, navigate, activeSection]);
 
   // Load profile when profile section is selected
   useEffect(() => {
-    if (activeSection === "profile" && auth && auth.role === "admin" && !adminProfile && !profileLoading) {
+    if (activeSection === "profile" && auth && auth.userRole === "admin" && !adminProfile && !profileLoading) {
       loadAdminProfile();
     }
   }, [activeSection, auth]);
 
   // Load all users when users section is selected and on "all" tab
   useEffect(() => {
-    if (activeSection === "users" && usersTab === "all" && auth && auth.role === "admin" && !usersLoading) {
+    if (activeSection === "users" && usersTab === "all" && auth && auth.userRole === "admin" && !usersLoading) {
       loadAllUsers();
     }
   }, [activeSection, usersTab]);
 
   // Load all aircraft when aircraft section is selected
   useEffect(() => {
-    if (activeSection === "aircraft" && auth && auth.role === "admin") {
+    if (activeSection === "aircraft" && auth && auth.userRole === "admin") {
       loadAllAircraft();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeSection]);
 
+  const loadAllBookings = useCallback(async () => {
+    if (allBookingsLoading) return;
+    if (!auth?.token) {
+      console.error("No auth token available");
+      return;
+    }
+    
+    setAllBookingsLoading(true);
+    try {
+      console.log("Fetching all bookings from /api/bookings/");
+      // Admin can fetch all bookings without passenger_id filter
+      const response = await axios.get("/api/bookings/", {
+        headers: { Authorization: `Bearer ${auth.token}` }
+      });
+      console.log("Bookings response:", response.data);
+      const bookings = Array.isArray(response.data) ? response.data : [];
+      setAllBookings(bookings);
+      console.log(`Loaded ${bookings.length} bookings`);
+    } catch (error: any) {
+      console.error("Error loading bookings:", error);
+      const errorMessage = error.response?.data?.detail || 
+                          error.response?.data?.message || 
+                          error.message || 
+                          "Failed to load bookings";
+      
+      if (error.code !== "ERR_NETWORK" && !error.message?.includes("Network Error")) {
+        if (error.response?.status === 403) {
+          toast({ description: "Admin access to bookings endpoint denied.", variant: "destructive" });
+        } else if (error.response?.status === 401) {
+          toast({ description: "Authentication failed. Please log in again.", variant: "destructive" });
+        } else {
+          toast({ description: errorMessage, variant: "destructive" });
+        }
+      } else {
+        console.warn("Network error loading bookings. Backend may not be running.");
+        toast({ description: "Cannot connect to backend server. Please ensure it's running.", variant: "destructive" });
+      }
+      setAllBookings([]);
+    } finally {
+      setAllBookingsLoading(false);
+    }
+  }, [auth, allBookingsLoading, toast]);
+
   // Load all bookings when bookings section is selected
   useEffect(() => {
-    if (activeSection === "bookings" && auth && auth.role === "admin") {
+    if (activeSection === "bookings" && auth && auth.userRole === "admin") {
       loadAllBookings();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeSection]);
+  }, [activeSection, auth, loadAllBookings]);
 
 
 
   // Load notifications when notifications section is selected
   useEffect(() => {
-    if (activeSection === "notifications" && auth && auth.role === "admin") {
+    if (activeSection === "notifications" && auth && auth.userRole === "admin") {
       loadNotifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -345,7 +387,7 @@ export default function AdminPortal() {
       }
     };
 
-    if (allUsers.length > 0 && auth && auth.role === "admin" && !vendorDataError) {
+    if (allUsers.length > 0 && auth && auth.userRole === "admin" && !vendorDataError) {
       loadVendorData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -414,16 +456,16 @@ export default function AdminPortal() {
       if (error.response?.status === 404 || error.response?.status === 401) {
         setAdminProfile({
           id: 0,
-          email: auth?.email || "",
+          email: "", // getStoredAuth doesn't have email property
           full_name: null,
-          role: auth?.role || "admin",
+          role: auth?.userRole || "admin",
           is_active: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         });
         setProfileFormData({
           full_name: "",
-          email: auth?.email || ""
+          email: "" // getStoredAuth doesn't have email property
         });
       } else {
         setProfileError("Failed to load profile information.");
@@ -496,7 +538,7 @@ export default function AdminPortal() {
       setUserBookings(response.data || []);
     } catch (error: any) {
       console.error("Error loading user bookings:", error);
-      showToast(error.response?.data?.detail || "Failed to load bookings", "error");
+      toast({ description: error.response?.data?.detail || "Failed to load bookings", variant: "destructive" });
       setUserBookings([]);
     } finally {
       setBookingsLoading(false);
@@ -562,62 +604,19 @@ export default function AdminPortal() {
       // Only show toast if it's not a network error (to avoid spam)
       if (error.code !== "ERR_NETWORK" && !error.message?.includes("Network Error")) {
         if (error.response?.status === 403) {
-          showToast("Admin access to aircraft endpoint denied. Please check backend permissions.", "error");
+          toast({ description: "Admin access to aircraft endpoint denied. Please check backend permissions.", variant: "destructive" });
         } else if (error.response?.status === 401) {
-          showToast("Authentication failed. Please log in again.", "error");
+          toast({ description: "Authentication failed. Please log in again.", variant: "destructive" });
         } else {
-          showToast(errorMessage, "error");
+          toast({ description: errorMessage, variant: "destructive" });
         }
       } else {
         console.warn("Network error loading aircraft. Backend may not be running on http://localhost:8000");
-        showToast("Cannot connect to backend server. Please ensure it's running.", "error");
+        toast({ description: "Cannot connect to backend server. Please ensure it's running.", variant: "destructive" });
       }
       setAllAircraft([]);
     } finally {
       setAircraftLoading(false);
-    }
-  };
-
-  const loadAllBookings = async () => {
-    if (allBookingsLoading) return;
-    if (!auth?.token) {
-      console.error("No auth token available");
-      return;
-    }
-    
-    setAllBookingsLoading(true);
-    try {
-      console.log("Fetching all bookings from /api/bookings/");
-      // Admin can fetch all bookings without passenger_id filter
-      const response = await axios.get("/api/bookings/", {
-        headers: { Authorization: `Bearer ${auth.token}` }
-      });
-      console.log("Bookings response:", response.data);
-      const bookings = Array.isArray(response.data) ? response.data : [];
-      setAllBookings(bookings);
-      console.log(`Loaded ${bookings.length} bookings`);
-    } catch (error: any) {
-      console.error("Error loading bookings:", error);
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          "Failed to load bookings";
-      
-      if (error.code !== "ERR_NETWORK" && !error.message?.includes("Network Error")) {
-        if (error.response?.status === 403) {
-          showToast("Admin access to bookings endpoint denied.", "error");
-        } else if (error.response?.status === 401) {
-          showToast("Authentication failed. Please log in again.", "error");
-        } else {
-          showToast(errorMessage, "error");
-        }
-      } else {
-        console.warn("Network error loading bookings. Backend may not be running.");
-        showToast("Cannot connect to backend server. Please ensure it's running.", "error");
-      }
-      setAllBookings([]);
-    } finally {
-      setAllBookingsLoading(false);
     }
   };
 
@@ -630,7 +629,7 @@ export default function AdminPortal() {
           headers: { Authorization: `Bearer ${auth?.token}` }
         }
       );
-      showToast(`Booking ${newStatus} successfully`, "success");
+      toast({ description: `Booking ${newStatus} successfully` });
       await loadAllBookings();
       if (selectedBooking?.id === bookingId) {
         setIsBookingDetailsOpen(false);
@@ -638,7 +637,7 @@ export default function AdminPortal() {
       }
     } catch (error: any) {
       console.error("Error updating booking status:", error);
-      showToast(error.response?.data?.detail || "Failed to update booking status", "error");
+      toast({ description: error.response?.data?.detail || "Failed to update booking status", variant: "destructive" });
     }
   };
 
@@ -761,7 +760,7 @@ export default function AdminPortal() {
           refunded: 0
         }
       });
-      showToast("Failed to load dashboard stats", "error");
+      toast({ description: "Failed to load dashboard stats", variant: "destructive" });
     } finally {
       setDashboardLoading(false);
     }
@@ -807,7 +806,7 @@ export default function AdminPortal() {
       });
       
       // Show success message
-      showToast(response.data?.message || "Account deleted successfully", "success");
+      toast({ description: response.data?.message || "Account deleted successfully" });
       
       // Verify deletion by reloading from server
       await loadAllUsers(false);
@@ -818,7 +817,7 @@ export default function AdminPortal() {
       // If deletion failed, restore the user in the list
       await loadAllUsers(false);
       
-      showToast(errorMessage, "error");
+      toast({ description: errorMessage, variant: "destructive" });
     } finally {
       setDeletingUserId(null);
       setUserToDelete(null);
@@ -898,10 +897,9 @@ export default function AdminPortal() {
           headers: { Authorization: `Bearer ${auth?.token}` }
         });
         
-        showToast(
-          newStatus ? "Vendor account activated successfully" : "Vendor account deactivated successfully",
-          "success"
-        );
+        toast({
+          description: newStatus ? "Vendor account activated successfully" : "Vendor account deactivated successfully"
+        });
         
         // Update vendor data in state
         setVendorData(prev => ({
@@ -921,7 +919,7 @@ export default function AdminPortal() {
           headers: { Authorization: `Bearer ${auth?.token}` }
         });
         
-        showToast(response.data?.message || (vendorToDeactivate.isActive ? "Vendor account deactivated successfully" : "Vendor account activated successfully"), "success");
+        toast({ description: response.data?.message || (vendorToDeactivate.isActive ? "Vendor account deactivated successfully" : "Vendor account activated successfully") });
         
         // Reload vendor data from server to get updated status
         try {
@@ -971,7 +969,7 @@ export default function AdminPortal() {
         errorMessage = error.message;
       }
       
-      showToast(errorMessage, "error");
+      toast({ description: errorMessage, variant: "destructive" });
     } finally {
       setProcessingVendorId(null);
       setVendorToDeactivate(null);
@@ -1014,7 +1012,7 @@ export default function AdminPortal() {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  if (!auth || auth.role !== "admin") {
+  if (!auth || auth.userRole !== "admin") {
     return null;
   }
 
@@ -2040,7 +2038,7 @@ export default function AdminPortal() {
                                     const fileUrl = window.URL.createObjectURL(blob);
                                     window.open(fileUrl, '_blank');
                                   } catch (error: any) {
-                                    showToast(error.response?.data?.detail || "Failed to load document", "error");
+                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
                                   }
                                 }}
                                 className="h-7 text-xs gap-1"
@@ -2072,7 +2070,7 @@ export default function AdminPortal() {
                                     const fileUrl = window.URL.createObjectURL(blob);
                                     window.open(fileUrl, '_blank');
                                   } catch (error: any) {
-                                    showToast(error.response?.data?.detail || "Failed to load document", "error");
+                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
                                   }
                                 }}
                                 className="h-7 text-xs gap-1"
@@ -2104,7 +2102,7 @@ export default function AdminPortal() {
                                     const fileUrl = window.URL.createObjectURL(blob);
                                     window.open(fileUrl, '_blank');
                                   } catch (error: any) {
-                                    showToast(error.response?.data?.detail || "Failed to load document", "error");
+                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
                                   }
                                 }}
                                 className="h-7 text-xs gap-1"
@@ -2137,7 +2135,7 @@ export default function AdminPortal() {
                                     const fileUrl = window.URL.createObjectURL(blob);
                                     window.open(fileUrl, '_blank');
                                   } catch (error: any) {
-                                    showToast(error.response?.data?.detail || "Failed to load document", "error");
+                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
                                   }
                                 }}
                                 className="h-7 text-xs gap-1"
@@ -2828,7 +2826,7 @@ export default function AdminPortal() {
                           </h2>
                           <p className="text-muted-foreground flex items-center gap-2 mt-1">
                             <Mail className="h-4 w-4" />
-                            {adminProfile?.email || auth?.email}
+                            {adminProfile?.email || ""}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
                             <Badge className="bg-primary/10 text-primary">
@@ -2911,7 +2909,7 @@ export default function AdminPortal() {
                           ) : (
                             <p className="font-body text-base p-3 bg-primary/5 rounded-lg flex items-center gap-2">
                               <Mail className="h-4 w-4 text-muted-foreground" />
-                              {adminProfile?.email || auth?.email}
+                              {adminProfile?.email || ""}
                             </p>
                           )}
                         </div>
@@ -2979,7 +2977,7 @@ export default function AdminPortal() {
                                 setIsEditingProfile(false);
                                 setProfileFormData({
                                   full_name: adminProfile?.full_name || "",
-                                  email: adminProfile?.email || auth?.email || ""
+                                  email: adminProfile?.email || ""
                                 });
                                 setProfileError(null);
                                 setProfileSuccess(null);
@@ -3276,7 +3274,7 @@ export default function AdminPortal() {
                   <Button
                     onClick={() => {
                       // TODO: Implement edit functionality
-                      showToast("Edit functionality coming soon", "info");
+                      toast({ description: "Edit functionality coming soon" });
                     }}
                     className="flex-1"
                   >

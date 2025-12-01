@@ -19,7 +19,7 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Sheet, SheetContent } from "../ui/sheet";
-import { getStoredAuth } from "../auth/Login";
+import { getStoredAuth } from "../../utils/getStoredAuth";
 import EditFlightForm from "../flights/EditFlightForm";
 import { extractMessage } from "../../lib/extractMessage";
 

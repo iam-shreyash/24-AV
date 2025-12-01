@@ -5,8 +5,8 @@ import { extractMessage } from "../../lib/extractMessage";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
-import { useToast } from "../ui/toast";
+import { getStoredAuth } from "../../utils/getStoredAuth";
+import { useToast } from "../ui/use-toast";
 
 type UserInfo = {
   id: number;
@@ -25,7 +25,7 @@ type EditUserFormProps = {
 
 export default function EditUserForm({ user, onClose, onSuccess }: EditUserFormProps) {
   const auth = getStoredAuth();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -46,7 +46,7 @@ export default function EditUserForm({ user, onClose, onSuccess }: EditUserFormP
       await axios.patch(`/api/users/${user.id}`, formData, {
         headers: { Authorization: `Bearer ${auth?.token}` }
       });
-      showToast("User updated successfully", "success");
+      toast({ description: "User updated successfully" });
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -74,7 +74,7 @@ export default function EditUserForm({ user, onClose, onSuccess }: EditUserFormP
           headers: { Authorization: `Bearer ${auth?.token}` }
         }
       );
-      showToast("Password reset successfully", "success");
+      toast({ description: "Password reset successfully" });
       setNewPassword("");
       setShowPasswordReset(false);
     } catch (err: any) {

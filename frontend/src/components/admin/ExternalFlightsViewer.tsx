@@ -7,8 +7,8 @@ import { extractMessage } from "../../lib/extractMessage";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../auth/Login";
-import { useToast } from "../ui/toast";
+import { getStoredAuth } from "../../utils/getStoredAuth";
+import { useToast } from "../ui/use-toast";
 
 type ExternalFlight = {
   id: string;
@@ -26,7 +26,7 @@ type ExternalFlight = {
 
 export default function ExternalFlightsViewer() {
   const auth = getStoredAuth();
-  const { showToast } = useToast();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [statusLoading, setStatusLoading] = useState(true);
   const [flights, setFlights] = useState<ExternalFlight[]>([]);
@@ -60,7 +60,7 @@ export default function ExternalFlightsViewer() {
       setApiStatus(response.data);
     } catch (error: any) {
       console.error("Error checking API status:", error);
-      setApiStatus({ enabled: false, has_api_key: false });
+      setApiStatus({ enabled: false });
     } finally {
       setStatusLoading(false);
     }
@@ -69,7 +69,7 @@ export default function ExternalFlightsViewer() {
   const searchFlights = async () => {
     if (!searchParams.origin && !searchParams.destination) {
       setError("Please enter at least origin or destination");
-      showToast("Please enter at least origin or destination", "error");
+      toast({ description: "Please enter at least origin or destination", variant: "destructive" });
       return;
     }
 
@@ -102,9 +102,9 @@ export default function ExternalFlightsViewer() {
       
       if (flightsData.length === 0) {
         setError("No flights found for the given criteria. Try different airports or dates.");
-        showToast("No flights found. Try different search criteria.", "warning");
+        toast({ description: "No flights found. Try different search criteria.", variant: "destructive" });
       } else {
-        showToast(`Found ${flightsData.length} flight(s)`, "success");
+        toast({ description: `Found ${flightsData.length} flight(s)` });
       }
     } catch (error: any) {
       console.error("Error searching flights:", error);
@@ -113,7 +113,7 @@ export default function ExternalFlightsViewer() {
       // Format multi-line error messages for display
       const singleLine = errorMessage.includes('\n') ? errorMessage.split('\n').join(' ') : errorMessage;
       setError(singleLine);
-      showToast(singleLine.length > 100 ? singleLine.substring(0, 100) + "..." : singleLine, "error");
+      toast({ description: singleLine.length > 100 ? singleLine.substring(0, 100) + "..." : singleLine, variant: "destructive" });
       setFlights([]);
     } finally {
       setLoading(false);
