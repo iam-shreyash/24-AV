@@ -125,12 +125,12 @@ export default function Login() {
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                      {t("auth.login.signingIn")}
+                      {t("Login In")}
                     </div>
                   ) : (
                     <>
                       <LogIn className="mr-2 h-4 w-4" />
-                      {t("auth.login.signIn")}
+                      {t("Login In")}
                     </>
                   )}
                 </Button>
