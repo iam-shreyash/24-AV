@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import axios from "axios";
 import {
   Plane,
   X,
@@ -16,7 +15,7 @@ import {
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../../utils/getStoredAuth";
+import api from "../../api/client";
 
 type AircraftRegistrationFormProps = {
   onClose: () => void;
@@ -27,8 +26,6 @@ export default function AircraftRegistrationForm({
   onClose,
   onSuccess
 }: AircraftRegistrationFormProps) {
-  const auth = getStoredAuth();
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -164,7 +161,7 @@ export default function AircraftRegistrationForm({
 
       const uploadFormData = new FormData();
 
-// Basic fields (never send null)
+      // Basic fields (never send null)
       uploadFormData.append("aircraft_name", payload.aircraft_name);
       uploadFormData.append("manufacturer", payload.manufacturer);
       uploadFormData.append("model", payload.model);
@@ -181,7 +178,7 @@ export default function AircraftRegistrationForm({
       uploadFormData.append("speed_unit", payload.speed_unit);
       uploadFormData.append("range_km", payload.range_km.toString());
 
-// Boolean fields must be string: “true” / “false”
+      // Boolean fields must be string: "true" / "false"
       uploadFormData.append("wifi_available", String(payload.wifi_available));
       uploadFormData.append("dining_service", String(payload.dining_service));
       uploadFormData.append(
@@ -194,16 +191,16 @@ export default function AircraftRegistrationForm({
       );
       uploadFormData.append("air_conditioning", String(payload.air_conditioning));
 
-// Array fields
+      // Array fields
       payload.amenities.forEach((item: string) =>
         uploadFormData.append("amenities", item)
       );
 
       payload.other_amenities.forEach((item: string) =>
         uploadFormData.append("other_amenities", item)
-);
+      );
 
-// Exterior image
+      // Exterior image
       if (exteriorImage) {
         uploadFormData.append("exterior_image", exteriorImage);
       }
@@ -215,9 +212,8 @@ export default function AircraftRegistrationForm({
         }
       });
 
-      await axios.post("/api/aircraft/", uploadFormData, {
+      await api.post("/aircraft/", uploadFormData, {
         headers: {
-          Authorization: `Bearer ${auth?.token}`,
           "Content-Type": "multipart/form-data"
         }
       });
@@ -303,9 +299,8 @@ export default function AircraftRegistrationForm({
                   placeholder="e.g., Sky King"
                   value={formData.aircraft_name}
                   onChange={e => handleChange("aircraft_name", e.target.value)}
-                  className={`h-12 ${
-                    fieldErrors.aircraft_name ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.aircraft_name ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.aircraft_name && (
@@ -337,9 +332,8 @@ export default function AircraftRegistrationForm({
                   placeholder="e.g., Citation CJ3"
                   value={formData.model}
                   onChange={e => handleChange("model", e.target.value)}
-                  className={`h-12 ${
-                    fieldErrors.model ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.model ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.model && (
@@ -394,9 +388,8 @@ export default function AircraftRegistrationForm({
                       e.target.value.toUpperCase()
                     )
                   }
-                  className={`h-12 ${
-                    fieldErrors.registration_number ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.registration_number ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.registration_number && (
@@ -426,9 +419,8 @@ export default function AircraftRegistrationForm({
                   min="1"
                   value={formData.seat_capacity}
                   onChange={e => handleChange("seat_capacity", e.target.value)}
-                  className={`h-12 ${
-                    fieldErrors.seat_capacity ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.seat_capacity ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.seat_capacity && (
@@ -450,9 +442,8 @@ export default function AircraftRegistrationForm({
                   step="0.1"
                   value={formData.luggage_load_kg}
                   onChange={e => handleChange("luggage_load_kg", e.target.value)}
-                  className={`h-12 ${
-                    fieldErrors.luggage_load_kg ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.luggage_load_kg ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.luggage_load_kg && (
@@ -478,9 +469,8 @@ export default function AircraftRegistrationForm({
                     onChange={e =>
                       handleChange("maximum_speed", e.target.value)
                     }
-                    className={`flex-1 h-12 ${
-                      fieldErrors.maximum_speed ? "border-destructive" : ""
-                    }`}
+                    className={`flex-1 h-12 ${fieldErrors.maximum_speed ? "border-destructive" : ""
+                      }`}
                     required
                   />
 
@@ -513,9 +503,8 @@ export default function AircraftRegistrationForm({
                   step="0.1"
                   value={formData.range_km}
                   onChange={e => handleChange("range_km", e.target.value)}
-                  className={`h-12 ${
-                    fieldErrors.range_km ? "border-destructive" : ""
-                  }`}
+                  className={`h-12 ${fieldErrors.range_km ? "border-destructive" : ""
+                    }`}
                   required
                 />
                 {fieldErrors.range_km && (
@@ -541,7 +530,6 @@ export default function AircraftRegistrationForm({
                   id="wifi_available"
                   checked={formData.wifi_available}
                   onChange={e => handleChange("wifi_available", e.target.checked)}
-                  className="h-5 w-5 rounded border-input"
                 />
                 <label
                   htmlFor="wifi_available"
@@ -561,7 +549,6 @@ export default function AircraftRegistrationForm({
                   onChange={e =>
                     handleChange("dining_service", e.target.checked)
                   }
-                  className="h-5 w-5 rounded border-input"
                 />
                 <label
                   htmlFor="dining_service"
@@ -581,7 +568,6 @@ export default function AircraftRegistrationForm({
                   onChange={e =>
                     handleChange("entertainment_system", e.target.checked)
                   }
-                  className="h-5 w-5 rounded border-input"
                 />
                 <label
                   htmlFor="entertainment_system"
@@ -601,7 +587,6 @@ export default function AircraftRegistrationForm({
                   onChange={e =>
                     handleChange("pet_onboard_allowed", e.target.checked)
                   }
-                  className="h-5 w-5 rounded border-input"
                 />
                 <label
                   htmlFor="pet_onboard_allowed"
@@ -621,7 +606,6 @@ export default function AircraftRegistrationForm({
                   onChange={e =>
                     handleChange("air_conditioning", e.target.checked)
                   }
-                  className="h-5 w-5 rounded border-input"
                 />
                 <label
                   htmlFor="air_conditioning"

@@ -28,26 +28,38 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     // If error is 401 and we haven't tried to refresh yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         // Try to refresh the token
-        const response = await axios.post('/api/auth/refresh', {}, { 
-          withCredentials: true 
+        const response = await axios.post('/api/auth/refresh', {}, {
+          withCredentials: true
         });
-        
+
         const { token } = response.data;
-        
+
         if (token) {
           // Store the new token
           localStorage.setItem('authToken', token);
-          
+
+          // Update 'auth' object too for AuthContext sync on reload
+          const authStored = localStorage.getItem('auth');
+          if (authStored) {
+            try {
+              const auth = JSON.parse(authStored);
+              auth.token = token;
+              localStorage.setItem('auth', JSON.stringify(auth));
+            } catch (e) {
+              console.error('Failed to update auth in localStorage', e);
+            }
+          }
+
           // Update the Authorization header
           originalRequest.headers.Authorization = `Bearer ${token}`;
-          
+
           // Retry the original request
           return api(originalRequest);
         } else {
@@ -57,6 +69,7 @@ api.interceptors.response.use(
         console.error('Token refresh failed:', error);
         // If refresh fails, clear auth and redirect to login
         localStorage.removeItem('authToken');
+        localStorage.removeItem('auth');
         // Use window.location instead of useNavigate to avoid hook issues in interceptors
         if (window.location.pathname !== '/login') {
           window.location.href = '/login';
@@ -64,12 +77,12 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
     }
-    
+
     // If the error is 403 (Forbidden), redirect to unauthorized page
     if (error.response?.status === 403) {
       window.location.href = '/unauthorized';
     }
-    
+
     return Promise.reject(error);
   }
 );

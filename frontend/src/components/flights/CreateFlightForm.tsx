@@ -1,5 +1,4 @@
 import { FormEvent, useEffect, useState } from "react";
-import axios from "axios";
 import {
   Calendar,
   X,
@@ -13,7 +12,7 @@ import {
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { getStoredAuth } from "../../utils/getStoredAuth";
+import api from "../../api/client";
 
 type Aircraft = {
   id: number;
@@ -45,7 +44,6 @@ export default function CreateFlightForm({
   onClose,
   onSuccess
 }: CreateFlightFormProps) {
-  const auth = getStoredAuth();
   const [loading, setLoading] = useState(false);
   const [loadingAircraft, setLoadingAircraft] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -65,7 +63,7 @@ export default function CreateFlightForm({
     arrival_time: "",
     total_seats_available: "",
     price_per_seat: "",
-    
+
     // Section B - Additional Details
     allowed_luggage_kg: "",
     special_amenities: [] as string[],
@@ -94,9 +92,7 @@ export default function CreateFlightForm({
   const loadAircraft = async () => {
     setLoadingAircraft(true);
     try {
-      const response = await axios.get("/api/aircraft/", {
-        headers: { Authorization: `Bearer ${auth?.token}` }
-      });
+      const response = await api.get("/aircraft/");
       setAircraftList(response.data);
       if (response.data.length > 0) {
         setFormData(prev => ({ ...prev, plane_id: response.data[0].id.toString() }));
@@ -110,11 +106,11 @@ export default function CreateFlightForm({
   };
 
   const calculateDuration = () => {
-    if (!formData.departure_date || !formData.departure_time || 
-        !formData.arrival_date || !formData.arrival_time) {
+    if (!formData.departure_date || !formData.departure_time ||
+      !formData.arrival_date || !formData.arrival_time) {
       return null;
     }
-    
+
     try {
       const departure = new Date(`${formData.departure_date}T${formData.departure_time}`);
       const arrival = new Date(`${formData.arrival_date}T${formData.arrival_time}`);
@@ -192,25 +188,10 @@ export default function CreateFlightForm({
       };
 
       console.log('Submitting flight creation with payload:', payload);
-      
-      // Add detailed logging for the request
-      const apiUrl = "/api/flights/";
-      console.log('Making request to:', apiUrl);
-      console.log('Request headers:', {
-        'Authorization': `Bearer ${auth?.token ? '***' : 'missing'}`,
-        'Content-Type': 'application/json'
-      });
-      
-      const response = await axios.post(apiUrl, payload, {
-        headers: { 
-          'Authorization': `Bearer ${auth?.token}`,
-          'Content-Type': 'application/json'
-        },
-        validateStatus: () => true // Don't throw for any status code
-      });
-      
+
+      const response = await api.post("/flights/", payload);
+
       console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
       console.log('Response data:', response.data);
 
       if (response.status >= 200 && response.status < 300) {
@@ -227,13 +208,13 @@ export default function CreateFlightForm({
       }
     } catch (err: any) {
       console.error("Error creating flight:", err);
-        const detail = err.response?.data?.detail;
-        const message = err.response?.data?.message;
-        const errorMessage = extractMessage(detail) ||
-                            (typeof message === 'string' ? message : '') ||
-                            err.message ||
-                            "Failed to create flight. Please try again.";
-        setError(errorMessage);
+      const detail = err.response?.data?.detail;
+      const message = err.response?.data?.message;
+      const errorMessage = extractMessage(detail) ||
+        (typeof message === 'string' ? message : '') ||
+        err.message ||
+        "Failed to create flight. Please try again.";
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -530,7 +511,7 @@ export default function CreateFlightForm({
                   )}
                 </div>
 
-                
+
 
                 <div className="md:col-span-2">
                   <label className="font-body text-sm font-medium text-foreground mb-2 block">

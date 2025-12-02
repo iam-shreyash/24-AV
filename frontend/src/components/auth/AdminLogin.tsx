@@ -1,8 +1,9 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Shield, Lock, Mail, Sparkles } from "lucide-react";
 import { extractMessage } from "../../lib/extractMessage";
+import { useAuth } from "./AuthContext";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -27,6 +28,13 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
+  const { isAuthenticated, userRole } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated && userRole === 'admin') {
+      navigate('/admin/portal', { replace: true });
+    }
+  }, [isAuthenticated, userRole, navigate]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();

@@ -1,6 +1,5 @@
 import React, { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import { Building2, CheckCircle, FileText, MapPin, Phone, Sparkles, Upload, Globe, User, CreditCard, ArrowLeft, ArrowRight, Receipt, XCircle } from "lucide-react";
 
 import { Badge } from "../ui/badge";
@@ -9,7 +8,9 @@ import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import { Stepper } from "../ui/stepper";
 import { extractMessage } from "../../lib/extractMessage";
-import { getStoredAuth, clearStoredAuth as clearAuth } from "../../utils/getStoredAuth";
+import { clearStoredAuth as clearAuth } from "../../utils/getStoredAuth";
+import { useAuth } from "../auth/AuthContext";
+import api from "../../api/client";
 import { countries, getStates, getCities } from "../../data/locations";
 
 type VendorApplicationData = {
@@ -58,7 +59,7 @@ const BUSINESS_BACKGROUND_OPTIONS = [
 export default function VendorApplication() {
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = getStoredAuth();
+  const { loading, userRole, token } = useAuth();
 
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<VendorApplicationData>({
@@ -91,14 +92,14 @@ export default function VendorApplication() {
     account_holder_name: ""
   });
 
-  const [loading, setLoading] = useState(false);
+  const [loadingLocal, setLoadingLocal] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loadingExisting, setLoadingExisting] = useState(true);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [availableStates, setAvailableStates] = useState<string[]>([]);
   const [availableCities, setAvailableCities] = useState<string[]>([]);
-  
+
   // Document uploads
   const [certificateOfIncorporation, setCertificateOfIncorporation] = useState<File | null>(null);
   const [gstCertificate, setGstCertificate] = useState<File | null>(null);
@@ -106,9 +107,11 @@ export default function VendorApplication() {
   const [ownerKycAddressProof, setOwnerKycAddressProof] = useState<File | null>(null);
 
   useEffect(() => {
+    if (loading) return;
+
     const locationState = location.state as { userId?: number; email?: string } | null;
-    
-    if (!auth) {
+
+    if (!token) {
       if (locationState?.userId) {
         navigate("/login", {
           state: {
@@ -122,16 +125,14 @@ export default function VendorApplication() {
       return;
     }
 
-    if (auth.userRole !== "vendor") {
+    if (userRole !== "vendor") {
       navigate("/login");
       return;
     }
 
     const loadApplication = async () => {
       try {
-        const response = await axios.get("/api/vendors/application", {
-          headers: { Authorization: `Bearer ${auth.token}` }
-        });
+        const response = await api.get("/vendors/application");
         if (response.data) {
           setApprovalStatus(response.data.approval_status);
           if (response.data.company_name !== "Pending Application") {
@@ -183,7 +184,7 @@ export default function VendorApplication() {
     };
 
     loadApplication();
-  }, [auth, navigate, location.state]);
+  }, [token, userRole, loading, navigate, location.state]);
 
   // Update available states when country changes
   useEffect(() => {
@@ -217,7 +218,7 @@ export default function VendorApplication() {
 
   const validateStep = (step: number): boolean => {
     const errors: Record<string, string> = {};
-    
+
     if (step === 1) {
       if (!formData.company_name.trim()) errors.company_name = "This field cannot be blank";
       if (!formData.owner_name.trim()) errors.owner_name = "This field cannot be blank";
@@ -245,14 +246,14 @@ export default function VendorApplication() {
       if (!gstCertificate) errors.gstCertificate = "GST Certificate is required";
       if (!ownerKycDocument) errors.ownerKycDocument = "Owner KYC document is required";
     }
-    
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    
+
     if (currentStep < 4) {
       if (!validateStep(currentStep)) {
         return;
@@ -267,12 +268,12 @@ export default function VendorApplication() {
     }
 
     setError(null);
-    setLoading(true);
+    setLoadingLocal(true);
 
     try {
       // Create FormData to include files
       const formDataToSend = new FormData();
-      
+
       // Add all form fields (convert to snake_case for backend)
       formDataToSend.append("company_name", formData.company_name);
       if (formData.owner_name) formDataToSend.append("owner_name", formData.owner_name);
@@ -301,7 +302,7 @@ export default function VendorApplication() {
       if (formData.bank_ifsc) formDataToSend.append("bank_ifsc", formData.bank_ifsc);
       if (formData.bank_branch) formDataToSend.append("bank_branch", formData.bank_branch);
       if (formData.account_holder_name) formDataToSend.append("account_holder_name", formData.account_holder_name);
-      
+
       // Add document files (required)
       if (certificateOfIncorporation) {
         formDataToSend.append("certificate_of_incorporation", certificateOfIncorporation);
@@ -317,12 +318,11 @@ export default function VendorApplication() {
         formDataToSend.append("owner_kyc_address_proof", ownerKycAddressProof);
       }
 
-      const response = await axios.post(
-        "/api/vendors/application",
+      const response = await api.post(
+        "/vendors/application",
         formDataToSend,
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`,
             "Content-Type": "multipart/form-data"
           },
           onUploadProgress: (progressEvent) => {
@@ -344,14 +344,14 @@ export default function VendorApplication() {
       console.error("Error response:", err.response?.data);
       console.error("Error status:", err.response?.status);
       console.error("Full error:", JSON.stringify(err.response?.data, null, 2));
-      
-      const errorMessage = extractMessage(err.response?.data?.detail) || 
-                          (typeof err.response?.data?.message === 'string' ? err.response?.data?.message : '') ||
-                          (typeof err.message === 'string' ? err.message : '') ||
-                          "Failed to submit application. Please try again.";
+
+      const errorMessage = extractMessage(err.response?.data?.detail) ||
+        (typeof err.response?.data?.message === 'string' ? err.response?.data?.message : '') ||
+        (typeof err.message === 'string' ? err.message : '') ||
+        "Failed to submit application. Please try again.";
       setError(errorMessage);
     } finally {
-      setLoading(false);
+      setLoadingLocal(false);
     }
   };
 
@@ -501,7 +501,7 @@ export default function VendorApplication() {
                 </div>
               </div>
             )}
-            
+
             {/* Stepper */}
             <div className="mb-8">
               <Stepper steps={STEPS} currentStep={currentStep} />
@@ -515,7 +515,7 @@ export default function VendorApplication() {
                     <User className="h-5 w-5 text-blue-800" />
                     <h3 className="font-heading text-xl font-semibold text-blue-800">Personal Details</h3>
                   </div>
-                  
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
@@ -532,7 +532,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.company_name}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Owner Name <span className="text-destructive">*</span>
@@ -548,7 +548,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.owner_name}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Business Background <span className="text-destructive">*</span>
@@ -568,7 +568,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.business_background}</p>
                       )}
                     </div>
-                    
+
                     {formData.business_background === "Other" && (
                       <div>
                         <label className="font-body text-sm font-medium text-foreground">
@@ -586,7 +586,7 @@ export default function VendorApplication() {
                         )}
                       </div>
                     )}
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Country <span className="text-destructive">*</span>
@@ -608,7 +608,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.country}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         State <span className="text-destructive">*</span>
@@ -631,7 +631,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.state}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         City <span className="text-destructive">*</span>
@@ -654,7 +654,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.city}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Pincode <span className="text-destructive">*</span>
@@ -670,7 +670,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.zip_code}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Address <span className="text-destructive">*</span>
@@ -686,8 +686,8 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.business_address}</p>
                       )}
                     </div>
-                    
-                    
+
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Phone <span className="text-destructive">*</span>
@@ -711,7 +711,7 @@ export default function VendorApplication() {
                     <CreditCard className="h-5 w-5 text-blue-800" />
                     <h3 className="font-heading text-xl font-semibold text-blue-800">Bank Details</h3>
                   </div>
-                  
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
@@ -725,7 +725,7 @@ export default function VendorApplication() {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Bank Name <span className="text-destructive">*</span>
@@ -741,7 +741,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.bank_name}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Account Number <span className="text-destructive">*</span>
@@ -757,7 +757,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.bank_account_number}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         IFSC Code <span className="text-destructive">*</span>
@@ -773,7 +773,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.bank_ifsc}</p>
                       )}
                     </div>
-                    
+
                     <div className="md:col-span-2">
                       <label className="font-body text-sm font-medium text-foreground">
                         Branch Name <span className="text-destructive">*</span>
@@ -800,7 +800,7 @@ export default function VendorApplication() {
                     <Receipt className="h-5 w-5 text-blue-800" />
                     <h3 className="font-heading text-xl font-semibold text-blue-800">GST Details</h3>
                   </div>
-                  
+
                   <div className="grid gap-4 md:grid-cols-2">
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
@@ -817,7 +817,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.tax_id}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         Business Registration Number <span className="text-destructive">*</span>
@@ -833,7 +833,7 @@ export default function VendorApplication() {
                         <p className="text-xs text-destructive mt-1">{fieldErrors.business_registration_number}</p>
                       )}
                     </div>
-                    
+
                     <div>
                       <label className="font-body text-sm font-medium text-foreground">
                         License Number <span className="text-destructive">*</span>
@@ -860,12 +860,12 @@ export default function VendorApplication() {
                     <FileText className="h-5 w-5 text-blue-800" />
                     <h3 className="font-heading text-xl font-semibold text-blue-800">Required Documents</h3>
                   </div>
-                  
+
                   {/* Document Uploads */}
                   <div className="mt-6 space-y-6">
                     <div>
-                      
-                      
+
+
                       {/* Certificate of Incorporation */}
                       <div className="mb-6">
                         <label className="font-body text-sm font-medium text-foreground mb-2 block">
@@ -1167,7 +1167,7 @@ export default function VendorApplication() {
                     Previous
                   </Button>
                 )}
-                
+
                 {currentStep < 4 ? (
                   <Button
                     type="button"

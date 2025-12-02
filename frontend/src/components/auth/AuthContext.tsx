@@ -13,7 +13,7 @@ type AuthContextType = AuthState & {
   login: (email: string, password: string) => Promise<AuthState>;
   logout: () => void;
   loading: boolean;
-  setAuth: (auth: AuthState) => void;
+  setAuth: (auth: Partial<AuthState>) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +34,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const parsed = JSON.parse(stored);
         if (parsed.token) {
           setAuthState(parsed);
+          // Ensure authToken is synced on load
+          localStorage.setItem('authToken', parsed.token);
         }
       } catch (e) {
         console.error('Failed to parse auth from localStorage', e);
@@ -46,6 +48,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAuthState(prev => {
       const updated = { ...prev, ...newAuth };
       localStorage.setItem('auth', JSON.stringify(updated));
+
+      // Sync with authToken for api/client.ts compatibility
+      if (updated.token) {
+        localStorage.setItem('authToken', updated.token);
+      } else {
+        localStorage.removeItem('authToken');
+      }
+
       return updated;
     });
   }, []);
@@ -57,7 +67,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         username: email,
         password
       });
-      
+
       const response = await axios.post('/api/auth/login', body, {
         headers: { "Content-Type": "application/x-www-form-urlencoded" }
       });
@@ -84,6 +94,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       token: null,
     });
     localStorage.removeItem('auth');
+    localStorage.removeItem('authToken');
   };
 
   return (

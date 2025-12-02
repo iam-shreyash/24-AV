@@ -55,7 +55,7 @@ async def create_aircraft(
     other_amenities: Optional[str] = Form(default=None),  # JSON string array
     amenities: Optional[str] = Form(default=None),  # JSON string array
     exterior_image: Optional[UploadFile] = File(default=None),
-    interior_image: Optional[List[UploadFile]] = File(default=None),
+    interior_image: List[UploadFile] = File(default=[]),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ) -> schemas.PlaneRead:
@@ -330,7 +330,7 @@ async def update_aircraft(
     other_amenities: Optional[str] = Form(default=None),  # JSON string array
     amenities: Optional[str] = Form(default=None),  # JSON string array
     exterior_image: Optional[UploadFile] = File(default=None),
-    interior_image: Optional[List[UploadFile]] = File(default=None),
+    interior_image: List[UploadFile] = File(default=[]),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ) -> schemas.PlaneRead:

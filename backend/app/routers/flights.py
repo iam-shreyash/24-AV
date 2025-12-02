@@ -71,8 +71,18 @@ def create_flight(
         "notes_for_passengers": payload.notes_for_passengers
     }
     
+    
+    # Determine vendor_id based on user role
+    if current_user.role == models.UserRole.VENDOR:
+        if not current_user.vendor:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vendor profile not found")
+        vendor_id = current_user.vendor.id
+    else:
+        # Admin creating flight - use the plane's vendor_id
+        vendor_id = plane.vendor_id
+    
     flight = models.Flight(
-        vendor_id=current_user.vendor.id if current_user.role == models.UserRole.VENDOR else plane.vendor_id,
+        vendor_id=vendor_id,
         plane_id=payload.plane_id,
         origin=payload.origin,
         destination=payload.destination,

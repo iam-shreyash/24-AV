@@ -2,7 +2,7 @@ import { Menu, Plane, User, Globe } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { clearStoredAuth as clearAuth, getStoredAuth } from "../utils/getStoredAuth";
+import { useAuth } from "./auth/AuthContext";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import LanguageSelector from "./LanguageSelector";
@@ -10,36 +10,37 @@ import LanguageSelector from "./LanguageSelector";
 export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
-  const auth = getStoredAuth();
+  const { userRole, isAuthenticated, logout } = useAuth();
   const { t } = useTranslation();
 
   const getMyBookingsHref = () => {
-    if (auth?.userRole === "passenger") return "/my-bookings";
-    if (auth?.userRole === "vendor") return "/vendor/dashboard";
-    if (auth?.userRole === "admin") return "/dashboard/admin";
+    if (userRole === "passenger") return "/my-bookings";
+    if (userRole === "vendor") return "/vendor/dashboard";
+    if (userRole === "admin") return "/dashboard/admin";
     return "/my-bookings";
   };
 
   const navigation = [
     { key: "nav.home", href: "/" },
-    ...(auth?.userRole !== "vendor"
+    ...(userRole !== "vendor"
       ? [{ key: "nav.searchFlights", href: "/search" }]
       : []),
-    ...(auth?.userRole === "passenger"
+    ...(userRole === "passenger"
       ? [{ key: "nav.myBookings", href: getMyBookingsHref() }]
       : []),
     { key: "nav.support", href: "/support" },
-    ...(auth?.userRole === "vendor"
+    ...(userRole === "vendor"
       ? [{ key: "nav.vendorPortal", href: "/vendor/dashboard" }]
       : []),
-    ...(auth?.userRole === "admin"
+    ...(userRole === "admin"
       ? [{ key: "nav.adminPortal", href: "/admin/portal" }]
       : []),
   ];
 
   const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
+    console.log('Logout clicked - clearing auth and redirecting to login');
+    logout(); // Clear all auth data from context and localStorage
+    navigate("/login", { replace: true }); // Redirect to login
   };
 
   return (
@@ -74,11 +75,10 @@ export default function Header() {
                 key={item.key}
                 to={item.href}
                 onClick={handleClick}
-                className={`font-body text-sm font-medium transition-all duration-300 ${
-                  isActive
-                    ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
-                    : "text-gray-700 hover:text-blue-800 hover:scale-105"
-                }`}
+                className={`font-body text-sm font-medium transition-all duration-300 ${isActive
+                  ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
+                  : "text-gray-700 hover:text-blue-800 hover:scale-105"
+                  }`}
               >
                 {t(item.key)}
               </Link>
@@ -88,13 +88,13 @@ export default function Header() {
           {/* New Beautiful Dropdown Language Selector */}
           <LanguageSelector />
 
-          {auth ? (
+          {isAuthenticated ? (
             <Button
+              variant="ghost"
               size="sm"
-              className="ml-4 bg-blue-800 hover:bg-blue-900"
               onClick={handleLogout}
+              className="text-blue-800 hover:bg-blue-50"
             >
-              <User className="mr-2 h-4 w-4" />
               {t("nav.logout")}
             </Button>
           ) : (
@@ -148,11 +148,10 @@ export default function Header() {
                     key={item.key}
                     to={item.href}
                     onClick={handleClick}
-                    className={`font-body text-base font-medium transition-all duration-300 ${
-                      isActive
-                        ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
-                        : "text-gray-700 hover:text-blue-800"
-                    }`}
+                    className={`font-body text-base font-medium transition-all duration-300 ${isActive
+                      ? "rounded-md bg-blue-50 px-3 py-1.5 text-blue-800"
+                      : "text-gray-700 hover:text-blue-800"
+                      }`}
                   >
                     {t(item.key)}
                   </Link>
@@ -162,25 +161,28 @@ export default function Header() {
               {/* Language selector in mobile menu */}
               <LanguageSelector />
 
-              {auth ? (
+            </nav>
+
+            <div className="mt-6 border-t border-blue-100 pt-6">
+              {isAuthenticated ? (
                 <Button
-                  className="bg-blue-800 hover:bg-blue-900"
+                  variant="ghost"
+                  className="w-full justify-start text-blue-800 hover:bg-blue-50"
                   onClick={handleLogout}
                 >
-                  <User className="mr-2 h-4 w-4" />
                   {t("nav.logout")}
                 </Button>
               ) : (
                 <>
                   <Button
                     variant="outline"
-                    className="border-blue-800 text-blue-800 hover:bg-blue-50"
+                    className="w-full justify-start border-blue-800 text-blue-800 hover:bg-blue-50"
                     onClick={() => navigate("/register")}
                   >
                     {t("nav.register")}
                   </Button>
                   <Button
-                    className="bg-blue-800 hover:bg-blue-900"
+                    className="mt-2 w-full justify-start bg-blue-800 hover:bg-blue-900"
                     onClick={() => navigate("/login")}
                   >
                     <User className="mr-2 h-4 w-4" />
@@ -188,7 +190,7 @@ export default function Header() {
                   </Button>
                 </>
               )}
-            </nav>
+            </div>
           </SheetContent>
         </Sheet>
       </div>

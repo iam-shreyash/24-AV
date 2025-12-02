@@ -42,25 +42,25 @@ const ProtectedRoute = ({
   redirectPath = '/login',
   checkAuthOnMount = false,
 }: ProtectedRouteProps) => {
-  const { isAuthenticated, userRole, loading: authLoading } = useAuth();
+  const { isAuthenticated, user, loading: authLoading } = useAuth();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const location = useLocation();
 
   useEffect(() => {
-    if (checkAuthOnMount && isAuthenticated && userRole) {
+    if (checkAuthOnMount && isAuthenticated && user?.role) {
       // Here you could add an API call to verify the token if needed
       // For now, we'll just use the local auth state
-      if (allowedRoles && !allowedRoles.includes(userRole)) {
+      if (allowedRoles && !allowedRoles.includes(user.role)) {
         setIsAuthorized(false);
       } else {
         setIsAuthorized(true);
       }
     } else if (!checkAuthOnMount) {
       // If we're not checking auth on mount, determine authorization immediately
-      const hasRequiredRole = !allowedRoles || (userRole && allowedRoles.includes(userRole));
+      const hasRequiredRole = !allowedRoles || (user?.role && allowedRoles.includes(user.role));
       setIsAuthorized(isAuthenticated && hasRequiredRole);
     }
-  }, [isAuthenticated, userRole, allowedRoles, checkAuthOnMount]);
+  }, [isAuthenticated, user, allowedRoles, checkAuthOnMount]);
 
   // Show loading state if we're still checking authentication
   if (authLoading || (checkAuthOnMount && isAuthorized === null)) {
@@ -77,7 +77,7 @@ const ProtectedRoute = ({
   }
 
   // Check if user has the required role
-  if (allowedRoles && (!userRole || !allowedRoles.includes(userRole))) {
+  if (allowedRoles && (!user?.role || !allowedRoles.includes(user.role))) {
     return <Navigate to="/unauthorized" state={{ from: location }} replace />;
   }
 

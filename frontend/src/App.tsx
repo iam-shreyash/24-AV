@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import { Suspense, lazy, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
-import api from './api/client';
+
 
 // Providers
 import { AuthProvider, useAuth } from './components/auth/AuthContext';
@@ -28,7 +28,7 @@ const VendorApplication = lazy(() => import('./components/vendor/VendorApplicati
 const AdminPortal = lazy(() => import('./components/admin/AdminPortal'));
 
 function AppRoutes() {
-  const { loading } = useAuth();
+  const { loading, userRole } = useAuth();
 
   if (loading) {
     return (
@@ -44,8 +44,9 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/admin" element={<AdminLogin />} />
-      
-      {/* Protected Routes */}
+
+      {/* Protected Routes - Only render when userRole is available */}
+      {/* Protected Routes - Only render when userRole is available */}
       <Route
         path="/dashboard/admin/*"
         element={
@@ -70,7 +71,7 @@ function AppRoutes() {
           </RequireRole>
         }
       />
-      
+
       {/* Public Routes */}
       <Route path="/search" element={<FlightSearch />} />
       <Route path="/fleet" element={<Fleet />} />
@@ -78,7 +79,7 @@ function AppRoutes() {
       <Route path="/offers" element={<Offers />} />
       <Route path="/vendor/application" element={<VendorApplication />} />
       <Route path="/admin/portal" element={<AdminPortal />} />
-      
+
       {/* Catch-all route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -87,71 +88,34 @@ function AppRoutes() {
 
 function AppContent() {
   const location = useLocation();
-  const { userRole, setAuth } = useAuth();
+  const { userRole, setAuth, loading } = useAuth();
   const { i18n } = useTranslation();
   const hideHeader = location.pathname.startsWith("/admin");
 
-  // Check authentication status on app load
-  const checkAuth = useCallback(async () => {
-    const token = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('userRole');
-    
-    if (token && userRole) {
-      try {
-        // Verify token is still valid
-        await api.get('/auth/verify');
-        // If verification succeeds, update auth state
-        setAuth({
-          isAuthenticated: true,
-          userRole: userRole as 'admin' | 'vendor' | 'passenger',
-          token
-        });
-      } catch (error) {
-        console.error('Session expired or invalid token:', error);
-        // Clear invalid auth data
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userRole');
-        setAuth({
-          isAuthenticated: false,
-          userRole: null,
-          token: null
-        });
-        // Only redirect if not already on login page
-        if (!location.pathname.startsWith('/login')) {
-          window.location.href = '/login';
-        }
-      }
-    }
-  }, [setAuth, location.pathname]);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
-
-  // Log route changes and auth state
+  // Log route changes and auth state (null-safe)
   useEffect(() => {
     console.log("App rendered, current path:", location.pathname);
-    console.log("Current user role:", userRole);
+    console.log("Current user role:", userRole || 'not authenticated');
   }, [location.pathname, userRole]);
 
   // Handle RTL layout based on language
   useEffect(() => {
     // Set RTL based on current language
     setRTL(i18n.language === 'ar' || i18n.language === 'he');
-    
+
     // Listen for language changes
     const handleLanguageChange = (lng: string) => {
       setRTL(lng === 'ar' || lng === 'he');
     };
 
     i18n.on('languageChanged', handleLanguageChange);
-    
+
     // Cleanup
     return () => {
       i18n.off('languageChanged', handleLanguageChange);
     };
   }, [i18n]);
-  
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {!hideHeader && <Header />}
@@ -166,14 +130,14 @@ function AppContent() {
 function App() {
   return (
     <Suspense
-        fallback={
-          <div className="flex h-screen w-full items-center justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
-          </div>
-        }
-      >
-        <AppContent />
-      </Suspense>
+      fallback={
+        <div className="flex h-screen w-full items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent" />
+        </div>
+      }
+    >
+      <AppContent />
+    </Suspense>
   );
 }
 

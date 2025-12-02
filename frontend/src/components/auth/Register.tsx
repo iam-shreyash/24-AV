@@ -1,8 +1,9 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { UserPlus, Sparkles, Eye, EyeOff } from "lucide-react";
 import { extractMessage } from "../../lib/extractMessage";
+import { useAuth } from "./AuthContext";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -31,7 +32,7 @@ export default function Register() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // OTP verification state (only for passenger accounts)
   // TODO: Re-enable OTP verification when SMS API key is added.
   const [mobileVerified, setMobileVerified] = useState(false);
@@ -40,6 +41,16 @@ export default function Register() {
   const [mobileNumber, setMobileNumber] = useState<string>("");
 
   const navigate = useNavigate();
+  const { isAuthenticated, userRole } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated && userRole) {
+      const target = userRole === 'admin' ? '/dashboard/admin' :
+        userRole === 'vendor' ? '/vendor/dashboard' :
+          '/my-bookings';
+      navigate(target, { replace: true });
+    }
+  }, [isAuthenticated, userRole, navigate]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -80,16 +91,16 @@ export default function Register() {
 
       // Registration successful - redirect to login
       // Vendors will be redirected to application form after login
-      navigate("/login", { 
+      navigate("/login", {
         replace: true,
-        state: { 
+        state: {
           message: `Account created successfully! Please login to ${data.role === "vendor" ? "complete your vendor application" : "access your dashboard"}.`,
           redirectTo: data.role === "vendor" ? "/vendor/application" : undefined
         }
       });
     } catch (err: any) {
       console.error("Registration error:", err);
-      
+
       if (err.response?.data?.detail) {
         // Backend returned a specific error message
         setError(extractMessage(err.response.data.detail));
@@ -277,11 +288,10 @@ export default function Register() {
                             setMobileNumber(""); // Also reset mobile number input
                           }
                         }}
-                        className={`rounded-lg border-2 p-4 text-center font-body text-sm font-medium transition-all ${
-                          role === r
-                            ? "border-blue-800 bg-blue-50 text-blue-800 shadow-md"
-                            : "border-gray-300 bg-white text-gray-700 hover:border-blue-300"
-                        }`}
+                        className={`rounded-lg border-2 p-4 text-center font-body text-sm font-medium transition-all ${role === r
+                          ? "border-blue-800 bg-blue-50 text-blue-800 shadow-md"
+                          : "border-gray-300 bg-white text-gray-700 hover:border-blue-300"
+                          }`}
                       >
                         <div className="font-heading text-base font-semibold">
                           {r.charAt(0).toUpperCase() + r.slice(1)}
@@ -311,7 +321,7 @@ export default function Register() {
                   <UserPlus className="mr-2 h-5 w-5" />
                   {loading ? "Creating Account..." : "Create Account"}
                 </Button>
-                
+
                 {/* TODO: Re-enable OTP verification when SMS API key is added. */}
                 {/* Temporarily disabled - OTP verification not required */}
                 {/* 

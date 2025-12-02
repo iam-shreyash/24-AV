@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { LogIn, Sparkles } from 'lucide-react';
@@ -14,10 +14,22 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, isAuthenticated, userRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    console.log('Login useEffect:', { isAuthenticated, userRole, locationState: location.state });
+    if (isAuthenticated && userRole) {
+      const from = location.state?.from?.pathname ||
+        (userRole === 'admin' ? '/dashboard/admin' :
+          userRole === 'vendor' ? '/vendor/dashboard' :
+            '/my-bookings');
+      console.log('Redirecting from Login to:', from);
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, userRole, navigate, location]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -27,12 +39,12 @@ export default function Login() {
     try {
       const response = await login(email, password);
       console.log('Login successful, role:', response.userRole);
-      
-      const from = location.state?.from?.pathname || 
-                  (response.userRole === 'admin' ? '/dashboard/admin' :
-                   response.userRole === 'vendor' ? '/vendor/dashboard' : 
-                   '/my-bookings');
-      
+
+      const from = location.state?.from?.pathname ||
+        (response.userRole === 'admin' ? '/dashboard/admin' :
+          response.userRole === 'vendor' ? '/vendor/dashboard' :
+            '/my-bookings');
+
       console.log('Redirect to', from);
       navigate(from, { replace: true });
 

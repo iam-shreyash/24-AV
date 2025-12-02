@@ -1,16 +1,17 @@
 import { ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { clearStoredAuth as clearAuth, getStoredAuth } from "../../utils/getStoredAuth";
+import { useAuth } from "../auth/AuthContext";
 
 export default function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
-  const auth = getStoredAuth();
+  const { userRole, isAuthenticated, logout } = useAuth();
   const { t } = useTranslation();
 
   const handleLogout = () => {
-    clearAuth();
-    navigate("/login");
+    console.log('Layout logout clicked');
+    logout();
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -22,9 +23,9 @@ export default function Layout({ children }: { children: ReactNode }) {
             <h1 className="text-2xl font-semibold">{t("layout.title")}</h1>
           </div>
           <div className="flex items-center gap-3">
-            {auth && (
+            {isAuthenticated && (
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs uppercase tracking-wide text-white/90">
-                {auth.userRole}
+                {userRole}
               </span>
             )}
             <span className="rounded-full bg-white/15 px-3 py-1 text-sm text-white/90">
@@ -43,7 +44,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               >
                 {t("layout.nav.flights")}
               </NavLink>
-              {auth?.userRole === "admin" && (
+              {userRole === "admin" && (
                 <NavLink
                   to="/dashboard/admin"
                   className={({ isActive }) =>
@@ -53,7 +54,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   {t("layout.nav.admin")}
                 </NavLink>
               )}
-              {auth?.userRole === "vendor" && (
+              {userRole === "vendor" && (
                 <NavLink
                   to="/vendor/dashboard"
                   className={({ isActive }) =>
@@ -63,7 +64,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   {t("layout.nav.vendor")}
                 </NavLink>
               )}
-              {auth?.userRole === "passenger" && (
+              {userRole === "passenger" && (
                 <NavLink
                   to="/passenger/dashboard"
                   className={({ isActive }) =>
@@ -75,7 +76,7 @@ export default function Layout({ children }: { children: ReactNode }) {
               )}
             </div>
             <div className="flex items-center gap-3">
-              {!auth && (
+              {!isAuthenticated && (
                 <NavLink
                   to="/login"
                   className={({ isActive }) =>
@@ -85,7 +86,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   {t("layout.nav.login")}
                 </NavLink>
               )}
-              {auth && (
+              {isAuthenticated && (
                 <button
                   type="button"
                   onClick={handleLogout}

@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Plane, Plus, Calendar, Clock, MapPin, RefreshCw, Edit, Trash2 } from "lucide-react";
 
@@ -10,8 +9,8 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Sheet, SheetContent } from "../ui/sheet";
 import { Tabs, TabsContent } from "../ui/tabs";
-import { getStoredAuth } from "../../utils/getStoredAuth";
 import { useAuth } from "../auth/AuthContext";
+import api from "../../api/client";
 import AircraftRegistrationForm from "../aircraft/AircraftRegistrationForm";
 import CreateFlightForm from "../flights/CreateFlightForm";
 import EditFlightForm from "../flights/EditFlightForm";
@@ -22,8 +21,7 @@ import { useToast } from "../ui/use-toast";
 export default function VendorDashboard() {
   const navigate = useNavigate();
   // Use AuthContext to determine authenticated user and loading state
-  const { loading } = useAuth();
-  const auth = getStoredAuth();
+  const { loading, userRole, token } = useAuth();
   const { t } = useTranslation();
   const [isAircraftFormOpen, setIsAircraftFormOpen] = useState(false);
   const [isFlightFormOpen, setIsFlightFormOpen] = useState(false);
@@ -36,17 +34,15 @@ export default function VendorDashboard() {
   const hasCheckedApproval = useRef(false);
   const hasLoadedFlights = useRef(false);
 
-  
+
 
   const loadVendorFlights = useCallback(async (force = false) => {
-    if (!auth || auth.userRole !== "vendor") return;
+    if (!token || userRole !== "vendor") return;
     if (!force && hasLoadedFlights.current) return;
-    
+
     setFlightsLoading(true);
     try {
-      const response = await axios.get("/api/flights/vendor", {
-        headers: { Authorization: `Bearer ${auth.token}` }
-      });
+      const response = await api.get("/flights/vendor");
       setFlights(response.data);
       hasLoadedFlights.current = true;
     } catch (error) {
@@ -54,7 +50,7 @@ export default function VendorDashboard() {
     } finally {
       setFlightsLoading(false);
     }
-  }, [auth]);
+  }, [userRole]);
 
   useEffect(() => {
     // Prevent infinite loops by checking if we've already checked
@@ -65,24 +61,17 @@ export default function VendorDashboard() {
       if (loading) return;
 
       // If no authenticated user or wrong role, send to login
-      if (!auth || auth.userRole !== "vendor") {
-        navigate("/login", { replace: true });
-        return;
-      }
-
-      // At this point user exists and is vendor
-      if (!auth || auth.userRole !== "vendor") {
-        // If token missing, send to login
-        navigate("/login", { replace: true });
+      // Note: RequireRole should handle this, but double check doesn't hurt as long as it uses same source of truth
+      if (!token || userRole !== "vendor") {
+        // We rely on RequireRole to handle the redirect to login if not authenticated
+        // But if we are here and not vendor, something is wrong
         return;
       }
 
       hasCheckedApproval.current = true;
 
       try {
-        const response = await axios.get("/api/vendors/application", {
-          headers: { Authorization: `Bearer ${auth.token}` }
-        });
+        const response = await api.get("/vendors/application");
         const vendor = response.data;
 
         // If not approved, redirect to application page
@@ -95,12 +84,13 @@ export default function VendorDashboard() {
       } catch (err) {
         // Network or server error - prefer sending to login instead of forcing application redirect
         console.error("Vendor approval check failed:", err);
-        navigate("/login", { replace: true });
+        // Don't redirect to login here, as it might cause loop if API fails. 
+        // Just let it be, or show error.
       }
     };
 
     checkApprovalStatus();
-  }, [loading, auth, navigate, loadVendorFlights]);
+  }, [loading, token, userRole, navigate, loadVendorFlights]);
 
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("flights");
@@ -155,7 +145,7 @@ export default function VendorDashboard() {
                 <Plus className="h-4 w-4" />
                 {t("vendor.buttons.addFlight")}
               </Button>
-              
+
             </div>
           </div>
         </div>
@@ -223,9 +213,9 @@ export default function VendorDashboard() {
         </div>
 
         <div className="container relative z-10 mx-auto px-4">
-              <VendorDashboardHome />
+          <VendorDashboardHome />
 
-              <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-0">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="mt-0">
 
             {/* Flights Tab */}
             <TabsContent value="flights" className="mt-0">
@@ -292,24 +282,22 @@ export default function VendorDashboard() {
                           const arrival = new Date(flight.arrival_time);
                           const duration = Math.round((arrival.getTime() - departure.getTime()) / (1000 * 60));
                           const isPast = arrival < new Date();
-                          
+
                           const handleEdit = (e: React.MouseEvent) => {
                             e.stopPropagation();
                             setFlightToEdit(flight);
                             setIsEditFlightFormOpen(true);
                           };
-                          
+
                           const handleDelete = async (e: React.MouseEvent) => {
                             e.stopPropagation();
                             if (!window.confirm(t('vendor.confirmDelete', { flight: flight.flight_number || `FL-${flight.id}` }))) {
                               return;
                             }
-                            
+
                             setDeletingFlightId(flight.id);
                             try {
-                              await axios.delete(`/api/flights/${flight.id}`, {
-                                headers: { Authorization: `Bearer ${auth?.token}` }
-                              });
+                              await api.delete(`/flights/${flight.id}`);
                               // Refresh flights list
                               hasLoadedFlights.current = false;
                               loadVendorFlights(true);
@@ -320,10 +308,10 @@ export default function VendorDashboard() {
                               setDeletingFlightId(null);
                             }
                           };
-                          
+
                           return (
-                            <tr 
-                              key={flight.id} 
+                            <tr
+                              key={flight.id}
                               className="border-b border-border transition-colors hover:bg-muted/50"
                             >
                               <td className="py-4 pr-6">
@@ -413,7 +401,7 @@ export default function VendorDashboard() {
               </div>
             </TabsContent>
 
-            
+
           </Tabs>
         </div>
       </section>

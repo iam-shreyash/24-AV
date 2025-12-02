@@ -14,15 +14,17 @@ export default function RequireRole({ role, children }: RequireRoleProps) {
   if (authLoading) return null;
 
   if (!isAuthenticated) {
+    console.log('RequireRole: Not authenticated, redirecting to login');
     return <Navigate to="/login" replace />;
   }
 
   if (userRole !== role) {
-    const redirectTo = 
+    console.log(`RequireRole: Role mismatch (expected ${role}, got ${userRole}), redirecting`);
+    const redirectTo =
       userRole === 'admin' ? '/dashboard/admin' :
-      userRole === 'vendor' ? '/vendor/dashboard' : 
-      '/my-bookings';
-    
+        userRole === 'vendor' ? '/vendor/dashboard' :
+          '/my-bookings';
+
     return <Navigate to={redirectTo} replace />;
   }
 
