@@ -81,35 +81,53 @@ def register_user(payload: schemas.UserCreate, db: Session = Depends(get_db)) ->
 
 @router.post("/login", response_model=schemas.Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> schemas.Token:
-    user = db.query(models.User).filter(models.User.email == form_data.username).first()
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Account not found. Please create an account to continue."
-        )
-    if not verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
+    try:
+        print(f"Login attempt for: {form_data.username}")
+        user = db.query(models.User).filter(models.User.email == form_data.username).first()
+        if not user:
+            print(f"User not found: {form_data.username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Account not found. Please create an account to continue."
+            )
+        
+        if not verify_password(form_data.password, user.hashed_password):
+            print(f"Invalid password for: {form_data.username}")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Incorrect email or password")
 
-    # Check if user account is deactivated
-    if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your account is deactivated. Please contact admin."
-        )
-
-    # Additional check for vendor account deactivation
-    if user.role == models.UserRole.VENDOR:
-        vendor = db.query(models.Vendor).filter(models.Vendor.user_id == user.id).first()
-        if vendor and not vendor.is_active:
+        # Check if user account is deactivated
+        if not user.is_active:
+            print(f"User deactivated: {form_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Your vendor account is deactivated. Please contact admin."
+                detail="Your account is deactivated. Please contact admin."
             )
 
-    # Allow all vendors to login regardless of approval status
-    # Rejected vendors can log in to reapply for vendor application
-    # Approval status will be checked on frontend to redirect appropriately
+        # Additional check for vendor account deactivation
+        if user.role == models.UserRole.VENDOR:
+            vendor = db.query(models.Vendor).filter(models.Vendor.user_id == user.id).first()
+            if vendor and not vendor.is_active:
+                print(f"Vendor deactivated: {form_data.username}")
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Your vendor account is deactivated. Please contact admin."
+                )
 
-    access_token, expires_in = create_access_token(subject=user.id, role=user.role.value)
-    return schemas.Token(access_token=access_token, expires_in=expires_in, role=user.role)
+        # Allow all vendors to login regardless of approval status
+        # Rejected vendors can log in to reapply for vendor application
+        # Approval status will be checked on frontend to redirect appropriately
+
+        access_token, expires_in = create_access_token(subject=user.id, role=user.role.value)
+        print(f"Login successful for: {form_data.username}")
+        return schemas.Token(access_token=access_token, expires_in=expires_in, role=user.role)
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        print(f"Login error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Login failed: {str(e)}"
+        )
 
