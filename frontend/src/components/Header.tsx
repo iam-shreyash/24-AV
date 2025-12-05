@@ -23,7 +23,10 @@ export default function Header() {
   const navigation = [
     { key: "nav.home", href: "/" },
     ...(userRole !== "vendor"
-      ? [{ key: "nav.searchFlights", href: "/search" }]
+      ? [
+        { key: "nav.searchFlights", href: "/search" },
+        { key: "nav.offers", href: "/offers" }
+      ]
       : []),
     ...(userRole === "passenger"
       ? [{ key: "nav.myBookings", href: getMyBookingsHref() }]

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 import logging
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -58,18 +58,14 @@ def create_flight(
             if not current_user.vendor or plane.vendor_id != current_user.vendor.id:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Aircraft not found in your inventory")
         
-        # Store extended flight data (crew info, etc.) - for now we'll store in a JSON field
+        # Store extended flight data - for now we'll store in a JSON field
         # In a production system, you'd want separate columns for these fields
         extended_data = {
-            "flight_number": payload.flight_number,
-            "total_seats_available": payload.total_seats_available or plane.seat_capacity,
-            "captain_name": payload.captain_name,
-            "co_pilot_name": payload.co_pilot_name,
-            "attendant_names": payload.attendant_names,
-            "emergency_crew_contact": payload.emergency_crew_contact,
-            "allowed_luggage_kg": payload.allowed_luggage_kg,
-            "special_amenities": payload.special_amenities,
-            "notes_for_passengers": payload.notes_for_passengers
+            "flight_number": getattr(payload, "flight_number", None),
+            "total_seats_available": getattr(payload, "total_seats_available", None) or plane.seat_capacity,
+            "allowed_luggage_kg": getattr(payload, "allowed_luggage_kg", None),
+            "special_amenities": getattr(payload, "special_amenities", []),
+            "notes_for_passengers": getattr(payload, "notes_for_passengers", None)
         }
         
         
@@ -95,8 +91,14 @@ def create_flight(
         )
         
         # Log flight creation for debugging
-        current_time = datetime.utcnow()
-        is_future = payload.departure_time >= current_time
+        current_time = datetime.now(timezone.utc)
+        
+        # Ensure payload departure_time is treated safely for comparison
+        dep_time = payload.departure_time
+        if dep_time.tzinfo is None:
+            dep_time = dep_time.replace(tzinfo=timezone.utc)
+            
+        is_future = dep_time >= current_time
         logging.info(f"Creating flight: {payload.origin} → {payload.destination}")
         logging.info(f"  Departure: {payload.departure_time} (UTC)")
         logging.info(f"  Current UTC: {current_time}")
@@ -128,15 +130,11 @@ def create_flight(
         # Create response with extended data
         # Note: In production, these fields should be added to the Flight model
         flight_data = schemas.FlightRead.model_validate(flight)
-        flight_data.flight_number = payload.flight_number
-        flight_data.total_seats_available = payload.total_seats_available or plane.seat_capacity
-        flight_data.captain_name = payload.captain_name
-        flight_data.co_pilot_name = payload.co_pilot_name
-        flight_data.attendant_names = payload.attendant_names
-        flight_data.emergency_crew_contact = payload.emergency_crew_contact
-        flight_data.allowed_luggage_kg = payload.allowed_luggage_kg
-        flight_data.special_amenities = payload.special_amenities
-        flight_data.notes_for_passengers = payload.notes_for_passengers
+        flight_data.flight_number = getattr(payload, "flight_number", None)
+        flight_data.total_seats_available = getattr(payload, "total_seats_available", None) or plane.seat_capacity
+        flight_data.allowed_luggage_kg = getattr(payload, "allowed_luggage_kg", None)
+        flight_data.special_amenities = getattr(payload, "special_amenities", [])
+        flight_data.notes_for_passengers = getattr(payload, "notes_for_passengers", None)
         
         # Calculate available seats for the response
         if not flight.is_full_charter_only:
@@ -468,10 +466,6 @@ async def search_flights(
                                 flight_number=ext_flight.get("flight_number"),
                                 total_seats_available=None,
                                 available_seats=None,  # External flights don't have seat inventory
-                                captain_name=None,
-                                co_pilot_name=None,
-                                attendant_names=[],
-                                emergency_crew_contact=None,
                                 allowed_luggage_kg=None,
                                 special_amenities=[],
                                 notes_for_passengers=None,

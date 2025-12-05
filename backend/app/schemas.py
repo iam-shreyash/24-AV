@@ -165,10 +165,6 @@ class FlightCreate(FlightBase):
     plane_id: int
     flight_number: str | None = None
     total_seats_available: int | None = None  # Override aircraft capacity if needed
-    captain_name: str | None = None
-    co_pilot_name: str | None = None
-    attendant_names: list[str] = []
-    emergency_crew_contact: str | None = None
     allowed_luggage_kg: float | None = None
     special_amenities: list[str] = []
     notes_for_passengers: str | None = None
@@ -185,10 +181,6 @@ class FlightUpdate(BaseModel):
     is_full_charter_only: bool | None = None
     flight_number: str | None = None
     total_seats_available: int | None = None
-    captain_name: str | None = None
-    co_pilot_name: str | None = None
-    attendant_names: list[str] | None = None
-    emergency_crew_contact: str | None = None
     allowed_luggage_kg: float | None = None
     special_amenities: list[str] | None = None
     notes_for_passengers: str | None = None
@@ -201,10 +193,6 @@ class FlightRead(FlightBase):
     plane_id: int
     flight_number: str | None = None
     total_seats_available: int | None = None
-    captain_name: str | None = None
-    co_pilot_name: str | None = None
-    attendant_names: list[str] = []
-    emergency_crew_contact: str | None = None
     allowed_luggage_kg: float | None = None
     special_amenities: list[str] = []
     notes_for_passengers: str | None = None
