@@ -45,109 +45,122 @@ def create_flight(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ) -> schemas.FlightRead:
-    if current_user.role not in {models.UserRole.ADMIN, models.UserRole.VENDOR}:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
+    try:
+        if current_user.role not in {models.UserRole.ADMIN, models.UserRole.VENDOR}:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Insufficient permissions")
 
-    # Get the plane to verify it belongs to the vendor
-    plane = db.get(models.Plane, payload.plane_id)
-    if not plane:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Aircraft not found")
-    
-    if current_user.role == models.UserRole.VENDOR:
-        if not current_user.vendor or plane.vendor_id != current_user.vendor.id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Aircraft not found in your inventory")
-    
-    # Store extended flight data (crew info, etc.) - for now we'll store in a JSON field
-    # In a production system, you'd want separate columns for these fields
-    extended_data = {
-        "flight_number": payload.flight_number,
-        "total_seats_available": payload.total_seats_available or plane.seat_capacity,
-        "captain_name": payload.captain_name,
-        "co_pilot_name": payload.co_pilot_name,
-        "attendant_names": payload.attendant_names,
-        "emergency_crew_contact": payload.emergency_crew_contact,
-        "allowed_luggage_kg": payload.allowed_luggage_kg,
-        "special_amenities": payload.special_amenities,
-        "notes_for_passengers": payload.notes_for_passengers
-    }
-    
-    
-    # Determine vendor_id based on user role
-    if current_user.role == models.UserRole.VENDOR:
-        if not current_user.vendor:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vendor profile not found")
-        vendor_id = current_user.vendor.id
-    else:
-        # Admin creating flight - use the plane's vendor_id
-        vendor_id = plane.vendor_id
-    
-    flight = models.Flight(
-        vendor_id=vendor_id,
-        plane_id=payload.plane_id,
-        origin=payload.origin,
-        destination=payload.destination,
-        departure_time=payload.departure_time,
-        arrival_time=payload.arrival_time,
-        flight_type=payload.flight_type,
-        base_price=payload.base_price,
-        is_full_charter_only=payload.is_full_charter_only,
-    )
-    
-    # Log flight creation for debugging
-    current_time = datetime.utcnow()
-    is_future = payload.departure_time >= current_time
-    logging.info(f"Creating flight: {payload.origin} → {payload.destination}")
-    logging.info(f"  Departure: {payload.departure_time} (UTC)")
-    logging.info(f"  Current UTC: {current_time}")
-    logging.info(f"  Is future: {is_future}")
-    if not is_future:
-        logging.warning(f"⚠️  Flight departure time is in the past! It won't show in search results.")
-    
-    db.add(flight)
-    db.commit()
-    db.refresh(flight)
-    
-    logging.info(f"✅ Flight {flight.id} created successfully")
-    
-    # Create seat inventory for the flight (unless it's full charter only)
-    if not payload.is_full_charter_only:
-        total_seats = payload.total_seats_available or plane.seat_capacity
-        # Create seats with seat numbers (1, 2, 3, etc.)
-        for seat_num in range(1, total_seats + 1):
-            seat = models.SeatInventory(
-                flight_id=flight.id,
-                seat_number=str(seat_num),
-                class_type="standard",
-                price=payload.base_price,
-                is_available=True
-            )
-            db.add(seat)
+        # Get the plane to verify it belongs to the vendor
+        plane = db.get(models.Plane, payload.plane_id)
+        if not plane:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Aircraft not found")
+        
+        if current_user.role == models.UserRole.VENDOR:
+            if not current_user.vendor or plane.vendor_id != current_user.vendor.id:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Aircraft not found in your inventory")
+        
+        # Store extended flight data (crew info, etc.) - for now we'll store in a JSON field
+        # In a production system, you'd want separate columns for these fields
+        extended_data = {
+            "flight_number": payload.flight_number,
+            "total_seats_available": payload.total_seats_available or plane.seat_capacity,
+            "captain_name": payload.captain_name,
+            "co_pilot_name": payload.co_pilot_name,
+            "attendant_names": payload.attendant_names,
+            "emergency_crew_contact": payload.emergency_crew_contact,
+            "allowed_luggage_kg": payload.allowed_luggage_kg,
+            "special_amenities": payload.special_amenities,
+            "notes_for_passengers": payload.notes_for_passengers
+        }
+        
+        
+        # Determine vendor_id based on user role
+        if current_user.role == models.UserRole.VENDOR:
+            if not current_user.vendor:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Vendor profile not found")
+            vendor_id = current_user.vendor.id
+        else:
+            # Admin creating flight - use the plane's vendor_id
+            vendor_id = plane.vendor_id
+        
+        flight = models.Flight(
+            vendor_id=vendor_id,
+            plane_id=payload.plane_id,
+            origin=payload.origin,
+            destination=payload.destination,
+            departure_time=payload.departure_time,
+            arrival_time=payload.arrival_time,
+            flight_type=payload.flight_type,
+            base_price=payload.base_price,
+            is_full_charter_only=payload.is_full_charter_only,
+        )
+        
+        # Log flight creation for debugging
+        current_time = datetime.utcnow()
+        is_future = payload.departure_time >= current_time
+        logging.info(f"Creating flight: {payload.origin} → {payload.destination}")
+        logging.info(f"  Departure: {payload.departure_time} (UTC)")
+        logging.info(f"  Current UTC: {current_time}")
+        logging.info(f"  Is future: {is_future}")
+        if not is_future:
+            logging.warning(f"⚠️  Flight departure time is in the past! It won't show in search results.")
+        
+        db.add(flight)
         db.commit()
-    
-    # Create response with extended data
-    # Note: In production, these fields should be added to the Flight model
-    flight_data = schemas.FlightRead.model_validate(flight)
-    flight_data.flight_number = payload.flight_number
-    flight_data.total_seats_available = payload.total_seats_available or plane.seat_capacity
-    flight_data.captain_name = payload.captain_name
-    flight_data.co_pilot_name = payload.co_pilot_name
-    flight_data.attendant_names = payload.attendant_names
-    flight_data.emergency_crew_contact = payload.emergency_crew_contact
-    flight_data.allowed_luggage_kg = payload.allowed_luggage_kg
-    flight_data.special_amenities = payload.special_amenities
-    flight_data.notes_for_passengers = payload.notes_for_passengers
-    
-    # Calculate available seats for the response
-    if not flight.is_full_charter_only:
-        available_seats = db.query(func.count(models.SeatInventory.id)).filter(
-            models.SeatInventory.flight_id == flight.id,
-            models.SeatInventory.is_available == True
-        ).scalar() or 0
-        flight_data.available_seats = available_seats
-    else:
-        flight_data.available_seats = None  # Full charter doesn't have individual seats
-    
-    return flight_data
+        db.refresh(flight)
+        
+        logging.info(f"✅ Flight {flight.id} created successfully")
+        
+        # Create seat inventory for the flight (unless it's full charter only)
+        if not payload.is_full_charter_only:
+            total_seats = payload.total_seats_available or plane.seat_capacity
+            # Create seats with seat numbers (1, 2, 3, etc.)
+            for seat_num in range(1, total_seats + 1):
+                seat = models.SeatInventory(
+                    flight_id=flight.id,
+                    seat_number=str(seat_num),
+                    class_type="standard",
+                    price=payload.base_price,
+                    is_available=True
+                )
+                db.add(seat)
+            db.commit()
+        
+        # Create response with extended data
+        # Note: In production, these fields should be added to the Flight model
+        flight_data = schemas.FlightRead.model_validate(flight)
+        flight_data.flight_number = payload.flight_number
+        flight_data.total_seats_available = payload.total_seats_available or plane.seat_capacity
+        flight_data.captain_name = payload.captain_name
+        flight_data.co_pilot_name = payload.co_pilot_name
+        flight_data.attendant_names = payload.attendant_names
+        flight_data.emergency_crew_contact = payload.emergency_crew_contact
+        flight_data.allowed_luggage_kg = payload.allowed_luggage_kg
+        flight_data.special_amenities = payload.special_amenities
+        flight_data.notes_for_passengers = payload.notes_for_passengers
+        
+        # Calculate available seats for the response
+        if not flight.is_full_charter_only:
+            available_seats = db.query(func.count(models.SeatInventory.id)).filter(
+                models.SeatInventory.flight_id == flight.id,
+                models.SeatInventory.is_available == True
+            ).scalar() or 0
+            flight_data.available_seats = available_seats
+        else:
+            flight_data.available_seats = None  # Full charter doesn't have individual seats
+        
+        return flight_data
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error creating flight: {e}", exc_info=True)
+        # Rollback only if db session is active/dirty, but usually exception handling needs care
+        # We can't easily rollback here without potentially affecting other things if we don't know the state,
+        # but db.rollback() is generally safe in a fresh request scope.
+        try:
+            db.rollback()
+        except:
+            pass
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
 
 @router.get("/vendor", response_model=list[schemas.FlightRead])

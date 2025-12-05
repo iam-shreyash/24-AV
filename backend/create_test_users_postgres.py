@@ -84,7 +84,33 @@ def create_test_users():
                     updated_at=datetime.utcnow()
                 )
                 db.add(new_user)
+                # Flush to get ID
+                db.flush()
+                
+                # Create Vendor profile if role is VENDOR
+                if user_data["role"] == "VENDOR":
+                    vendor = models.Vendor(
+                        user_id=new_user.id,
+                        company_name="Test Vendor Aviation",
+                        approval_status="approved",
+                        is_active=True
+                    )
+                    db.add(vendor)
+                
                 created_count += 1
+            
+            # Check for missing vendor profile for existing users
+            if existing_user and user_data["role"] == "VENDOR":
+                existing_vendor = db.query(models.Vendor).filter(models.Vendor.user_id == existing_user.id).first()
+                if not existing_vendor:
+                    print(f"⚠️  Creating missing vendor profile for {user_data['email']}")
+                    vendor = models.Vendor(
+                        user_id=existing_user.id,
+                        company_name="Test Vendor Aviation",
+                        approval_status="approved",
+                        is_active=True
+                    )
+                    db.add(vendor)
         
         # Commit all changes
         db.commit()
