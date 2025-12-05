@@ -9,7 +9,7 @@ import fr from "./locales/fr/translation.json";
 import de from "./locales/de/translation.json";
 import es from "./locales/es/translation.json";
 import ar from "./locales/ar/translation.json";
-import jp from "./locales/jp/translation.json";
+import ja from "./locales/ja/translation.json";
 import zh from "./locales/zh/translation.json";
 import ru from "./locales/ru/translation.json";
 
@@ -19,7 +19,7 @@ const resources = {
   de: { translation: de },
   es: { translation: es },
   ar: { translation: ar },
-  jp: { translation: jp },
+  ja: { translation: ja },
   zh: { translation: zh },
   ru: { translation: ru },
 };
@@ -47,7 +47,7 @@ i18n
 if (typeof window !== "undefined") {
   // Set initial RTL state
   setRTL(i18n.language === "ar");
-  
+
   i18n.on("languageChanged", (lang: string) => {
     try {
       localStorage.setItem(STORAGE_KEY, lang);

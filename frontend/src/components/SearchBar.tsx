@@ -37,10 +37,10 @@ export default function SearchBar() {
 
   const handleSearch = () => {
     if (from && to && departure) {
-      const params = new URLSearchParams({ 
-        from: from.replace(/ \(.*\)/, ""), 
-        to: to.replace(/ \(.*\)/, ""), 
-        date: departure 
+      const params = new URLSearchParams({
+        from: from.replace(/ \(.*\)/, ""),
+        to: to.replace(/ \(.*\)/, ""),
+        date: departure
       });
       navigate(`/search?${params.toString()}`);
     }
@@ -52,12 +52,12 @@ export default function SearchBar() {
         <div className="flex flex-wrap items-center gap-3">
           {/* Origin */}
           <div className="relative flex-1 min-w-[140px]">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rtl:right-3 rtl:left-auto" />
             <Input
               placeholder={t("searchBar.fromPlaceholder")}
               value={from}
               onChange={(event) => setFrom(event.target.value)}
-              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
+              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600 rtl:pr-10 rtl:pl-4"
             />
           </div>
 
@@ -72,37 +72,37 @@ export default function SearchBar() {
 
           {/* Destination */}
           <div className="relative flex-1 min-w-[140px]">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rtl:right-3 rtl:left-auto" />
             <Input
               placeholder={t("searchBar.toPlaceholder")}
               value={to}
               onChange={(event) => setTo(event.target.value)}
-              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
+              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600 rtl:pr-10 rtl:pl-4"
             />
           </div>
 
           {/* Departure Date */}
           <div className="relative flex-1 min-w-[140px]">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rtl:right-3 rtl:left-auto" />
             <Input
               type="date"
               placeholder={t("searchBar.departurePlaceholder")}
               value={departure}
               onChange={(event) => setDeparture(event.target.value)}
-              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
+              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600 rtl:pr-10 rtl:pl-4"
             />
           </div>
 
           {/* Passengers */}
           <div className="relative flex-1 min-w-[140px]">
-            <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rtl:right-3 rtl:left-auto" />
             <Input
               type="number"
               placeholder={t("searchBar.passengersPlaceholder")}
               value={passengers}
               onChange={(event) => setPassengers(event.target.value)}
               min="1"
-              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600"
+              className="h-14 pl-10 pr-4 text-base border-gray-300 focus:border-blue-600 focus:ring-blue-600 rtl:pr-10 rtl:pl-4"
             />
           </div>
 

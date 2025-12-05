@@ -113,16 +113,6 @@
       "viewReports": "عرض التقارير"
     }
   },
-  "offers": {
-    "title": "العروض والخصومات",
-    "subtitle": "وفر المزيد على رحلتك القادمة مع عروضنا الحصرية",
-    "promoCodeLabel": "كود الخصم",
-    "clickToCopy": "انقر للنسخ",
-    "copied": "تم النسخ!",
-    "expiresIn": "تنتهي خلال",
-    "days": "أيام",
-    "viewAll": "عرض الكل"
-  },
   "support": {
     "title": "مركز المساعدة",
     "faqTitle": "الأسئلة الشائعة",
@@ -144,6 +134,29 @@
       "emailLabel": "البريد الإلكتروني",
       "emailSubtitle": "support@24av.com"
     }
+  },
+  "passenger": {
+    "badge": "لوحة تحكم المسافر",
+    "welcomeTitle": "مرحباً بك مجدداً",
+    "welcomeSubtitle": "استكشف الرحلات المتاحة وأدر حجوزاتك.",
+    "myBookingsTitle": "حجوزاتي",
+    "myBookingsSubtitle": "رحلاتك المجدولة وحجوزاتك.",
+    "loading": "جاري تحميل حجوزاتك...",
+    "errorGeneric": "فشل تحميل الحجوزات. يرجى المحاولة مرة أخرى.",
+    "tryAgain": "حاول مرة أخرى",
+    "emptyTitle": "لا توجد حجوزات بعد",
+    "emptyBody": "لم تقم بحجز أي رحلات بعد. ابدأ باستكشاف الرحلات المتاحة لحجز رحلتك القادمة.",
+    "emptyCta": "البحث عن رحلات ←",
+    "downloadTicket": "تنزيل التذكرة",
+    "downloadError": "فشل تنزيل التذكرة. يرجى المحاولة مرة أخرى."
+  },
+  "searchBar": {
+    "fromPlaceholder": "من مدينة",
+    "toPlaceholder": "إلى مدينة",
+    "departurePlaceholder": "تاريخ المغادرة",
+    "passengersPlaceholder": "الركاب",
+    "searchButton": "البحث عن رحلات",
+    "swapAria": "تبديل مدن المغادرة والوصول"
   },
   "flightSearch": {
     "badge": "بحث الرحلات",
