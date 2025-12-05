@@ -9,7 +9,7 @@ from typing import List, Dict, Any
 from .. import models, schemas
 from ..database import get_db
 from ..dependencies import get_current_user, require_role
-from ..services.external_flight_api import get_external_flight_api
+
 from ..utils.iata_codes import expand_search_terms
 
 
@@ -228,7 +228,7 @@ async def search_flights(
     origin: str | None = None,
     destination: str | None = None,
     include_return_legs: bool = True,
-    include_external: bool = True,
+
     db: Session = Depends(get_db),
 ) -> list[schemas.FlightRead]:
     """
@@ -236,15 +236,13 @@ async def search_flights(
     This endpoint is public and allows passengers to see all available flights.
     Only shows future flights (departure_time >= current time).
     
-    Combines:
-    - Internal flights (from vendors in the system)
-    - External flights (from third-party APIs like Aviationstack, if enabled)
+    Shows internal flights from vendors in the system.
     
     Query Parameters:
     - origin: Filter by origin airport/city
     - destination: Filter by destination airport/city
     - include_return_legs: Include return leg flights (default: True)
-    - include_external: Include flights from external APIs (default: True)
+
     """
     try:
         result: List[schemas.FlightRead] = []
@@ -254,7 +252,7 @@ async def search_flights(
         logging.info(f"🔍 FLIGHT SEARCH REQUEST")
         logging.info(f"   Origin: {origin}")
         logging.info(f"   Destination: {destination}")
-        logging.info(f"   Include External: {include_external}")
+
         logging.info("=" * 60)
         
         # ============================================================
@@ -407,92 +405,16 @@ async def search_flights(
                     logging.error(f"      This flight will NOT appear in search results!")
                     continue
         
-        # ============================================================
-        # STEP 2: Get external flights from third-party APIs (if enabled)
-        # These are flights from AviationStack/Amadeus APIs
-        # ============================================================
-        if include_external:
-            try:
-                external_api = get_external_flight_api()
-                if external_api.is_enabled():
-                    external_flights: List[Dict[str, Any]] = []
-
-                    # Try Amadeus first (free tier), then AviationStack
-                    try:
-                        amadeus_key, amadeus_secret = external_api._get_amadeus_credentials()
-                        if amadeus_key and amadeus_secret and origin and destination:
-                            external_flights = await external_api.fetch_flights_amadeus(
-                                origin=origin,
-                                destination=destination,
-                                limit=50,
-                            )
-                            logging.info(f"Fetched {len(external_flights)} flights from Amadeus")
-                        else:
-                            logging.debug("Skipping Amadeus: credentials or route info missing")
-                    except Exception as amadeus_error:
-                        logging.warning(f"Amadeus API failed, trying AviationStack: {amadeus_error}")
-
-                        # Fallback to AviationStack
-                        try:
-                            aviationstack_key = external_api._get_api_key()
-                            if aviationstack_key:
-                                external_flights = await external_api.fetch_flights_aviationstack(
-                                    origin=origin,
-                                    destination=destination,
-                                    limit=50,  # Limit external results
-                                )
-                                logging.info(f"Fetched {len(external_flights)} flights from AviationStack")
-                            else:
-                                logging.debug("Skipping AviationStack: API key missing")
-                        except Exception as aviationstack_error:
-                            logging.warning(f"AviationStack API also failed: {aviationstack_error}")
-                    
-                    # Convert external flights to our schema format
-                    for ext_flight in external_flights:
-                        try:
-                            # Create a FlightRead-like object from external data
-                            # Since external flights don't have database IDs, we'll create a special format
-                            flight_data = schemas.FlightRead(
-                                id=0,  # External flights don't have DB IDs
-                                vendor_id=0,
-                                plane_id=0,
-                                origin=ext_flight.get("origin", ""),
-                                destination=ext_flight.get("destination", ""),
-                                departure_time=datetime.fromisoformat(ext_flight["departure_time"]),
-                                arrival_time=datetime.fromisoformat(ext_flight["arrival_time"]),
-                                flight_type=models.FlightType.CHARTER,
-                                base_price=ext_flight.get("base_price", 0.0),
-                                is_full_charter_only=False,
-                                flight_number=ext_flight.get("flight_number"),
-                                total_seats_available=None,
-                                available_seats=None,  # External flights don't have seat inventory
-                                allowed_luggage_kg=None,
-                                special_amenities=[],
-                                notes_for_passengers=None,
-                            )
-                            
-                            result.append(flight_data)
-                        except Exception as e:
-                            # Skip invalid external flight data
-                            logging.warning(f"Skipping invalid external flight data: {e}")
-                            continue
-                else:
-                    logging.debug("External flight API is not enabled or configured")
-            except Exception as e:
-                # If external API fails, continue with internal flights only
-                logging.warning(f"External API error (continuing with internal flights only): {e}", exc_info=True)
         
         # ============================================================
-        # STEP 3: Combine and sort all flights (vendor + API)
-        # Both vendor flights and API flights are now in the same result array
+        # STEP 2: Sort results by departure time
         # ============================================================
         # Sort all results by departure time (earliest first)
         result.sort(key=lambda x: x.departure_time)
         
-        # Log final combined results
-        vendor_count = sum(1 for f in result if f.id > 0)  # Vendor flights have real DB IDs
-        api_count = sum(1 for f in result if f.id == 0)  # API flights have id=0
-        logging.info(f"📊 Combined Results: {vendor_count} vendor flights + {api_count} API flights = {len(result)} total")
+        # Log final results
+        logging.info(f"📊 Results: {len(result)} vendor flights")
+        
         
         logging.info("=" * 60)
         logging.info(f"✅ RETURNING {len(result)} TOTAL FLIGHTS")

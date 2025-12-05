@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
@@ -59,7 +59,7 @@ import { getStoredAuth, clearStoredAuth as clearAuth } from "../../utils/getStor
 import AdminFlightsManagement from "./AdminFlightsManagement";
 import EditUserForm from "./EditUserForm";
 import ApiKeysManagement from "./ApiKeysManagement";
-import ExternalFlightsViewer from "./ExternalFlightsViewer";
+
 import AircraftGallery from "../flights/AircraftGallery";
 
 type VendorApplication = {
@@ -101,7 +101,7 @@ type VendorApplication = {
   created_at: string;
 };
 
-type AdminSection = "dashboard" | "users" | "aircraft" | "flights" | "bookings" | "notifications" | "api-keys" | "external-flights" | "profile";
+type AdminSection = "dashboard" | "users" | "aircraft" | "flights" | "bookings" | "notifications" | "api-keys" | "profile";
 
 type AdminProfile = {
   id: number;
@@ -125,6 +125,8 @@ type UserInfo = {
 export default function AdminPortal() {
   const navigate = useNavigate();
   const auth = getStoredAuth();
+  const token = auth?.token;
+  const userRole = auth?.userRole;
   const [activeSection, setActiveSection] = useState<AdminSection>("users");
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pendingVendors, setPendingVendors] = useState<VendorApplication[]>([]);
@@ -171,60 +173,61 @@ export default function AdminPortal() {
   const [vendorNames, setVendorNames] = useState<Record<number, string>>({});
   const [allBookings, setAllBookings] = useState<any[]>([]);
   const [allBookingsLoading, setAllBookingsLoading] = useState(false);
+  const loadingBookingsRef = useRef(false);
   const [bookingSearchQuery, setBookingSearchQuery] = useState("");
   const [bookingStatusFilter, setBookingStatusFilter] = useState<string>("all");
   const [bookingDateFilter, setBookingDateFilter] = useState<string>("");
   const [selectedBooking, setSelectedBooking] = useState<any | null>(null);
   const [isBookingDetailsOpen, setIsBookingDetailsOpen] = useState(false);
-  
+
   // Dashboard state
   const [dashboardStats, setDashboardStats] = useState<any>(null);
   const [dashboardLoading, setDashboardLoading] = useState(false);
-  
+
   // Analytics state
   const [analyticsData, setAnalyticsData] = useState<any>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
   const [analyticsDateRange, setAnalyticsDateRange] = useState<string>("7d");
-  
+
   // Financial state
   const [financialData, setFinancialData] = useState<any>(null);
   const [financialLoading, setFinancialLoading] = useState(false);
-  
+
   // Audit logs state
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [auditLogsLoading, setAuditLogsLoading] = useState(false);
   const [auditLogsFilter, setAuditLogsFilter] = useState<string>("all");
-  
+
   // Bulk operations state
   const [selectedItems, setSelectedItems] = useState<Set<number>>(new Set());
   const [bulkAction, setBulkAction] = useState<string>("");
   const [bulkProcessing, setBulkProcessing] = useState(false);
-  
+
   // Notifications state
   const [notifications, setNotifications] = useState<any[]>([]);
   const [notificationsLoading, setNotificationsLoading] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-  
+
   const { toast } = useToast();
 
   useEffect(() => {
     // Check if user is admin
-    if (!auth || auth.userRole !== "admin") {
+    if (!auth || userRole !== "admin") {
       navigate("/admin", { replace: true });
       return;
     }
     // Load pending vendors on initial load (only if we have auth token)
-    if (activeSection === "users" && auth?.token) {
+    if (activeSection === "users" && token) {
       loadPendingVendors();
     }
-  }, [auth, navigate, activeSection]);
+  }, [token, userRole, navigate, activeSection]);
 
   // Load profile when profile section is selected
   useEffect(() => {
-    if (activeSection === "profile" && auth && auth.userRole === "admin" && !adminProfile && !profileLoading) {
+    if (activeSection === "profile" && userRole === "admin" && !adminProfile && !profileLoading) {
       loadAdminProfile();
     }
-  }, [activeSection, auth]);
+  }, [activeSection, userRole, adminProfile, profileLoading]);
 
   // Load all users when users section is selected and on "all" tab
   useEffect(() => {
@@ -242,18 +245,19 @@ export default function AdminPortal() {
   }, [activeSection]);
 
   const loadAllBookings = useCallback(async () => {
-    if (allBookingsLoading) return;
-    if (!auth?.token) {
+    if (loadingBookingsRef.current) return;
+    if (!token) {
       console.error("No auth token available");
       return;
     }
-    
+
     setAllBookingsLoading(true);
+    loadingBookingsRef.current = true;
     try {
       console.log("Fetching all bookings from /api/bookings/");
       // Admin can fetch all bookings without passenger_id filter
       const response = await axios.get("/api/bookings/", {
-        headers: { Authorization: `Bearer ${auth.token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       console.log("Bookings response:", response.data);
       const bookings = Array.isArray(response.data) ? response.data : [];
@@ -261,11 +265,11 @@ export default function AdminPortal() {
       console.log(`Loaded ${bookings.length} bookings`);
     } catch (error: any) {
       console.error("Error loading bookings:", error);
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          "Failed to load bookings";
-      
+      const errorMessage = error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to load bookings";
+
       if (error.code !== "ERR_NETWORK" && !error.message?.includes("Network Error")) {
         if (error.response?.status === 403) {
           toast({ description: "Admin access to bookings endpoint denied.", variant: "destructive" });
@@ -281,15 +285,16 @@ export default function AdminPortal() {
       setAllBookings([]);
     } finally {
       setAllBookingsLoading(false);
+      loadingBookingsRef.current = false;
     }
-  }, [auth, allBookingsLoading, toast]);
+  }, [token, toast]);
 
   // Load all bookings when bookings section is selected
   useEffect(() => {
-    if (activeSection === "bookings" && auth && auth.userRole === "admin") {
+    if (activeSection === "bookings" && userRole === "admin") {
       loadAllBookings();
     }
-  }, [activeSection, auth, loadAllBookings]);
+  }, [activeSection, userRole, loadAllBookings]);
 
 
 
@@ -309,14 +314,14 @@ export default function AdminPortal() {
         setVendorDataLoading(false);
         return;
       }
-      
+
       // Prevent infinite retries if we've already failed
       if (vendorDataError) {
         return;
       }
-      
+
       if (vendorDataLoading) return; // Prevent concurrent requests
-      
+
       const vendorUsers = allUsers.filter(u => u.role === "vendor");
       if (vendorUsers.length === 0) {
         setVendorData({});
@@ -342,14 +347,14 @@ export default function AdminPortal() {
           axios.get("/api/vendors/", {
             headers: { Authorization: `Bearer ${auth?.token}` }
           }),
-          new Promise((_, reject) => 
+          new Promise((_, reject) =>
             setTimeout(() => reject(new Error("Request timeout")), 10000)
           )
         ]) as any;
-        
+
         const vendors = vendorsResponse.data || [];
         const vendorMap: Record<number, { id: number; is_active: boolean; company_name?: string }> = {};
-        
+
         // Match vendors to users
         vendorUsers.forEach(user => {
           const vendor = vendors.find((v: any) => v.user_id === user.id);
@@ -364,12 +369,12 @@ export default function AdminPortal() {
             vendorMap[user.id] = defaultVendorMap[user.id];
           }
         });
-        
+
         setVendorData(vendorMap);
       } catch (error: any) {
         // Mark as error to prevent infinite retries
         setVendorDataError(true);
-        
+
         // Log error once (before setting vendorDataError)
         console.error("Error loading vendor data:", error);
         // Keep defaults if fetch fails - buttons will still work
@@ -387,15 +392,15 @@ export default function AdminPortal() {
       }
     };
 
-    if (allUsers.length > 0 && auth && auth.userRole === "admin" && !vendorDataError) {
+    if (allUsers.length > 0 && userRole === "admin" && !vendorDataError) {
       loadVendorData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allUsers, auth]); // Only run when allUsers or auth changes, not on every render
+  }, [allUsers, userRole, token, vendorDataError]); // Only run when allUsers or auth changes, not on every render
 
   const loadPendingVendors = async () => {
     if (!auth?.token) return;
-    
+
     try {
       const response = await axios.get("/api/vendors/pending", {
         headers: { Authorization: `Bearer ${auth.token}` },
@@ -551,7 +556,7 @@ export default function AdminPortal() {
       console.error("No auth token available");
       return;
     }
-    
+
     setAircraftLoading(true);
     try {
       console.log("Fetching aircraft from /api/aircraft/");
@@ -563,7 +568,7 @@ export default function AdminPortal() {
       const aircraft = Array.isArray(response.data) ? response.data : [];
       setAllAircraft(aircraft);
       console.log(`Loaded ${aircraft.length} aircraft`);
-      
+
       // Fetch vendor information for all unique vendor IDs
       const vendorIds = [...new Set(aircraft.map((a: any) => a.vendor_id).filter(Boolean))];
       if (vendorIds.length > 0) {
@@ -595,12 +600,12 @@ export default function AdminPortal() {
         message: error.message,
         code: error.code
       });
-      
-      const errorMessage = error.response?.data?.detail || 
-                          error.response?.data?.message || 
-                          error.message || 
-                          "Failed to load aircraft";
-      
+
+      const errorMessage = error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to load aircraft";
+
       // Only show toast if it's not a network error (to avoid spam)
       if (error.code !== "ERR_NETWORK" && !error.message?.includes("Network Error")) {
         if (error.response?.status === 403) {
@@ -648,94 +653,94 @@ export default function AdminPortal() {
       setDashboardLoading(false);
       return;
     }
-    
+
     setDashboardLoading(true);
     try {
       // Use direct API calls (removed problematic /api/admin/dashboard/stats endpoint)
       const [bookingsRes, usersRes, aircraftRes, flightsRes] = await Promise.all([
-        axios.get("/api/bookings/", { 
+        axios.get("/api/bookings/", {
           headers: { Authorization: `Bearer ${auth.token}` },
           timeout: 5000
         }).catch(() => ({ data: [] })),
-        axios.get("/api/users/", { 
+        axios.get("/api/users/", {
           headers: { Authorization: `Bearer ${auth.token}` },
           timeout: 5000
         }).catch(() => ({ data: [] })),
-        axios.get("/api/aircraft/", { 
+        axios.get("/api/aircraft/", {
           headers: { Authorization: `Bearer ${auth.token}` },
           timeout: 5000
         }).catch(() => ({ data: [] })),
-        axios.get("/api/flights/", { 
+        axios.get("/api/flights/", {
           headers: { Authorization: `Bearer ${auth.token}` },
           timeout: 5000
         }).catch(() => ({ data: [] }))
       ]);
 
-        const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : [];
-        const users = Array.isArray(usersRes.data) ? usersRes.data : [];
-        const aircraft = Array.isArray(aircraftRes.data) ? aircraftRes.data : [];
-        const flights = Array.isArray(flightsRes.data) ? flightsRes.data : [];
+      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : [];
+      const users = Array.isArray(usersRes.data) ? usersRes.data : [];
+      const aircraft = Array.isArray(aircraftRes.data) ? aircraftRes.data : [];
+      const flights = Array.isArray(flightsRes.data) ? flightsRes.data : [];
 
-        const totalRevenue = bookings
-          .filter((b: any) => b.status === "confirmed")
-          .reduce((sum: number, b: any) => sum + (parseFloat(b.total_amount) || 0), 0);
+      const totalRevenue = bookings
+        .filter((b: any) => b.status === "confirmed")
+        .reduce((sum: number, b: any) => sum + (parseFloat(b.total_amount) || 0), 0);
 
-        const todayBookings = bookings.filter((b: any) => {
-          const bookingDate = b.booked_at ? new Date(b.booked_at).toDateString() : null;
-          return bookingDate === new Date().toDateString();
+      const todayBookings = bookings.filter((b: any) => {
+        const bookingDate = b.booked_at ? new Date(b.booked_at).toDateString() : null;
+        return bookingDate === new Date().toDateString();
+      });
+
+      const pendingBookings = bookings.filter((b: any) => b.status === "pending");
+      const confirmedBookings = bookings.filter((b: any) => b.status === "confirmed");
+      const cancelledBookings = bookings.filter((b: any) => b.status === "cancelled");
+
+      const activeVendors = users.filter((u: any) => u.role === "vendor" && u.is_active).length;
+      const activePassengers = users.filter((u: any) => u.role === "passenger" && u.is_active).length;
+
+      const todayFlights = flights.filter((f: any) => {
+        if (!f.departure_time) return false;
+        const flightDate = new Date(f.departure_time).toDateString();
+        return flightDate === new Date().toDateString();
+      });
+
+      const last7Days = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        return date.toDateString();
+      }).reverse();
+
+      const revenueByDay = last7Days.map(date => {
+        const dayBookings = bookings.filter((b: any) => {
+          if (!b.booked_at || b.status !== "confirmed") return false;
+          return new Date(b.booked_at).toDateString() === date;
         });
+        return {
+          date,
+          revenue: dayBookings.reduce((sum: number, b: any) => sum + (parseFloat(b.total_amount) || 0), 0)
+        };
+      });
 
-        const pendingBookings = bookings.filter((b: any) => b.status === "pending");
-        const confirmedBookings = bookings.filter((b: any) => b.status === "confirmed");
-        const cancelledBookings = bookings.filter((b: any) => b.status === "cancelled");
-
-        const activeVendors = users.filter((u: any) => u.role === "vendor" && u.is_active).length;
-        const activePassengers = users.filter((u: any) => u.role === "passenger" && u.is_active).length;
-
-        const todayFlights = flights.filter((f: any) => {
-          if (!f.departure_time) return false;
-          const flightDate = new Date(f.departure_time).toDateString();
-          return flightDate === new Date().toDateString();
-        });
-
-        const last7Days = Array.from({ length: 7 }, (_, i) => {
-          const date = new Date();
-          date.setDate(date.getDate() - i);
-          return date.toDateString();
-        }).reverse();
-
-        const revenueByDay = last7Days.map(date => {
-          const dayBookings = bookings.filter((b: any) => {
-            if (!b.booked_at || b.status !== "confirmed") return false;
-            return new Date(b.booked_at).toDateString() === date;
-          });
-          return {
-            date,
-            revenue: dayBookings.reduce((sum: number, b: any) => sum + (parseFloat(b.total_amount) || 0), 0)
-          };
-        });
-
-        setDashboardStats({
-          totalBookings: bookings.length,
-          todayBookings: todayBookings.length,
-          pendingBookings: pendingBookings.length,
-          confirmedBookings: confirmedBookings.length,
-          cancelledBookings: cancelledBookings.length,
-          totalRevenue,
-          totalUsers: users.length,
-          activeVendors,
-          activePassengers,
-          totalAircraft: aircraft.length,
-          totalFlights: flights.length,
-          todayFlights: todayFlights.length,
-          revenueByDay,
-          bookingStatusBreakdown: {
-            pending: pendingBookings.length,
-            confirmed: confirmedBookings.length,
-            cancelled: cancelledBookings.length,
-            refunded: bookings.filter((b: any) => b.status === "refunded").length
-          }
-        });
+      setDashboardStats({
+        totalBookings: bookings.length,
+        todayBookings: todayBookings.length,
+        pendingBookings: pendingBookings.length,
+        confirmedBookings: confirmedBookings.length,
+        cancelledBookings: cancelledBookings.length,
+        totalRevenue,
+        totalUsers: users.length,
+        activeVendors,
+        activePassengers,
+        totalAircraft: aircraft.length,
+        totalFlights: flights.length,
+        todayFlights: todayFlights.length,
+        revenueByDay,
+        bookingStatusBreakdown: {
+          pending: pendingBookings.length,
+          confirmed: confirmedBookings.length,
+          cancelled: cancelledBookings.length,
+          refunded: bookings.filter((b: any) => b.status === "refunded").length
+        }
+      });
     } catch (error: any) {
       console.error("Error loading dashboard stats:", error);
       // Set empty stats on error
@@ -771,13 +776,13 @@ export default function AdminPortal() {
   const loadNotifications = async () => {
     if (notificationsLoading) return;
     if (!auth?.token) return;
-    
+
     setNotificationsLoading(true);
     try {
       const response = await axios.get("/api/admin/notifications", {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
-      
+
       setNotifications(response.data);
       setUnreadCount(response.data.filter((n: any) => !n.read).length);
     } catch (error: any) {
@@ -791,32 +796,32 @@ export default function AdminPortal() {
 
   const handleDeleteConfirm = async () => {
     if (!userToDelete) return;
-    
+
     const userIdToDelete = userToDelete.id;
     setDeleteConfirmOpen(false);
-    
+
     // Immediately remove from UI (optimistic update)
     setAllUsers(prevUsers => prevUsers.filter(u => u.id !== userIdToDelete));
     setDeletingUserId(userIdToDelete);
-    
+
     try {
       // Delete from database
       const response = await axios.delete(`/api/users/${userIdToDelete}`, {
         headers: { Authorization: `Bearer ${auth?.token}` }
       });
-      
+
       // Show success message
       toast({ description: response.data?.message || "Account deleted successfully" });
-      
+
       // Verify deletion by reloading from server
       await loadAllUsers(false);
     } catch (error: any) {
       console.error("Error deleting user:", error);
       const errorMessage = error.response?.data?.detail || error.response?.data?.message || error.message || "Failed to delete user. Please try again.";
-      
+
       // If deletion failed, restore the user in the list
       await loadAllUsers(false);
-      
+
       toast({ description: errorMessage, variant: "destructive" });
     } finally {
       setDeletingUserId(null);
@@ -826,7 +831,7 @@ export default function AdminPortal() {
 
   const handleVendorDeactivateClick = async (user: UserInfo) => {
     let vendor = vendorData[user.id];
-    
+
     // If vendor data not loaded, try to fetch it
     if (!vendor || vendor.id === 0) {
       try {
@@ -885,10 +890,10 @@ export default function AdminPortal() {
 
   const handleVendorDeactivateConfirm = async () => {
     if (!vendorToDeactivate) return;
-    
+
     setDeactivateConfirmOpen(false);
     setProcessingVendorId(vendorToDeactivate.vendorId);
-    
+
     try {
       // If vendor record doesn't exist (id === 0), update user status directly
       if (vendorToDeactivate.vendorId === 0) {
@@ -896,11 +901,11 @@ export default function AdminPortal() {
         await axios.patch(`/api/users/${vendorToDeactivate.userId}/status?is_active=${newStatus}`, {}, {
           headers: { Authorization: `Bearer ${auth?.token}` }
         });
-        
+
         toast({
           description: newStatus ? "Vendor account activated successfully" : "Vendor account deactivated successfully"
         });
-        
+
         // Update vendor data in state
         setVendorData(prev => ({
           ...prev,
@@ -911,16 +916,16 @@ export default function AdminPortal() {
         }));
       } else {
         // Vendor record exists, use vendor deactivate/activate endpoint
-        const endpoint = vendorToDeactivate.isActive 
+        const endpoint = vendorToDeactivate.isActive
           ? `/api/vendors/${vendorToDeactivate.vendorId}/deactivate`
           : `/api/vendors/${vendorToDeactivate.vendorId}/activate`;
-        
+
         const response = await axios.put(endpoint, {}, {
           headers: { Authorization: `Bearer ${auth?.token}` }
         });
-        
+
         toast({ description: response.data?.message || (vendorToDeactivate.isActive ? "Vendor account deactivated successfully" : "Vendor account activated successfully") });
-        
+
         // Reload vendor data from server to get updated status
         try {
           const vendorsResponse = await axios.get("/api/vendors/", {
@@ -928,7 +933,7 @@ export default function AdminPortal() {
           });
           const vendors = vendorsResponse.data || [];
           const vendorInfo = vendors.find((v: any) => v.id === vendorToDeactivate.vendorId);
-          
+
           if (vendorInfo) {
             // Update vendor data in state with fresh data from server
             setVendorData(prev => ({
@@ -952,13 +957,13 @@ export default function AdminPortal() {
           }));
         }
       }
-      
+
       // Reload users to refresh status in user list
       await loadAllUsers(false);
     } catch (error: any) {
       console.error("Error updating vendor status:", error);
       let errorMessage = "Failed to update vendor status. Please try again.";
-      
+
       if (error.code === "ERR_NETWORK" || error.message?.includes("Network Error")) {
         errorMessage = "Cannot connect to server. Please make sure the backend is running on http://localhost:8000";
       } else if (error.response?.data?.detail) {
@@ -968,7 +973,7 @@ export default function AdminPortal() {
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
+
       toast({ description: errorMessage, variant: "destructive" });
     } finally {
       setProcessingVendorId(null);
@@ -978,11 +983,11 @@ export default function AdminPortal() {
 
   // Filter users based on search, role, and status
   const filteredUsers = allUsers.filter((user) => {
-    const matchesSearch = 
+    const matchesSearch =
       user.email.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
       (user.full_name && user.full_name.toLowerCase().includes(userSearchQuery.toLowerCase()));
     const matchesRole = userRoleFilter === "all" || user.role === userRoleFilter;
-    
+
     // Status filter
     let matchesStatus = true;
     if (userStatusFilter !== "all") {
@@ -993,7 +998,7 @@ export default function AdminPortal() {
         const isActive = vendor?.is_active !== undefined ? vendor.is_active : user.is_active;
         // Also ensure user.is_active matches (since we update both)
         const finalStatus = isActive && user.is_active;
-        
+
         if (userStatusFilter === "active") {
           matchesStatus = finalStatus;
         } else if (userStatusFilter === "inactive") {
@@ -1008,7 +1013,7 @@ export default function AdminPortal() {
         }
       }
     }
-    
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -1055,12 +1060,7 @@ export default function AdminPortal() {
       description: "Manage API Keys",
       icon: Key
     },
-    {
-      id: "external-flights" as AdminSection,
-      label: "External Flights",
-      description: "AviationStack API",
-      icon: Plane
-    },
+
     {
       id: "profile" as AdminSection,
       label: "Profile Settings",
@@ -1083,82 +1083,81 @@ export default function AdminPortal() {
     <div className="min-h-screen bg-background flex h-screen overflow-hidden">
       {/* Sidebar */}
       {sidebarOpen && (
-      <aside className="w-64 transition-all duration-300 bg-card border-r border-primary/20 overflow-hidden flex-shrink-0">
-        <div className="h-full flex flex-col">
-          {/* Sidebar Header */}
-          <div className="p-4 border-b border-primary/20">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-primary/10 p-2">
-                  <Shield className="h-5 w-5 text-primary" />
+        <aside className="w-64 transition-all duration-300 bg-card border-r border-primary/20 overflow-hidden flex-shrink-0">
+          <div className="h-full flex flex-col">
+            {/* Sidebar Header */}
+            <div className="p-4 border-b border-primary/20">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-primary/10 p-2">
+                    <Shield className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="font-heading text-sm font-bold">Admin Portal</h2>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="font-heading text-sm font-bold">Admin Portal</h2>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
+            </div>
+
+            {/* Navigation Menu */}
+            <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveSection(item.id)}
+                    className={`group w-full flex items-start gap-3 p-3 rounded-lg transition-all duration-300 text-left transform ${isActive
+                      ? "bg-primary/10 border border-primary/20 text-primary scale-105 shadow-md shadow-primary/20 translate-x-1"
+                      : "hover:bg-primary/5 text-muted-foreground hover:text-foreground hover:scale-105 hover:shadow-md hover:shadow-primary/10 hover:translate-x-1 active:scale-100"
+                      }`}
+                  >
+                    <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 transition-transform duration-300 ${isActive ? "text-primary scale-110" : "group-hover:scale-110"}`} />
+                    <div className="flex-1 min-w-0">
+                      <div className="font-heading text-sm font-semibold">{item.label}</div>
+                      <div className="font-body text-xs text-muted-foreground mt-0.5">{item.description}</div>
+                    </div>
+                    {item.badge !== undefined && item.badge > 0 && (
+                      <Badge className="bg-warning/10 text-warning text-xs ml-auto flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+                        {item.badge}
+                      </Badge>
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Sidebar Footer */}
+            <div className="p-4 border-t border-primary/20">
               <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setSidebarOpen(false)}
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={handleLogout}
               >
-                <X className="h-4 w-4" />
+                Logout
               </Button>
             </div>
           </div>
-
-          {/* Navigation Menu */}
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = activeSection === item.id;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveSection(item.id)}
-                  className={`group w-full flex items-start gap-3 p-3 rounded-lg transition-all duration-300 text-left transform ${
-                    isActive
-                      ? "bg-primary/10 border border-primary/20 text-primary scale-105 shadow-md shadow-primary/20 translate-x-1"
-                      : "hover:bg-primary/5 text-muted-foreground hover:text-foreground hover:scale-105 hover:shadow-md hover:shadow-primary/10 hover:translate-x-1 active:scale-100"
-                  }`}
-                >
-                  <Icon className={`h-5 w-5 mt-0.5 flex-shrink-0 transition-transform duration-300 ${isActive ? "text-primary scale-110" : "group-hover:scale-110"}`} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-heading text-sm font-semibold">{item.label}</div>
-                    <div className="font-body text-xs text-muted-foreground mt-0.5">{item.description}</div>
-                  </div>
-                  {item.badge !== undefined && item.badge > 0 && (
-                    <Badge className="bg-warning/10 text-warning text-xs ml-auto flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                      {item.badge}
-                    </Badge>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Sidebar Footer */}
-          <div className="p-4 border-t border-primary/20">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full"
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
-          </div>
-        </div>
-      </aside>
+        </aside>
       )}
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0">
-      {/* Header */}
-      <div className="border-b border-primary/20 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        {/* Header */}
+        <div className="border-b border-primary/20 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
           <div className="px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
                 {!sidebarOpen && (
                   <Button
                     variant="ghost"
@@ -1169,15 +1168,15 @@ export default function AdminPortal() {
                     <Menu className="h-5 w-5" />
                   </Button>
                 )}
-              <div>
+                <div>
                   <h1 className="font-heading text-xl font-bold">{getSectionTitle()}</h1>
                   <p className="font-body text-xs text-muted-foreground">{getSectionDescription()}</p>
+                </div>
               </div>
-            </div>
               {activeSection === "users" && pendingVendors.length > 0 && (
-              <Badge className="bg-primary/10 text-primary">
-                {pendingVendors.length} Pending
-              </Badge>
+                <Badge className="bg-primary/10 text-primary">
+                  {pendingVendors.length} Pending
+                </Badge>
               )}
             </div>
           </div>
@@ -1402,7 +1401,7 @@ export default function AdminPortal() {
                     </div>
                     <div className="mt-4 pt-4 border-t border-primary/20">
                       <p className="text-xs text-muted-foreground">
-                        <strong>Admin Roles:</strong> The system supports multiple admin roles/permissions (e.g. super-admin, support staff) 
+                        <strong>Admin Roles:</strong> The system supports multiple admin roles/permissions (e.g. super-admin, support staff)
                         so that privileges (user editing, financial operations, etc.) can be granted appropriately.
                       </p>
                     </div>
@@ -1416,11 +1415,10 @@ export default function AdminPortal() {
                       setUsersTab("all");
                       loadAllUsers();
                     }}
-                    className={`px-4 py-2 font-heading text-sm font-semibold border-b-2 transition-colors ${
-                      usersTab === "all"
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-4 py-2 font-heading text-sm font-semibold border-b-2 transition-colors ${usersTab === "all"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     All Users
                     {allUsers.length > 0 && (
@@ -1431,11 +1429,10 @@ export default function AdminPortal() {
                   </button>
                   <button
                     onClick={() => setUsersTab("pending")}
-                    className={`px-4 py-2 font-heading text-sm font-semibold border-b-2 transition-colors ${
-                      usersTab === "pending"
-                        ? "border-primary text-primary"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}
+                    className={`px-4 py-2 font-heading text-sm font-semibold border-b-2 transition-colors ${usersTab === "pending"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}
                   >
                     Pending Applications
                     {pendingVendors.length > 0 && (
@@ -1494,8 +1491,8 @@ export default function AdminPortal() {
                       >
                         <RefreshCw className={`h-4 w-4 ${usersLoading ? "animate-spin" : ""}`} />
                         Refresh
-              </Button>
-            </div>
+                      </Button>
+                    </div>
 
                     {/* Users Table */}
                     {usersLoading ? (
@@ -1542,12 +1539,12 @@ export default function AdminPortal() {
                                   setEditingUser(user);
                                   setIsEditUserFormOpen(true);
                                 };
-                                
+
                                 const handleDeleteClick = () => {
                                   setUserToDelete(user);
                                   setDeleteConfirmOpen(true);
                                 };
-                                
+
                                 return (
                                   <tr key={user.id} className="hover:bg-primary/5 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1567,8 +1564,8 @@ export default function AdminPortal() {
                                           user.role === "admin"
                                             ? "bg-primary/10 text-primary"
                                             : user.role === "vendor"
-                                            ? "bg-blue-100 text-blue-800"
-                                            : "bg-green-100 text-green-800"
+                                              ? "bg-blue-100 text-blue-800"
+                                              : "bg-green-100 text-green-800"
                                         }
                                       >
                                         {user.role.toUpperCase()}
@@ -1588,10 +1585,10 @@ export default function AdminPortal() {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                                       {user.created_at
                                         ? new Date(user.created_at).toLocaleDateString("en-US", {
-                                            year: "numeric",
-                                            month: "short",
-                                            day: "numeric"
-                                          })
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric"
+                                        })
                                         : "N/A"}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -1611,7 +1608,7 @@ export default function AdminPortal() {
                                             // Use user.is_active as the primary source of truth since we update it when deactivating/activating
                                             const isVendorActive = user.is_active;
                                             const isProcessing = processingVendorId && vendor && processingVendorId === vendor.id;
-                                            
+
                                             if (isProcessing) {
                                               return (
                                                 <Button
@@ -1625,7 +1622,7 @@ export default function AdminPortal() {
                                                 </Button>
                                               );
                                             }
-                                            
+
                                             // Show Deactivate button (RED) if vendor is active
                                             // Show Activate button (GREEN) if vendor is inactive
                                             return isVendorActive ? (
@@ -1712,521 +1709,520 @@ export default function AdminPortal() {
                       <h3 className="font-heading text-lg font-semibold mb-4">Pending Vendor Applications</h3>
                     </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading vendor applications...</p>
-          </div>
-        ) : pendingVendors.length === 0 ? (
-          <Card className="p-12 text-center">
-            <CheckCircle className="h-16 w-16 text-accent mx-auto mb-4 opacity-50" />
-            <h2 className="font-heading text-2xl font-bold mb-2">All Clear!</h2>
-            <p className="text-muted-foreground">No pending vendor applications at this time.</p>
-          </Card>
-        ) : (
-          <div className="grid gap-6 lg:grid-cols-3">
-            {/* Vendor List */}
-            <div className="lg:col-span-1">
-              <Card className="p-6">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="font-heading text-xl font-semibold">Pending Applications</h2>
-                  <Badge className="bg-warning/10 text-warning">{pendingVendors.length}</Badge>
-                </div>
-                <div className="space-y-3 max-h-[calc(100vh-250px)] overflow-y-auto">
-                  {pendingVendors.map((vendor) => (
-                    <div
-                      key={vendor.id}
-                      onClick={() => setSelectedVendor(vendor)}
-                      className={`rounded-lg border p-4 cursor-pointer transition-all ${
-                        selectedVendor?.id === vendor.id
-                          ? "border-primary bg-primary/10"
-                          : "border-primary/20 bg-primary/5 hover:bg-primary/10"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h3 className="font-heading font-semibold">{vendor.company_name}</h3>
-                        <Badge variant="secondary" className="bg-warning/10 text-warning">
-                          Pending
-                        </Badge>
+                    {loading ? (
+                      <div className="text-center py-12">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                        <p className="mt-4 text-muted-foreground">Loading vendor applications...</p>
                       </div>
-                      {vendor.city && vendor.country && (
-                        <p className="font-body text-xs text-muted-foreground flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {vendor.city}, {vendor.country}
-                        </p>
-                      )}
-                      {vendor.license_number && (
-                        <p className="font-body text-xs text-muted-foreground mt-1">
-                          License: {vendor.license_number}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </div>
-
-            {/* Vendor Details */}
-            <div className="lg:col-span-2">
-              {selectedVendor ? (
-                <Card className="p-6">
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h2 className="font-heading text-2xl font-bold">{selectedVendor.company_name}</h2>
-                        <p className="font-body text-sm text-muted-foreground mt-1">
-                          Application submitted on {new Date(selectedVendor.created_at).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 max-h-[calc(100vh-400px)] overflow-y-auto">
-                    {/* Company Information */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-4">
-                        <Building2 className="h-5 w-5 text-primary" />
-                        <h3 className="font-heading text-lg font-semibold">Company Information</h3>
-                      </div>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        <div>
-                          <p className="font-body text-sm text-muted-foreground">Travels Name / Company Name</p>
-                          <p className="font-body font-medium">{selectedVendor.company_name}</p>
+                    ) : pendingVendors.length === 0 ? (
+                      <Card className="p-12 text-center">
+                        <CheckCircle className="h-16 w-16 text-accent mx-auto mb-4 opacity-50" />
+                        <h2 className="font-heading text-2xl font-bold mb-2">All Clear!</h2>
+                        <p className="text-muted-foreground">No pending vendor applications at this time.</p>
+                      </Card>
+                    ) : (
+                      <div className="grid gap-6 lg:grid-cols-3">
+                        {/* Vendor List */}
+                        <div className="lg:col-span-1">
+                          <Card className="p-6">
+                            <div className="mb-4 flex items-center justify-between">
+                              <h2 className="font-heading text-xl font-semibold">Pending Applications</h2>
+                              <Badge className="bg-warning/10 text-warning">{pendingVendors.length}</Badge>
+                            </div>
+                            <div className="space-y-3 max-h-[calc(100vh-250px)] overflow-y-auto">
+                              {pendingVendors.map((vendor) => (
+                                <div
+                                  key={vendor.id}
+                                  onClick={() => setSelectedVendor(vendor)}
+                                  className={`rounded-lg border p-4 cursor-pointer transition-all ${selectedVendor?.id === vendor.id
+                                    ? "border-primary bg-primary/10"
+                                    : "border-primary/20 bg-primary/5 hover:bg-primary/10"
+                                    }`}
+                                >
+                                  <div className="flex items-start justify-between mb-2">
+                                    <h3 className="font-heading font-semibold">{vendor.company_name}</h3>
+                                    <Badge variant="secondary" className="bg-warning/10 text-warning">
+                                      Pending
+                                    </Badge>
+                                  </div>
+                                  {vendor.city && vendor.country && (
+                                    <p className="font-body text-xs text-muted-foreground flex items-center gap-1">
+                                      <MapPin className="h-3 w-3" />
+                                      {vendor.city}, {vendor.country}
+                                    </p>
+                                  )}
+                                  {vendor.license_number && (
+                                    <p className="font-body text-xs text-muted-foreground mt-1">
+                                      License: {vendor.license_number}
+                                    </p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </Card>
                         </div>
-                        {selectedVendor.owner_name && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Owner Name</p>
-                            <p className="font-body font-medium">{selectedVendor.owner_name}</p>
-                          </div>
-                        )}
-                        {selectedVendor.business_background && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Business Background</p>
-                            <p className="font-body font-medium">
-                              {selectedVendor.business_background}
-                              {selectedVendor.business_background === "Other" && selectedVendor.business_background_other && (
-                                <span className="text-muted-foreground"> - {selectedVendor.business_background_other}</span>
-                              )}
-                            </p>
-                          </div>
-                        )}
-                        {selectedVendor.license_number && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">License Number</p>
-                            <p className="font-body font-medium">{selectedVendor.license_number}</p>
-                          </div>
-                        )}
-                        {selectedVendor.business_registration_number && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Business Registration</p>
-                            <p className="font-body font-medium">{selectedVendor.business_registration_number}</p>
-                          </div>
-                        )}
-                        {selectedVendor.tax_id && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Tax ID / GST</p>
-                            <p className="font-body font-medium">{selectedVendor.tax_id}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
 
-                    {/* Contact Information */}
-                    <div>
-                      <div className="flex items-center gap-2 mb-4">
-                        <Phone className="h-5 w-5 text-primary" />
-                        <h3 className="font-heading text-lg font-semibold">Contact Information</h3>
-                      </div>
-                      <div className="grid gap-4 md:grid-cols-2">
-                        {selectedVendor.contact_phone && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Mobile</p>
-                            <p className="font-body font-medium">{selectedVendor.contact_phone}</p>
-                          </div>
-                        )}
-                        {selectedVendor.phone && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Phone</p>
-                            <p className="font-body font-medium">{selectedVendor.phone}</p>
-                          </div>
-                        )}
-                        {selectedVendor.website && (
-                          <div>
-                            <p className="font-body text-sm text-muted-foreground">Website</p>
-                            <a href={selectedVendor.website} target="_blank" rel="noopener noreferrer" className="font-body font-medium text-primary hover:underline flex items-center gap-1">
-                              <Globe className="h-4 w-4" />
-                              {selectedVendor.website}
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                        {/* Vendor Details */}
+                        <div className="lg:col-span-2">
+                          {selectedVendor ? (
+                            <Card className="p-6">
+                              <div className="mb-6">
+                                <div className="flex items-center justify-between mb-4">
+                                  <div>
+                                    <h2 className="font-heading text-2xl font-bold">{selectedVendor.company_name}</h2>
+                                    <p className="font-body text-sm text-muted-foreground mt-1">
+                                      Application submitted on {new Date(selectedVendor.created_at).toLocaleDateString()}
+                                    </p>
+                                  </div>
+                                  <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
+                                </div>
+                              </div>
 
-                    {/* Business Address */}
-                    {(selectedVendor.business_address || selectedVendor.city) && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <MapPin className="h-5 w-5 text-primary" />
-                          <h3 className="font-heading text-lg font-semibold">Business Address</h3>
-                        </div>
-                        <div className="space-y-2">
-                          {selectedVendor.business_address && (
-                            <p className="font-body font-medium">{selectedVendor.business_address}</p>
+                              <div className="space-y-6 max-h-[calc(100vh-400px)] overflow-y-auto">
+                                {/* Company Information */}
+                                <div>
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <Building2 className="h-5 w-5 text-primary" />
+                                    <h3 className="font-heading text-lg font-semibold">Company Information</h3>
+                                  </div>
+                                  <div className="grid gap-4 md:grid-cols-2">
+                                    <div>
+                                      <p className="font-body text-sm text-muted-foreground">Travels Name / Company Name</p>
+                                      <p className="font-body font-medium">{selectedVendor.company_name}</p>
+                                    </div>
+                                    {selectedVendor.owner_name && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Owner Name</p>
+                                        <p className="font-body font-medium">{selectedVendor.owner_name}</p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.business_background && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Business Background</p>
+                                        <p className="font-body font-medium">
+                                          {selectedVendor.business_background}
+                                          {selectedVendor.business_background === "Other" && selectedVendor.business_background_other && (
+                                            <span className="text-muted-foreground"> - {selectedVendor.business_background_other}</span>
+                                          )}
+                                        </p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.license_number && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">License Number</p>
+                                        <p className="font-body font-medium">{selectedVendor.license_number}</p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.business_registration_number && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Business Registration</p>
+                                        <p className="font-body font-medium">{selectedVendor.business_registration_number}</p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.tax_id && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Tax ID / GST</p>
+                                        <p className="font-body font-medium">{selectedVendor.tax_id}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Contact Information */}
+                                <div>
+                                  <div className="flex items-center gap-2 mb-4">
+                                    <Phone className="h-5 w-5 text-primary" />
+                                    <h3 className="font-heading text-lg font-semibold">Contact Information</h3>
+                                  </div>
+                                  <div className="grid gap-4 md:grid-cols-2">
+                                    {selectedVendor.contact_phone && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Mobile</p>
+                                        <p className="font-body font-medium">{selectedVendor.contact_phone}</p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.phone && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Phone</p>
+                                        <p className="font-body font-medium">{selectedVendor.phone}</p>
+                                      </div>
+                                    )}
+                                    {selectedVendor.website && (
+                                      <div>
+                                        <p className="font-body text-sm text-muted-foreground">Website</p>
+                                        <a href={selectedVendor.website} target="_blank" rel="noopener noreferrer" className="font-body font-medium text-primary hover:underline flex items-center gap-1">
+                                          <Globe className="h-4 w-4" />
+                                          {selectedVendor.website}
+                                        </a>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* Business Address */}
+                                {(selectedVendor.business_address || selectedVendor.city) && (
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                      <MapPin className="h-5 w-5 text-primary" />
+                                      <h3 className="font-heading text-lg font-semibold">Business Address</h3>
+                                    </div>
+                                    <div className="space-y-2">
+                                      {selectedVendor.business_address && (
+                                        <p className="font-body font-medium">{selectedVendor.business_address}</p>
+                                      )}
+                                      <p className="font-body text-sm text-muted-foreground">
+                                        {[
+                                          selectedVendor.city,
+                                          selectedVendor.district,
+                                          selectedVendor.state,
+                                          selectedVendor.zip_code,
+                                          selectedVendor.country
+                                        ]
+                                          .filter(Boolean)
+                                          .join(", ")}
+                                      </p>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Contact Person */}
+                                {(selectedVendor.contact_person_name || selectedVendor.contact_person_email) && (
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                      <User className="h-5 w-5 text-primary" />
+                                      <h3 className="font-heading text-lg font-semibold">Contact Person</h3>
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      {selectedVendor.contact_person_name && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Name</p>
+                                          <p className="font-body font-medium">{selectedVendor.contact_person_name}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.contact_person_designation && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Designation</p>
+                                          <p className="font-body font-medium">{selectedVendor.contact_person_designation}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.contact_person_email && (
+                                        <div className="md:col-span-2">
+                                          <p className="font-body text-sm text-muted-foreground">Email</p>
+                                          <p className="font-body font-medium">{selectedVendor.contact_person_email}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Bank Details */}
+                                {(selectedVendor.bank_name || selectedVendor.bank_account_number) && (
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                      <CreditCard className="h-5 w-5 text-primary" />
+                                      <h3 className="font-heading text-lg font-semibold">Bank Account Details</h3>
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      {selectedVendor.bank_name && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Bank Name</p>
+                                          <p className="font-body font-medium">{selectedVendor.bank_name}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.account_holder_name && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Account Holder</p>
+                                          <p className="font-body font-medium">{selectedVendor.account_holder_name}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.bank_account_number && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Account Number</p>
+                                          <p className="font-body font-medium font-mono">{selectedVendor.bank_account_number}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.bank_ifsc && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">IFSC Code</p>
+                                          <p className="font-body font-medium font-mono">{selectedVendor.bank_ifsc}</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.bank_branch && (
+                                        <div className="md:col-span-2">
+                                          <p className="font-body text-sm text-muted-foreground">Branch</p>
+                                          <p className="font-body font-medium">{selectedVendor.bank_branch}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Business Details */}
+                                {(selectedVendor.years_in_business || selectedVendor.number_of_aircraft || selectedVendor.description) && (
+                                  <div>
+                                    <div className="flex items-center gap-2 mb-4">
+                                      <FileText className="h-5 w-5 text-primary" />
+                                      <h3 className="font-heading text-lg font-semibold">Business Details</h3>
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      {selectedVendor.years_in_business !== null && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Years in Business</p>
+                                          <p className="font-body font-medium">{selectedVendor.years_in_business} years</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.number_of_aircraft !== null && (
+                                        <div>
+                                          <p className="font-body text-sm text-muted-foreground">Number of Aircraft</p>
+                                          <p className="font-body font-medium">{selectedVendor.number_of_aircraft} aircraft</p>
+                                        </div>
+                                      )}
+                                      {selectedVendor.description && (
+                                        <div className="md:col-span-2">
+                                          <p className="font-body text-sm text-muted-foreground mb-2">Description</p>
+                                          <p className="font-body text-sm bg-primary/5 p-3 rounded-lg">{selectedVendor.description}</p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Verification Section */}
+                              <div className="mt-6 pt-6 border-t">
+                                <div className="mb-4">
+                                  <div className="flex items-center gap-2 mb-3">
+                                    <FileCheck className="h-5 w-5 text-primary" />
+                                    <h3 className="font-heading text-lg font-semibold">Verification Status</h3>
+                                  </div>
+                                  <div className="grid gap-4 md:grid-cols-2 mb-4">
+                                    <div className="p-3 bg-primary/5 rounded-lg">
+                                      <p className="text-xs text-muted-foreground mb-1">Documents</p>
+                                      <div className="flex items-center gap-2">
+                                        <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
+                                      </div>
+                                    </div>
+                                    <div className="p-3 bg-primary/5 rounded-lg">
+                                      <p className="text-xs text-muted-foreground mb-1">Aircraft Details</p>
+                                      <div className="flex items-center gap-2">
+                                        <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Document Viewing Section */}
+                                  <div className="mb-4">
+                                    <h4 className="font-heading font-semibold text-foreground mb-3">Uploaded Documents</h4>
+                                    <div className="grid gap-3 md:grid-cols-2">
+                                      <div className="p-3 border border-primary/20 rounded-lg bg-background">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <FileText className="h-4 w-4 text-primary" />
+                                            <span className="text-sm font-medium">Certificate of Incorporation</span>
+                                          </div>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={async () => {
+                                              try {
+                                                const url = `/api/vendors/${selectedVendor.id}/documents/certificate_of_incorporation`;
+                                                const response = await axios.get(url, {
+                                                  headers: { Authorization: `Bearer ${auth?.token}` },
+                                                  responseType: 'blob'
+                                                });
+                                                const blob = new Blob([response.data]);
+                                                const fileUrl = window.URL.createObjectURL(blob);
+                                                window.open(fileUrl, '_blank');
+                                              } catch (error: any) {
+                                                toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
+                                              }
+                                            }}
+                                            className="h-7 text-xs gap-1"
+                                            disabled={!selectedVendor.certificate_of_incorporation_path}
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            View Document
+                                          </Button>
+                                        </div>
+                                      </div>
+
+                                      <div className="p-3 border border-primary/20 rounded-lg bg-background">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <FileText className="h-4 w-4 text-primary" />
+                                            <span className="text-sm font-medium">GST Certificate</span>
+                                          </div>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={async () => {
+                                              try {
+                                                const url = `/api/vendors/${selectedVendor.id}/documents/gst_certificate`;
+                                                const response = await axios.get(url, {
+                                                  headers: { Authorization: `Bearer ${auth?.token}` },
+                                                  responseType: 'blob'
+                                                });
+                                                const blob = new Blob([response.data]);
+                                                const fileUrl = window.URL.createObjectURL(blob);
+                                                window.open(fileUrl, '_blank');
+                                              } catch (error: any) {
+                                                toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
+                                              }
+                                            }}
+                                            className="h-7 text-xs gap-1"
+                                            disabled={!selectedVendor.gst_certificate_path}
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            View Document
+                                          </Button>
+                                        </div>
+                                      </div>
+
+                                      <div className="p-3 border border-primary/20 rounded-lg bg-background">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <FileText className="h-4 w-4 text-primary" />
+                                            <span className="text-sm font-medium">Owner KYC Document</span>
+                                          </div>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={async () => {
+                                              try {
+                                                const url = `/api/vendors/${selectedVendor.id}/documents/owner_kyc`;
+                                                const response = await axios.get(url, {
+                                                  headers: { Authorization: `Bearer ${auth?.token}` },
+                                                  responseType: 'blob'
+                                                });
+                                                const blob = new Blob([response.data]);
+                                                const fileUrl = window.URL.createObjectURL(blob);
+                                                window.open(fileUrl, '_blank');
+                                              } catch (error: any) {
+                                                toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
+                                              }
+                                            }}
+                                            className="h-7 text-xs gap-1"
+                                            disabled={!selectedVendor.owner_kyc_document_path}
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            View Document
+                                          </Button>
+                                        </div>
+                                      </div>
+
+                                      <div className="p-3 border border-primary/20 rounded-lg bg-background">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-2">
+                                            <FileText className="h-4 w-4 text-primary" />
+                                            <span className="text-sm font-medium">Owner KYC Address Proof</span>
+                                            <Badge variant="secondary" className="text-xs">Optional</Badge>
+                                          </div>
+                                          <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={async () => {
+                                              try {
+                                                const url = `/api/vendors/${selectedVendor.id}/documents/owner_kyc_address`;
+                                                const response = await axios.get(url, {
+                                                  headers: { Authorization: `Bearer ${auth?.token}` },
+                                                  responseType: 'blob'
+                                                });
+                                                const blob = new Blob([response.data]);
+                                                const fileUrl = window.URL.createObjectURL(blob);
+                                                window.open(fileUrl, '_blank');
+                                              } catch (error: any) {
+                                                toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
+                                              }
+                                            }}
+                                            className="h-7 text-xs gap-1"
+                                            disabled={!selectedVendor.owner_kyc_address_proof_path}
+                                          >
+                                            <Eye className="h-3 w-3" />
+                                            View Document
+                                          </Button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <label className="font-body text-sm font-medium text-foreground mb-2 block">
+                                    Verification Notes (Optional)
+                                  </label>
+                                  <textarea
+                                    value={verificationNotes[selectedVendor.id] || ""}
+                                    onChange={(e) => setVerificationNotes(prev => ({ ...prev, [selectedVendor.id]: e.target.value }))}
+                                    placeholder="Add verification notes about documents, aircraft, or other details..."
+                                    className="w-full min-h-[80px] rounded-lg border border-input bg-background px-3 py-2 font-body text-sm"
+                                    rows={3}
+                                  />
+                                  <p className="text-xs text-muted-foreground mt-2">
+                                    Use this section to verify submitted documents (license, registration, tax ID) and aircraft details before approval.
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Approval Actions */}
+                              <div className="mt-6 pt-6 border-t">
+                                <div className="mb-4">
+                                  <label className="font-body text-sm font-medium text-foreground mb-2 block">
+                                    Approval Notes (Optional)
+                                  </label>
+                                  <textarea
+                                    value={approvalNotes}
+                                    onChange={(e) => setApprovalNotes(e.target.value)}
+                                    placeholder="Add notes about this application..."
+                                    className="w-full min-h-[80px] rounded-lg border border-input bg-background px-3 py-2 font-body text-sm"
+                                    rows={3}
+                                  />
+                                </div>
+                                <div className="flex gap-4">
+                                  <Button
+                                    onClick={() => handleApproval(selectedVendor.id, "approved")}
+                                    disabled={processing === selectedVendor.id}
+                                    className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 h-12"
+                                  >
+                                    {processing === selectedVendor.id ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Processing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Check className="h-4 w-4 mr-2" />
+                                        Approve Application
+                                      </>
+                                    )}
+                                  </Button>
+                                  <Button
+                                    variant="destructive"
+                                    onClick={() => handleApproval(selectedVendor.id, "rejected")}
+                                    disabled={processing === selectedVendor.id}
+                                    className="flex-1 h-12"
+                                  >
+                                    {processing === selectedVendor.id ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                        Processing...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <XCircle className="h-4 w-4 mr-2" />
+                                        Reject Application
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                            </Card>
+                          ) : (
+                            <Card className="p-12 text-center">
+                              <Eye className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
+                              <h2 className="font-heading text-xl font-bold mb-2">Select a Vendor</h2>
+                              <p className="text-muted-foreground">Choose a vendor application from the list to view details and take action.</p>
+                            </Card>
                           )}
-                          <p className="font-body text-sm text-muted-foreground">
-                            {[
-                              selectedVendor.city,
-                              selectedVendor.district,
-                              selectedVendor.state,
-                              selectedVendor.zip_code,
-                              selectedVendor.country
-                            ]
-                              .filter(Boolean)
-                              .join(", ")}
-                          </p>
                         </div>
                       </div>
                     )}
-
-                    {/* Contact Person */}
-                    {(selectedVendor.contact_person_name || selectedVendor.contact_person_email) && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <User className="h-5 w-5 text-primary" />
-                          <h3 className="font-heading text-lg font-semibold">Contact Person</h3>
-                        </div>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          {selectedVendor.contact_person_name && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Name</p>
-                              <p className="font-body font-medium">{selectedVendor.contact_person_name}</p>
-                            </div>
-                          )}
-                          {selectedVendor.contact_person_designation && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Designation</p>
-                              <p className="font-body font-medium">{selectedVendor.contact_person_designation}</p>
-                            </div>
-                          )}
-                          {selectedVendor.contact_person_email && (
-                            <div className="md:col-span-2">
-                              <p className="font-body text-sm text-muted-foreground">Email</p>
-                              <p className="font-body font-medium">{selectedVendor.contact_person_email}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Bank Details */}
-                    {(selectedVendor.bank_name || selectedVendor.bank_account_number) && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <CreditCard className="h-5 w-5 text-primary" />
-                          <h3 className="font-heading text-lg font-semibold">Bank Account Details</h3>
-                        </div>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          {selectedVendor.bank_name && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Bank Name</p>
-                              <p className="font-body font-medium">{selectedVendor.bank_name}</p>
-                            </div>
-                          )}
-                          {selectedVendor.account_holder_name && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Account Holder</p>
-                              <p className="font-body font-medium">{selectedVendor.account_holder_name}</p>
-                            </div>
-                          )}
-                          {selectedVendor.bank_account_number && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Account Number</p>
-                              <p className="font-body font-medium font-mono">{selectedVendor.bank_account_number}</p>
-                            </div>
-                          )}
-                          {selectedVendor.bank_ifsc && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">IFSC Code</p>
-                              <p className="font-body font-medium font-mono">{selectedVendor.bank_ifsc}</p>
-                            </div>
-                          )}
-                          {selectedVendor.bank_branch && (
-                            <div className="md:col-span-2">
-                              <p className="font-body text-sm text-muted-foreground">Branch</p>
-                              <p className="font-body font-medium">{selectedVendor.bank_branch}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Business Details */}
-                    {(selectedVendor.years_in_business || selectedVendor.number_of_aircraft || selectedVendor.description) && (
-                      <div>
-                        <div className="flex items-center gap-2 mb-4">
-                          <FileText className="h-5 w-5 text-primary" />
-                          <h3 className="font-heading text-lg font-semibold">Business Details</h3>
-                        </div>
-                        <div className="grid gap-4 md:grid-cols-2">
-                          {selectedVendor.years_in_business !== null && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Years in Business</p>
-                              <p className="font-body font-medium">{selectedVendor.years_in_business} years</p>
-                            </div>
-                          )}
-                          {selectedVendor.number_of_aircraft !== null && (
-                            <div>
-                              <p className="font-body text-sm text-muted-foreground">Number of Aircraft</p>
-                              <p className="font-body font-medium">{selectedVendor.number_of_aircraft} aircraft</p>
-                            </div>
-                          )}
-                          {selectedVendor.description && (
-                            <div className="md:col-span-2">
-                              <p className="font-body text-sm text-muted-foreground mb-2">Description</p>
-                              <p className="font-body text-sm bg-primary/5 p-3 rounded-lg">{selectedVendor.description}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Verification Section */}
-                  <div className="mt-6 pt-6 border-t">
-                    <div className="mb-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <FileCheck className="h-5 w-5 text-primary" />
-                        <h3 className="font-heading text-lg font-semibold">Verification Status</h3>
-                      </div>
-                      <div className="grid gap-4 md:grid-cols-2 mb-4">
-                        <div className="p-3 bg-primary/5 rounded-lg">
-                          <p className="text-xs text-muted-foreground mb-1">Documents</p>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
-                          </div>
-                        </div>
-                        <div className="p-3 bg-primary/5 rounded-lg">
-                          <p className="text-xs text-muted-foreground mb-1">Aircraft Details</p>
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-warning/10 text-warning">Pending Review</Badge>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Document Viewing Section */}
-                      <div className="mb-4">
-                        <h4 className="font-heading font-semibold text-foreground mb-3">Uploaded Documents</h4>
-                        <div className="grid gap-3 md:grid-cols-2">
-                          <div className="p-3 border border-primary/20 rounded-lg bg-background">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">Certificate of Incorporation</span>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={async () => {
-                                  try {
-                                    const url = `/api/vendors/${selectedVendor.id}/documents/certificate_of_incorporation`;
-                                    const response = await axios.get(url, {
-                                      headers: { Authorization: `Bearer ${auth?.token}` },
-                                      responseType: 'blob'
-                                    });
-                                    const blob = new Blob([response.data]);
-                                    const fileUrl = window.URL.createObjectURL(blob);
-                                    window.open(fileUrl, '_blank');
-                                  } catch (error: any) {
-                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
-                                  }
-                                }}
-                                className="h-7 text-xs gap-1"
-                                disabled={!selectedVendor.certificate_of_incorporation_path}
-                              >
-                                <Eye className="h-3 w-3" />
-                                View Document
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="p-3 border border-primary/20 rounded-lg bg-background">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">GST Certificate</span>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={async () => {
-                                  try {
-                                    const url = `/api/vendors/${selectedVendor.id}/documents/gst_certificate`;
-                                    const response = await axios.get(url, {
-                                      headers: { Authorization: `Bearer ${auth?.token}` },
-                                      responseType: 'blob'
-                                    });
-                                    const blob = new Blob([response.data]);
-                                    const fileUrl = window.URL.createObjectURL(blob);
-                                    window.open(fileUrl, '_blank');
-                                  } catch (error: any) {
-                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
-                                  }
-                                }}
-                                className="h-7 text-xs gap-1"
-                                disabled={!selectedVendor.gst_certificate_path}
-                              >
-                                <Eye className="h-3 w-3" />
-                                View Document
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="p-3 border border-primary/20 rounded-lg bg-background">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">Owner KYC Document</span>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={async () => {
-                                  try {
-                                    const url = `/api/vendors/${selectedVendor.id}/documents/owner_kyc`;
-                                    const response = await axios.get(url, {
-                                      headers: { Authorization: `Bearer ${auth?.token}` },
-                                      responseType: 'blob'
-                                    });
-                                    const blob = new Blob([response.data]);
-                                    const fileUrl = window.URL.createObjectURL(blob);
-                                    window.open(fileUrl, '_blank');
-                                  } catch (error: any) {
-                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
-                                  }
-                                }}
-                                className="h-7 text-xs gap-1"
-                                disabled={!selectedVendor.owner_kyc_document_path}
-                              >
-                                <Eye className="h-3 w-3" />
-                                View Document
-                              </Button>
-                            </div>
-                          </div>
-                          
-                          <div className="p-3 border border-primary/20 rounded-lg bg-background">
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-2">
-                                <FileText className="h-4 w-4 text-primary" />
-                                <span className="text-sm font-medium">Owner KYC Address Proof</span>
-                                <Badge variant="secondary" className="text-xs">Optional</Badge>
-                              </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={async () => {
-                                  try {
-                                    const url = `/api/vendors/${selectedVendor.id}/documents/owner_kyc_address`;
-                                    const response = await axios.get(url, {
-                                      headers: { Authorization: `Bearer ${auth?.token}` },
-                                      responseType: 'blob'
-                                    });
-                                    const blob = new Blob([response.data]);
-                                    const fileUrl = window.URL.createObjectURL(blob);
-                                    window.open(fileUrl, '_blank');
-                                  } catch (error: any) {
-                                    toast({ description: error.response?.data?.detail || "Failed to load document", variant: "destructive" });
-                                  }
-                                }}
-                                className="h-7 text-xs gap-1"
-                                disabled={!selectedVendor.owner_kyc_address_proof_path}
-                              >
-                                <Eye className="h-3 w-3" />
-                                View Document
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <label className="font-body text-sm font-medium text-foreground mb-2 block">
-                        Verification Notes (Optional)
-                      </label>
-                      <textarea
-                        value={verificationNotes[selectedVendor.id] || ""}
-                        onChange={(e) => setVerificationNotes(prev => ({ ...prev, [selectedVendor.id]: e.target.value }))}
-                        placeholder="Add verification notes about documents, aircraft, or other details..."
-                        className="w-full min-h-[80px] rounded-lg border border-input bg-background px-3 py-2 font-body text-sm"
-                        rows={3}
-                      />
-                      <p className="text-xs text-muted-foreground mt-2">
-                        Use this section to verify submitted documents (license, registration, tax ID) and aircraft details before approval.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Approval Actions */}
-                  <div className="mt-6 pt-6 border-t">
-                    <div className="mb-4">
-                      <label className="font-body text-sm font-medium text-foreground mb-2 block">
-                        Approval Notes (Optional)
-                      </label>
-                      <textarea
-                        value={approvalNotes}
-                        onChange={(e) => setApprovalNotes(e.target.value)}
-                        placeholder="Add notes about this application..."
-                        className="w-full min-h-[80px] rounded-lg border border-input bg-background px-3 py-2 font-body text-sm"
-                        rows={3}
-                      />
-                    </div>
-                    <div className="flex gap-4">
-                      <Button
-                        onClick={() => handleApproval(selectedVendor.id, "approved")}
-                        disabled={processing === selectedVendor.id}
-                        className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-                      >
-                        {processing === selectedVendor.id ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <Check className="h-4 w-4 mr-2" />
-                            Approve Application
-                          </>
-                        )}
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={() => handleApproval(selectedVendor.id, "rejected")}
-                        disabled={processing === selectedVendor.id}
-                        className="flex-1 h-12"
-                      >
-                        {processing === selectedVendor.id ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <XCircle className="h-4 w-4 mr-2" />
-                            Reject Application
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ) : (
-                <Card className="p-12 text-center">
-                  <Eye className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h2 className="font-heading text-xl font-bold mb-2">Select a Vendor</h2>
-                  <p className="text-muted-foreground">Choose a vendor application from the list to view details and take action.</p>
-                </Card>
-              )}
-            </div>
-          </div>
-        )}
                   </>
                 )}
               </>
@@ -2242,22 +2238,22 @@ export default function AdminPortal() {
                         <h4 className="font-semibold text-foreground mb-1">Aircraft Operations:</h4>
                         <ul className="space-y-1 ml-4">
                           <li>• View all aircraft added by vendors</li>
-                      <li>• Add or edit plane records (model, capacity, tail number, etc.)</li>
-                      <li>• Approve new planes added by vendors</li>
-                      <li>• Deactivate lost or retired aircraft</li>
+                          <li>• Add or edit plane records (model, capacity, tail number, etc.)</li>
+                          <li>• Approve new planes added by vendors</li>
+                          <li>• Deactivate lost or retired aircraft</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-1">Data Management:</h4>
                         <ul className="space-y-1 ml-4">
-                      <li>• Maintain accurate plane data for flight listings</li>
+                          <li>• Maintain accurate plane data for flight listings</li>
                           <li>• View aircraft details and specifications</li>
                           <li>• Search and filter aircraft by vendor or model</li>
                           <li>• Monitor aircraft inventory across all vendors</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
+                        </ul>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
 
                 {/* Search and Filter */}
@@ -2465,9 +2461,9 @@ export default function AdminPortal() {
                             <div className="flex items-center gap-2 mb-1">
                               <Badge className={
                                 notification.type === "success" ? "bg-green-100 text-green-800" :
-                                notification.type === "warning" ? "bg-warning/10 text-warning" :
-                                notification.type === "error" ? "bg-destructive/10 text-destructive" :
-                                "bg-primary/10 text-primary"
+                                  notification.type === "warning" ? "bg-warning/10 text-warning" :
+                                    notification.type === "error" ? "bg-destructive/10 text-destructive" :
+                                      "bg-primary/10 text-primary"
                               }>
                                 {notification.type.toUpperCase()}
                               </Badge>
@@ -2485,7 +2481,7 @@ export default function AdminPortal() {
                             variant="ghost"
                             size="sm"
                             onClick={() => {
-                              const updated = notifications.map(n => 
+                              const updated = notifications.map(n =>
                                 n.id === notification.id ? { ...n, read: true } : n
                               );
                               setNotifications(updated);
@@ -2517,23 +2513,23 @@ export default function AdminPortal() {
                       <div>
                         <h4 className="font-semibold text-foreground mb-1">Booking Operations:</h4>
                         <ul className="space-y-1 ml-4">
-                      <li>• Search and manage all bookings</li>
-                      <li>• Filter bookings by status, date, vendor or passenger</li>
-                      <li>• Confirm, cancel or modify bookings</li>
-                      <li>• Handle special cases (manual seat assignments, oversold flights)</li>
+                          <li>• Search and manage all bookings</li>
+                          <li>• Filter bookings by status, date, vendor or passenger</li>
+                          <li>• Confirm, cancel or modify bookings</li>
+                          <li>• Handle special cases (manual seat assignments, oversold flights)</li>
                         </ul>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground mb-1">System Management:</h4>
                         <ul className="space-y-1 ml-4">
-                      <li>• Enforce rules like waiting lists or rebooking</li>
-                      <li>• Process booking change or cancellation requests</li>
-                      <li>• Update seat counts system-wide</li>
+                          <li>• Enforce rules like waiting lists or rebooking</li>
+                          <li>• Process booking change or cancellation requests</li>
+                          <li>• Update seat counts system-wide</li>
                           <li>• Monitor booking trends and patterns</li>
-                    </ul>
-                  </div>
-                </div>
-              </Card>
+                        </ul>
+                      </div>
+                    </div>
+                  </Card>
                 </div>
 
                 {/* Search and Filter */}
@@ -2634,7 +2630,7 @@ export default function AdminPortal() {
                               // Search filter
                               if (bookingSearchQuery) {
                                 const query = bookingSearchQuery.toLowerCase();
-                                const matchesSearch = 
+                                const matchesSearch =
                                   booking.id?.toString().includes(query) ||
                                   booking.passenger_name?.toLowerCase().includes(query) ||
                                   booking.passenger_email?.toLowerCase().includes(query) ||
@@ -2643,26 +2639,26 @@ export default function AdminPortal() {
                                   booking.flight?.flight_number?.toLowerCase().includes(query);
                                 if (!matchesSearch) return false;
                               }
-                              
+
                               // Status filter
                               if (bookingStatusFilter !== "all") {
                                 if (booking.status?.toLowerCase() !== bookingStatusFilter.toLowerCase()) {
                                   return false;
                                 }
                               }
-                              
+
                               // Date filter
                               if (bookingDateFilter) {
-                                const bookingDate = booking.flight?.departure_time 
+                                const bookingDate = booking.flight?.departure_time
                                   ? new Date(booking.flight.departure_time).toISOString().split('T')[0]
-                                  : booking.booked_at 
-                                  ? new Date(booking.booked_at).toISOString().split('T')[0]
-                                  : null;
+                                  : booking.booked_at
+                                    ? new Date(booking.booked_at).toISOString().split('T')[0]
+                                    : null;
                                 if (bookingDate !== bookingDateFilter) {
                                   return false;
                                 }
                               }
-                              
+
                               return true;
                             })
                             .map((booking) => (
@@ -2696,8 +2692,8 @@ export default function AdminPortal() {
                                     {booking.flight?.departure_time
                                       ? new Date(booking.flight.departure_time).toLocaleString()
                                       : booking.booked_at
-                                      ? new Date(booking.booked_at).toLocaleString()
-                                      : "N/A"}
+                                        ? new Date(booking.booked_at).toLocaleString()
+                                        : "N/A"}
                                   </div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -2711,10 +2707,10 @@ export default function AdminPortal() {
                                       booking.status === "confirmed"
                                         ? "bg-accent/10 text-accent"
                                         : booking.status === "cancelled"
-                                        ? "bg-destructive/10 text-destructive"
-                                        : booking.status === "refunded"
-                                        ? "bg-blue-100 text-blue-800"
-                                        : "bg-warning/10 text-warning"
+                                          ? "bg-destructive/10 text-destructive"
+                                          : booking.status === "refunded"
+                                            ? "bg-blue-100 text-blue-800"
+                                            : "bg-warning/10 text-warning"
                                     }
                                   >
                                     {booking.status?.toUpperCase() || "PENDING"}
@@ -2768,7 +2764,7 @@ export default function AdminPortal() {
                         Showing {allBookings.filter((booking) => {
                           if (bookingSearchQuery) {
                             const query = bookingSearchQuery.toLowerCase();
-                            const matchesSearch = 
+                            const matchesSearch =
                               booking.id?.toString().includes(query) ||
                               booking.passenger_name?.toLowerCase().includes(query) ||
                               booking.passenger_email?.toLowerCase().includes(query) ||
@@ -2781,11 +2777,11 @@ export default function AdminPortal() {
                             if (booking.status?.toLowerCase() !== bookingStatusFilter.toLowerCase()) return false;
                           }
                           if (bookingDateFilter) {
-                            const bookingDate = booking.flight?.departure_time 
+                            const bookingDate = booking.flight?.departure_time
                               ? new Date(booking.flight.departure_time).toISOString().split('T')[0]
-                              : booking.booked_at 
-                              ? new Date(booking.booked_at).toISOString().split('T')[0]
-                              : null;
+                              : booking.booked_at
+                                ? new Date(booking.booked_at).toISOString().split('T')[0]
+                                : null;
                             if (bookingDate !== bookingDateFilter) return false;
                           }
                           return true;
@@ -2801,9 +2797,7 @@ export default function AdminPortal() {
               <ApiKeysManagement />
             )}
 
-            {activeSection === "external-flights" && (
-              <ExternalFlightsViewer />
-            )}
+
 
             {activeSection === "profile" && (
               <div className="max-w-4xl mx-auto space-y-6">
@@ -3080,7 +3074,7 @@ export default function AdminPortal() {
         open={deactivateConfirmOpen}
         onOpenChange={setDeactivateConfirmOpen}
         title={vendorToDeactivate?.isActive ? "Deactivate Vendor Account" : "Activate Vendor Account"}
-        description={vendorToDeactivate?.isActive 
+        description={vendorToDeactivate?.isActive
           ? "Are you sure you want to deactivate this vendor account?"
           : "Are you sure you want to activate this vendor account?"}
       >
@@ -3088,7 +3082,7 @@ export default function AdminPortal() {
           {vendorToDeactivate && (
             <div className="space-y-2">
               <p className="font-body text-sm text-foreground">
-                {vendorToDeactivate.isActive 
+                {vendorToDeactivate.isActive
                   ? "This will deactivate the vendor account for:"
                   : "This will activate the vendor account for:"}
               </p>
@@ -3202,7 +3196,7 @@ export default function AdminPortal() {
                 {/* Aircraft Images Gallery */}
                 <Card className="p-6">
                   <h3 className="font-heading text-lg font-semibold mb-4">Aircraft Images</h3>
-                  <AircraftGallery 
+                  <AircraftGallery
                     images={
                       selectedAircraft.aircraft_images && Array.isArray(selectedAircraft.aircraft_images)
                         ? selectedAircraft.aircraft_images
@@ -3384,10 +3378,10 @@ export default function AdminPortal() {
                           selectedBooking.status === "confirmed"
                             ? "bg-accent/10 text-accent"
                             : selectedBooking.status === "cancelled"
-                            ? "bg-destructive/10 text-destructive"
-                            : selectedBooking.status === "refunded"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-warning/10 text-warning"
+                              ? "bg-destructive/10 text-destructive"
+                              : selectedBooking.status === "refunded"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-warning/10 text-warning"
                         }
                       >
                         {selectedBooking.status?.toUpperCase() || "PENDING"}
@@ -3458,11 +3452,11 @@ export default function AdminPortal() {
         <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
           {viewingBookingsFor && (
             <div className="space-y-6">
-                <div>
-                  <h2 className="font-heading text-2xl font-bold">Booking History</h2>
-                  <p className="font-body text-sm text-muted-foreground mt-1">
-                    {viewingBookingsFor.full_name || "No name"} ({viewingBookingsFor.email})
-                  </p>
+              <div>
+                <h2 className="font-heading text-2xl font-bold">Booking History</h2>
+                <p className="font-body text-sm text-muted-foreground mt-1">
+                  {viewingBookingsFor.full_name || "No name"} ({viewingBookingsFor.email})
+                </p>
               </div>
 
               {bookingsLoading ? (
@@ -3488,8 +3482,8 @@ export default function AdminPortal() {
                                 booking.status === "confirmed"
                                   ? "bg-accent/10 text-accent"
                                   : booking.status === "cancelled"
-                                  ? "bg-destructive/10 text-destructive"
-                                  : "bg-warning/10 text-warning"
+                                    ? "bg-destructive/10 text-destructive"
+                                    : "bg-warning/10 text-warning"
                               }
                             >
                               {booking.status?.toUpperCase() || "PENDING"}

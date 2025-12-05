@@ -53,9 +53,7 @@ class Settings(BaseModel):
     redis_url: str = Field(alias="REDIS_URL")
     admin_default_email: str = Field(alias="ADMIN_DEFAULT_EMAIL")
     admin_default_password: str = Field(alias="ADMIN_DEFAULT_PASSWORD")
-    # External Flight API Configuration
-    enable_external_flight_api: bool = Field(default=False, alias="ENABLE_EXTERNAL_FLIGHT_API")
-    aviationstack_api_key: str = Field(default="", alias="AVIATIONSTACK_API_KEY")
+
 
     class Config:
         populate_by_name = True
@@ -101,7 +99,6 @@ def get_settings() -> Settings:
         redis_url=os.getenv("REDIS_URL", ""),
         admin_default_email=os.getenv("ADMIN_DEFAULT_EMAIL", ""),
         admin_default_password=os.getenv("ADMIN_DEFAULT_PASSWORD", ""),
-        enable_external_flight_api=os.getenv("ENABLE_EXTERNAL_FLIGHT_API", "false").lower() == "true",
-        aviationstack_api_key=_get_api_key("AVIATIONSTACK_API_KEY", os.getenv("AVIATIONSTACK_API_KEY", "")),
+
     )
 

@@ -68,24 +68,7 @@ const API_KEY_DEFINITIONS = [
     description: "API key for OTP service (optional, for future use)",
     type: "password",
   },
-  {
-    key_name: "AVIATIONSTACK_API_KEY",
-    label: "AviationStack API Key",
-    description: "AviationStack API key for fetching external flight data",
-    type: "password",
-  },
-  {
-    key_name: "AMADEUS_API_KEY",
-    label: "Amadeus API Key",
-    description: "Amadeus API Key (Client ID) for fetching external flight data",
-    type: "text",
-  },
-  {
-    key_name: "AMADEUS_API_SECRET",
-    label: "Amadeus API Secret",
-    description: "Amadeus API Secret (Client Secret) for authentication",
-    type: "password",
-  },
+
 ];
 
 export default function ApiKeysManagement() {
