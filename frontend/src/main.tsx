@@ -15,6 +15,20 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
+// Hide initial loader once React is ready
+const hideInitialLoader = () => {
+  const loader = document.getElementById("initial-loader");
+  if (loader) {
+    // Add fade-out class
+    loader.classList.add("fade-out");
+
+    // Remove from DOM after animation completes
+    setTimeout(() => {
+      loader.remove();
+    }, 500); // Match the CSS transition duration
+  }
+};
+
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundary>
@@ -30,4 +44,7 @@ ReactDOM.createRoot(rootElement).render(
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+// Hide loader after displaying the animation (2 seconds for better UX)
+setTimeout(hideInitialLoader, 2000);
 
